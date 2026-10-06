@@ -1,6 +1,6 @@
 const fs = require('fs');
 async function checkAllExt() {
-  const buffer = fs.readFileSync('public/models/amg-one.glb');
+  const buffer = fs.readFileSync('public/models/transparency_mercedes_amg_one.glb');
   const length = buffer.readUInt32LE(8);
   let offset = 12;
   let jsonChunk = null;

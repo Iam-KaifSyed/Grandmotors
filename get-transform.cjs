@@ -2,7 +2,7 @@ const { NodeIO } = require('@gltf-transform/core');
 
 async function inspect() {
   const io = new NodeIO();
-  const document = await io.read('./public/models/amg-one.glb');
+  const document = await io.read('./public/models/transparency_mercedes_amg_one.glb');
   const root = document.getRoot();
   const nodes = root.listNodes();
   

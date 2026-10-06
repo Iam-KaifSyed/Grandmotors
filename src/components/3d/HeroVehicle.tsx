@@ -15,7 +15,7 @@ import { ANCHOR_IDS, type AnchorId } from '../../experience/rig/anchors';
 import { getFrame } from '../../lib/directorState';
 
 export function HeroVehicle() {
-  const { scene } = useGLTF('/models/amg-one.glb');
+  const { scene } = useGLTF('/models/transparency_mercedes_amg_one.glb');
   
   // Clone scene so we don't mutate the cached singleton if re-mounted
   const clonedScene = useMemo(() => scene.clone(), [scene]);
@@ -168,4 +168,4 @@ export function HeroVehicle() {
   );
 }
 
-useGLTF.preload('/models/amg-one.glb');
+useGLTF.preload('/models/transparency_mercedes_amg_one.glb');

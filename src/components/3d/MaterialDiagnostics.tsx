@@ -17,7 +17,7 @@ export function MaterialDiagnostics() {
 }
 
 function MatDiagInner() {
-  const { scene } = useGLTF('/models/amg-one.glb');
+  const { scene } = useGLTF('/models/transparency_mercedes_amg_one.glb');
   const logs: any[] = [];
   scene.traverse((child) => {
     if ((child as THREE.Mesh).isMesh) {

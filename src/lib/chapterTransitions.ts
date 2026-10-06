@@ -111,7 +111,7 @@ export interface ChapterData {
   chapterLabel: string;
 }
 
-export const CHAPTER_DATA: readonly ChapterData[] = [
+const RAW_CHAPTER_DATA: readonly ChapterData[] = [
   {
     eyebrowCategory: 'GRAND MOTORS',
     eyebrowName: 'PERFORMANCE SERVICE',
@@ -185,3 +185,9 @@ export const CHAPTER_DATA: readonly ChapterData[] = [
     chapterLabel: 'IGNITION',
   },
 ] as const;
+
+/** Reversed order: scene 9 (ignition) is first, scene 1 (open) is last */
+export const CHAPTER_DATA: readonly ChapterData[] = [...RAW_CHAPTER_DATA].reverse().map((ch, idx) => ({
+  ...ch,
+  chapterNumber: String(idx + 1).padStart(2, '0'),
+}));

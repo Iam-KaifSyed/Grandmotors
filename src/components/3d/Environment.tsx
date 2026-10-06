@@ -1,4 +1,4 @@
-import { useFrame } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import { useRef } from 'react';
 import * as THREE from 'three';
 import { MeshReflectorMaterial, Environment as DreiEnvironment } from '@react-three/drei';
@@ -6,6 +6,7 @@ import { getFrame } from '../../lib/directorState';
 import { Effects } from './Effects';
 
 export function Environment() {
+  const { scene } = useThree();
   const ambientRef = useRef<THREE.AmbientLight>(null);
   const keyRef = useRef<THREE.PointLight>(null);
   const headlampsRef = useRef<THREE.SpotLight>(null);
@@ -16,15 +17,20 @@ export function Environment() {
     const frame = getFrame();
     if (!frame) return;
 
-    if (ambientRef.current) ambientRef.current.intensity = (frame.values['light.ambient'] ?? 0) * Math.PI * 0.7;
+    const ambientTrack = frame.values['light.ambient'] ?? 0;
+
+    // Scale HDR environment reflection intensity based on ambient track
+    scene.environmentIntensity = ambientTrack * 0.5;
+
+    if (ambientRef.current) ambientRef.current.intensity = ambientTrack * Math.PI * 0.1;
     // Overhead cinematic key
-    if (keyRef.current) keyRef.current.intensity = (frame.values['light.key'] ?? 0) * Math.PI * 16;
+    if (keyRef.current) keyRef.current.intensity = (frame.values['light.key'] ?? 0) * Math.PI * 1.5;
     // Front aero & headlamp accents
-    if (headlampsRef.current) headlampsRef.current.intensity = (frame.values['light.headlamps'] ?? 0) * Math.PI * 3.5;
+    if (headlampsRef.current) headlampsRef.current.intensity = (frame.values['light.headlamps'] ?? 0) * Math.PI * 0.5;
     // Rim / vehicle silhouette separation
-    if (floorRef.current) floorRef.current.intensity = (frame.values['light.floor'] ?? 0) * Math.PI * 8;
+    if (floorRef.current) floorRef.current.intensity = (frame.values['light.floor'] ?? 0) * Math.PI * 1;
     // Architectural wall wash
-    if (wallWashRef.current) wallWashRef.current.intensity = (frame.values['light.ambient'] ?? 0.1) * Math.PI * 6;
+    if (wallWashRef.current) wallWashRef.current.intensity = ambientTrack * Math.PI * 0.5;
   });
 
   return (
@@ -36,16 +42,16 @@ export function Environment() {
       <fog attach="fog" args={['#07090a', 6, 26]} />
 
       {/* Studio reflections for realistic carbon fiber and paint sheen */}
-      <DreiEnvironment preset="studio" environmentIntensity={0.5} />
+      <DreiEnvironment preset="studio" />
 
-      <ambientLight ref={ambientRef} color="#b8c0c8" intensity={0.15} />
+      <ambientLight ref={ambientRef} color="#b8c0c8" />
 
       {/* Cinematic overhead key light */}
-      <pointLight 
-        ref={keyRef} 
-        color="#f8fafc" 
-        position={[0.5, 4.2, 1.2]} 
-        distance={18} 
+      <pointLight
+        ref={keyRef}
+        color="#e2e8ef"
+        position={[0.5, 4.2, 1.2]}
+        distance={18}
         decay={1.6}
         castShadow
         shadow-mapSize={[2048, 2048]}
@@ -53,23 +59,23 @@ export function Environment() {
       />
 
       {/* Rim light - separating the vehicle from the background */}
-      <pointLight 
-        ref={floorRef} 
-        color="#8fa3b8" 
-        position={[-2.8, 1.8, -3.5]} 
-        distance={14} 
-        decay={1.5} 
+      <pointLight
+        ref={floorRef}
+        color="#798ba0"
+        position={[-2.8, 1.8, -3.5]}
+        distance={14}
+        decay={1.8}
       />
 
       {/* Soft front fill light */}
       <spotLight
         ref={headlampsRef}
-        color="#e2e8f0"
+        color="#d1d5db"
         position={[-0.8, 1.6, 4.2]}
         angle={Math.PI / 3.8}
-        penumbra={0.9}
+        penumbra={1}
         distance={12}
-        decay={1.8}
+        decay={2}
         castShadow
         shadow-mapSize={[1024, 1024]}
         shadow-bias={-0.0001}

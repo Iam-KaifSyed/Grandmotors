@@ -1,7 +1,7 @@
 const fs = require('fs');
 
 async function checkGLB() {
-  const buffer = fs.readFileSync('public/models/amg-one.glb');
+  const buffer = fs.readFileSync('public/models/transparency_mercedes_amg_one.glb');
 
   // Basic GLB parsing
   const magic = buffer.readUInt32LE(0);
