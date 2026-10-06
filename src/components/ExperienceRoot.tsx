@@ -62,7 +62,7 @@ export function ExperienceRoot() {
 
   return (
     <>
-      <div ref={containerRef} className="fixed inset-0 w-full h-full pointer-events-none bg-[#030303]">
+      <div ref={containerRef} className="fixed inset-0 w-full h-full pointer-events-none bg-[#07090A] overflow-hidden">
         {ready && (
           <Canvas
             className="w-full h-full"
@@ -87,8 +87,8 @@ export function ExperienceRoot() {
         {/* HUD reinstated */}
         <HUD />
 
-        {/* Scrubber / Tweakpane controls */}
-        {import.meta.env.DEV && <DebugPanel />}
+        {/* Scrubber / Tweakpane controls (gated behind ?debug=true flag) */}
+        <DebugPanel />
       </div>
 
       {/* HTML overlay injected below the canvas relative to pointer events */}

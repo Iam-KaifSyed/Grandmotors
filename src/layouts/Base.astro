@@ -9,15 +9,21 @@ const { title, description } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" class="bg-[#07090A] text-[#F2F0EA] antialiased">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#050506" />
+    <meta name="theme-color" content="#07090A" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
   </head>
-  <body>
+  <body class="bg-[#07090A] text-[#F2F0EA] overflow-x-hidden selection:bg-[#B88952]/30 selection:text-[#F2F0EA]">
     <slot />
   </body>
 </html>

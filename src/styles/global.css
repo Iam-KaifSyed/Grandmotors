@@ -1,24 +1,36 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-ink: #050506;
-  --color-steel: #c9ccd1;
-  --color-smoke: #7b7f87;
-  --color-amber: #e8a24a;
+  --color-bg-darkest: #07090a;
+  --color-bg-main: #111315;
+  --color-bg-secondary: #181b1e;
+  --color-bg-highlight: #25282b;
+
+  --color-text-primary: #f2f0ea;
+  --color-text-secondary: #a7aaad;
+  --color-text-nav: #d8d6d0;
+  --color-accent: #b88952;
+
+  --font-sans: "Inter", "Manrope", system-ui, -apple-system, sans-serif;
+  --font-display: "Inter", "Space Grotesk", system-ui, sans-serif;
 }
 
 :root {
   color-scheme: dark;
-  background: #050506;
+  background: #07090a;
+  color: #f2f0ea;
+  font-family: var(--font-sans);
 }
 
 html,
 body {
   margin: 0;
-  background: #050506;
-  color: #e9eaec;
-  font-family: system-ui, sans-serif;
+  padding: 0;
+  background: #07090a;
+  color: #f2f0ea;
+  font-family: "Inter", "Manrope", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Lenis */
@@ -31,4 +43,27 @@ html.lenis body {
 }
 .lenis.lenis-stopped {
   overflow: hidden;
+}
+
+/* Semantic Hero Classes for Future GSAP Animation */
+.hero-nav {
+  /* Minimal top navigation */
+}
+.hero-eyebrow {
+  /* Small uppercase category header */
+}
+.hero-title {
+  /* Main editorial bold headline */
+}
+.hero-title-line {
+  /* Individual headline line container */
+}
+.hero-description {
+  /* Supporting editorial subtitle */
+}
+.hero-chapter {
+  /* Upper-right sequence indicator */
+}
+.hero-scroll {
+  /* Bottom telemetry & exploration cues */
 }

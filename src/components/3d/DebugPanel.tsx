@@ -6,8 +6,15 @@ export function DebugPanel() {
   const paneRef = useRef<Pane | null>(null);
 
   useEffect(() => {
-    // Only mount if url has ?debug=true or in dev (we can just add it generally for this stage)
+    // Only mount if url has ?debug=true or ?dev=true flag (hidden from visible hero presentation)
     if (typeof window === 'undefined') return;
+
+    const searchParams = new URLSearchParams(window.location.search);
+    const isDebug = searchParams.get('debug') === 'true' || 
+                    searchParams.get('dev') === 'true' || 
+                    (window as unknown as { __GRAND_DEBUG__?: boolean }).__GRAND_DEBUG__ === true;
+
+    if (!isDebug) return;
 
     if (!document.getElementById('tweakpane-container')) {
       const div = document.createElement('div');

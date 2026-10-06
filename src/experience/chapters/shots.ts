@@ -2,13 +2,14 @@ import { shot } from './util';
 
 export const B = {
   // Hero render quality test shot (3/4 front, grounded, cinematic lens)
-  heroFront: shot([-3.2, 0.8, 3.8], [0.2, 0.5, 0.0], 32),
+  heroFront: shot([-3.1, 1.22, 3.4], [-0.75, 0.52, 0.1], 32),
   
-  open: shot([-4.2, 1.0, 4.8], [0.0, 0.4, 0.0], 35),
-  openEnd: shot([-4.0, 1.05, 4.6], [0.0, 0.42, 0.0], 35), // Micro push-in
+  // Chapter 00: Hero Composition (Occupies 55-65% width on center/right, height 1.22m, negative space on left)
+  open: shot([-3.1, 1.22, 3.4], [-0.75, 0.52, 0.1], 32),
+  openEnd: shot([-2.95, 1.20, 3.25], [-0.72, 0.52, 0.12], 32), // Subtle cinematic push-in
 
   // Car is at Z=0 for this test!
-  arrivalEnd: shot([-3.5, 0.4, -3.5], [0, 0.6, 0.5], 35),
+  arrivalEnd: shot([-3.5, 0.6, -3.5], [0, 0.6, 0.5], 35),
   revealEnd: shot([3.5, 0.8, 3.5], [0, 0.6, 0.5], 30),
 
   // Dummies

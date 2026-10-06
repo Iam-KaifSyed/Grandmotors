@@ -1,25 +1,56 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { getFrame } from '../lib/directorState';
+import { CHAPTER_DATA, getChapterAnimationState } from '../lib/chapterTransitions';
+import { CinematicProgressBar } from './CinematicProgressBar';
 
 export function HUD() {
-  const awakenRef = useRef<HTMLDivElement>(null);
-  const revealRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const chapterRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const indicatorNumberRef = useRef<HTMLSpanElement>(null);
+  const indicatorLabelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    let prevChapter = -1;
+
     const tick = () => {
       const frame = getFrame();
       if (!frame) return;
 
-      const awakenOverlay = frame.overlays.find(o => o.id === 'awaken');
-      if (awakenRef.current) {
-        awakenRef.current.style.opacity = (awakenOverlay?.opacity ?? 0).toString();
+      const currentChapter = Math.max(0, Math.min(CHAPTER_DATA.length - 1, frame.chapter));
+      const localProgress = frame.local;
+
+      // 1. Update Chapter Indicator in Header
+      if (currentChapter !== prevChapter) {
+        prevChapter = currentChapter;
+        const currentData = CHAPTER_DATA[currentChapter];
+        if (currentData) {
+          if (indicatorNumberRef.current) {
+            indicatorNumberRef.current.textContent = currentData.chapterNumber;
+          }
+          if (indicatorLabelRef.current) {
+            indicatorLabelRef.current.textContent = currentData.chapterLabel;
+          }
+        }
       }
 
-      const revealOverlay = frame.overlays.find(o => o.id === 'reveal');
-      if (revealRef.current) {
-        revealRef.current.style.opacity = (revealOverlay?.opacity ?? 0).toString();
-      }
+      // 2. Animate Chapter Typography Groups (Strict Zero-Overlap Rule)
+      CHAPTER_DATA.forEach((_, idx) => {
+        const el = chapterRefs.current[idx];
+        if (!el) return;
+
+        const { opacity, translateX, isVisible } = getChapterAnimationState(
+          idx,
+          currentChapter,
+          localProgress,
+          CHAPTER_DATA.length
+        );
+
+        el.style.opacity = opacity.toFixed(3);
+        el.style.transform = `translateX(${translateX.toFixed(1)}px)`;
+        el.style.visibility = isVisible ? 'visible' : 'hidden';
+        el.style.pointerEvents = isVisible ? 'auto' : 'none';
+      });
     };
 
     gsap.ticker.add(tick);
@@ -29,41 +60,147 @@ export function HUD() {
   }, []);
 
   return (
-    <div className="fixed inset-0 z-10 pointer-events-none p-12 lg:p-24 flex items-center">
+    <div 
+      ref={containerRef}
+      className="fixed inset-0 z-20 pointer-events-none flex flex-col justify-between select-none overflow-hidden"
+    >
+      {/* ============================================================ */}
+      {/* 1. TOP NAVIGATION & CHAPTER INDICATOR                        */}
+      {/* ============================================================ */}
+      <header className="hero-nav w-full px-6 md:px-12 lg:px-16 pt-8 md:pt-10 flex items-start justify-between">
+        {/* Brand */}
+        <div className="flex items-center gap-3">
+          <span className="text-xs md:text-sm font-semibold tracking-[0.25em] text-[#F2F0EA] uppercase">
+            GRAND MOTOR
+          </span>
+          <span className="w-1.5 h-1.5 rounded-full bg-[#B88952] opacity-80" />
+        </div>
 
-      {/* AWAKEN OVERLAY */}
-      <div
-        ref={awakenRef}
-        className="opacity-0 absolute left-8 lg:left-24 top-1/2 -translate-y-1/2 text-white font-light tracking-[0.2em] leading-tight"
-      >
-        <h1 className="text-xl md:text-3xl text-neutral-300">
-          ENGINEERED<br />
-          FOR THE<br />
-          ROAD.
-        </h1>
-      </div>
+        {/* Minimal Navigation Links */}
+        <nav className="hidden md:flex items-center gap-8 lg:gap-12 pointer-events-auto">
+          <a
+            href="#services"
+            className="text-[11px] font-medium tracking-[0.2em] text-[#D8D6D0]/70 hover:text-[#F2F0EA] transition-colors duration-200 uppercase"
+          >
+            SERVICES
+          </a>
+          <a
+            href="#about"
+            className="text-[11px] font-medium tracking-[0.2em] text-[#D8D6D0]/70 hover:text-[#F2F0EA] transition-colors duration-200 uppercase"
+          >
+            ABOUT
+          </a>
+          <a
+            href="#contact"
+            className="text-[11px] font-medium tracking-[0.2em] text-[#D8D6D0]/70 hover:text-[#F2F0EA] transition-colors duration-200 uppercase"
+          >
+            CONTACT
+          </a>
+        </nav>
 
-      
-      {/* REVEAL OVERLAY */}
-      <div
-        ref={revealRef}
-        className="opacity-0 absolute left-8 lg:left-24 top-1/2 -translate-y-1/2 text-white font-light tracking-[0.2em] leading-tight"
-      >
-        <h1 className="text-xl md:text-3xl text-neutral-300">
-          PRECISION<br />
-          STARTS WITH<br />
-          UNDERSTANDING.
-        </h1>
-      </div>
+        {/* Dynamic Chapter Indicator */}
+        <div className="hero-chapter text-right">
+          <div className="flex items-baseline justify-end gap-1 font-mono text-xs md:text-sm tracking-wider">
+            <span ref={indicatorNumberRef} className="text-[#F2F0EA] font-semibold">
+              01
+            </span>
+            <span className="text-[#A7AAAD]/40">/</span>
+            <span className="text-[#A7AAAD]/60 text-[11px]">09</span>
+          </div>
+          <div 
+            ref={indicatorLabelRef}
+            className="text-[10px] md:text-[11px] font-medium tracking-[0.22em] text-[#A7AAAD]/80 uppercase mt-0.5"
+          >
+            GARAGE ARRIVAL
+          </div>
+        </div>
+      </header>
 
-      <a
-        href="https://sketchfab.com/3d-models/cafe-nhan-sam-hoa-tan-queen-food-e28a0fb813ad49e0ba610c7fa0137146"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="absolute bottom-4 right-4 pointer-events-auto text-[10px] opacity-20 hover:opacity-50 text-neutral-500 font-sans tracking-normal"
-      >
-        3D Model: CC-BY-4.0 Khoai Lang Tím Sấy Giòn Queen Food
-      </a>
+      {/* ============================================================ */}
+      {/* 2. HERO LEFT-SIDE EDITORIAL TYPOGRAPHY                      */}
+      {/* ============================================================ */}
+      <main className="relative w-full px-6 md:px-12 lg:px-16 flex-1 flex items-center">
+        <div className="relative w-full max-w-xl lg:max-w-2xl lg:ml-[2vw] h-[340px] flex items-center">
+          
+          {CHAPTER_DATA.map((chapter, idx) => {
+            const isFirst = idx === 0;
+            return (
+              <div
+                key={chapter.chapterNumber}
+                ref={(el) => { chapterRefs.current[idx] = el; }}
+                className={`chapter-${chapter.chapterNumber} absolute inset-0 flex flex-col justify-center will-change-transform ${
+                  isFirst ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'
+                }`}
+                style={{
+                  transform: 'translateX(0px)',
+                }}
+              >
+                {/* Eyebrow */}
+                <div className="hero-eyebrow flex items-center gap-2 mb-4 md:mb-6">
+                  <span className="text-[10px] md:text-xs font-semibold tracking-[0.28em] text-[#A7AAAD] uppercase">
+                    {chapter.eyebrowCategory}
+                  </span>
+                  <span className="text-[#B88952] text-[10px] md:text-xs font-medium">/</span>
+                  <span className="text-[10px] md:text-xs font-medium tracking-[0.24em] text-[#A7AAAD]/90 uppercase">
+                    {chapter.eyebrowName}
+                  </span>
+                </div>
+
+                {/* Main Headline */}
+                <h1 className="hero-title text-4xl sm:text-5xl md:text-6xl lg:text-[4.75rem] font-extrabold tracking-[-0.035em] text-[#F2F0EA] leading-[0.92] uppercase mb-5 md:mb-7">
+                  {chapter.titleLines.map((line, lineIdx) => (
+                    <div 
+                      key={lineIdx} 
+                      className={`hero-title-line ${lineIdx > 0 ? 'mt-1 md:mt-2' : ''}`}
+                    >
+                      {line}
+                    </div>
+                  ))}
+                </h1>
+
+                {/* Supporting Description */}
+                <p className="hero-description text-xs sm:text-sm md:text-[15px] font-normal tracking-[0.02em] text-[#A7AAAD] leading-relaxed max-w-md">
+                  {chapter.description}
+                </p>
+              </div>
+            );
+          })}
+
+        </div>
+      </main>
+
+      {/* ============================================================ */}
+      {/* 3. CINEMATIC TIMELINE & BOTTOM FOOTER                        */}
+      {/* ============================================================ */}
+      <footer className="hero-scroll w-full px-6 md:px-12 lg:px-16 pb-4 md:pb-5 flex flex-col items-center gap-2.5">
+        {/* Cinematic Film Timeline Progress Bar */}
+        <CinematicProgressBar />
+
+        {/* Cues & Attribution */}
+        <div className="w-full flex items-center justify-between text-[10px] md:text-[11px] font-medium tracking-[0.22em] text-[#A7AAAD]/80 uppercase">
+          {/* Bottom Left Cue */}
+          <div className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 bg-[#B88952]/80 rounded-full" />
+            <span>ENGINEERED FOR THE DRIVE</span>
+          </div>
+
+          {/* Attribution (Unobtrusive) */}
+          <a
+            href="https://sketchfab.com/3d-models/cafe-nhan-sam-hoa-tan-queen-food-e28a0fb813ad49e0ba610c7fa0137146"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hidden xl:inline-block pointer-events-auto text-[9px] tracking-normal text-[#A7AAAD]/30 hover:text-[#A7AAAD]/60 transition-colors"
+          >
+            Mercedes-AMG ONE (CC-BY-4.0)
+          </a>
+
+          {/* Bottom Right Cue */}
+          <div className="flex items-center gap-1.5 text-[#F2F0EA]/90 tracking-[0.2em]">
+            <span>SCROLL TO EXPLORE</span>
+            <span className="text-[#B88952] text-xs">↓</span>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
