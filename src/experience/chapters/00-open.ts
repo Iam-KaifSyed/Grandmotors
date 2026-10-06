@@ -2,19 +2,23 @@ import type { Chapter } from '../core/types';
 import { B } from './shots';
 import { cam, track } from './util';
 
-/** Dark open: the car sits far back in the dark, headlamps come up, a reflection crosses the body. */
+/** Static Render Quality Hero Shot (3/4 Front) */
 export const open: Chapter = {
   id: 'open',
-  beats: 1.2,
-  camera: [cam(0, B.open, true), cam(1, B.openEnd)],
-  tracks: [
-    track('light.ambient', [0, 0], [0.1, 0], [1, 0.12]),
-    track('light.headlamps', [0, 0], [0.2, 0], [0.65, 1]),
-    track('light.key', [0, 0], [1, 0]),
-    track('light.floor', [0, 0], [1, 0]),
-    track('fx.sheen', [0, 0], [0.45, 0], [1, 1]),
-    // Car waits at its start position; the arrival chapter moves it in.
-    track('rig.pz', [0, -5]),
+  beats: 3, 
+  camera: [
+    cam(0, B.open),
+    cam(1, B.openEnd),
   ],
-  overlays: [{ id: 'hero', from: 0.22, to: 1, fade: 0.14 }],
+  tracks: [
+    // Keep car at 0 so we can see it perfectly
+    track('rig.pz', [0, 0], [1, 0]), 
+    
+    // Fully dialed-in cinematic lighting from beat 0
+    track('light.ambient', [0, 0.1], [1, 0.1]), 
+    track('light.headlamps', [0, 0.8], [1, 0.8]), 
+    track('light.key', [0, 1.2], [1, 1.2]), 
+    track('light.floor', [0, 0.7], [1, 0.7]), 
+  ],
+  overlays: [],
 };

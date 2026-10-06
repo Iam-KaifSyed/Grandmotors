@@ -53,6 +53,13 @@ export function DebugPanel() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
       });
 
+      let md = false;
+      const diagBtn = pane.addButton({ title: 'Toggle Mat Diag' });
+      diagBtn.on('click', () => {
+        md = !md;
+        window.dispatchEvent(new CustomEvent('toggle-mat-diagnostics', { detail: md }));
+      });
+
       return () => {
         clearInterval(updateInterval);
         pane.dispose();

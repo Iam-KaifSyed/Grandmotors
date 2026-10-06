@@ -1,0 +1,590 @@
+Number of meshes: 152
+Total Triangles: 387826
+Total Vertices: 421471
+Number of materials: 32
+ - Material: amgprojone_tire
+   Transmissive? No
+   Alpha mode: OPAQUE
+ - Material: amgprojone_runninglight
+   Transmissive? No
+   Alpha mode: OPAQUE
+ - Material: amgprojone_clearglass2
+   Transmissive? No
+   Alpha mode: BLEND
+ - Material: amgprojone_decal_star
+   Transmissive? No
+   Alpha mode: BLEND
+ - Material: amgprojone_decal_grill1
+   Transmissive? No
+   Alpha mode: BLEND
+ - Material: amgprojone_clearglass
+   Transmissive? No
+   Alpha mode: BLEND
+ - Material: amgprojone_plastic
+   Transmissive? No
+   Alpha mode: OPAQUE
+ - Material: amgprojone_headlight
+   Transmissive? No
+   Alpha mode: OPAQUE
+ - Material: amgprojone_glass_005
+   Transmissive? No
+   Alpha mode: BLEND
+ - Material: amgprojone_carbon
+   Transmissive? No
+   Alpha mode: OPAQUE
+ - Material: amgprojone_hubdecal_amg
+   Transmissive? No
+   Alpha mode: BLEND
+ - Material: amgprojone_grey
+   Transmissive? No
+   Alpha mode: OPAQUE
+ - Material: amgprojone_decal_bolt1
+   Transmissive? No
+   Alpha mode: BLEND
+ - Material: amgprojone_paint
+   Transmissive? No
+   Alpha mode: OPAQUE
+ - Material: amgprojone_decal_livery
+   Transmissive? No
+   Alpha mode: BLEND
+ - Material: amgprojone_decal_bolt2
+   Transmissive? No
+   Alpha mode: BLEND
+ - Material: amgprojone_interior_9
+   Transmissive? No
+   Alpha mode: OPAQUE
+ - Material: amgprojone_interior_alcantara
+   Transmissive? No
+   Alpha mode: OPAQUE
+ - Material: amgprojone_decal_symbol
+   Transmissive? No
+   Alpha mode: BLEND
+ - Material: amgprojone_stitches
+   Transmissive? No
+   Alpha mode: BLEND
+ - Material: amgprojone_speakers
+   Transmissive? No
+   Alpha mode: OPAQUE
+ - Material: amgprojone_redglass
+   Transmissive? No
+   Alpha mode: OPAQUE
+ - Material: amgprojone_detailradiator2
+   Transmissive? No
+   Alpha mode: OPAQUE
+ - Material: amgprojone_detail_radiator1
+   Transmissive? No
+   Alpha mode: OPAQUE
+ - Material: amgprojone_decal_emblem
+   Transmissive? No
+   Alpha mode: OPAQUE
+ - Material: amgprojone_lightsnormal
+   Transmissive? No
+   Alpha mode: OPAQUE
+ - Material: amgprojone_detail_underbody
+   Transmissive? No
+   Alpha mode: OPAQUE
+ - Material: amgprojone_beltinterior
+   Transmissive? No
+   Alpha mode: OPAQUE
+ - Material: interior_001
+   Transmissive? No
+   Alpha mode: OPAQUE
+ - Material: amgprojone_trim001
+   Transmissive? No
+   Alpha mode: OPAQUE
+ - Material: amgprojone_decalamg_12interior
+   Transmissive? No
+   Alpha mode: BLEND
+ - Material: amgprojone_decal_logo
+   Transmissive? No
+   Alpha mode: BLEND
+Number of textures: 25
+ - Texture:  (image/jpeg), size: 49810 bytes
+ - Texture:  (image/jpeg), size: 10161 bytes
+ - Texture:  (image/png), size: 88543 bytes
+ - Texture:  (image/jpeg), size: 321668 bytes
+ - Texture:  (image/jpeg), size: 1853 bytes
+ - Texture:  (image/png), size: 5774 bytes
+ - Texture:  (image/jpeg), size: 284 bytes
+ - Texture:  (image/png), size: 6329 bytes
+ - Texture:  (image/jpeg), size: 320636 bytes
+ - Texture:  (image/png), size: 226314 bytes
+ - Texture:  (image/png), size: 15320 bytes
+ - Texture:  (image/jpeg), size: 83560 bytes
+ - Texture:  (image/png), size: 159051 bytes
+ - Texture:  (image/jpeg), size: 2485 bytes
+ - Texture:  (image/jpeg), size: 374905 bytes
+ - Texture:  (image/jpeg), size: 45090 bytes
+ - Texture:  (image/jpeg), size: 64653 bytes
+ - Texture:  (image/jpeg), size: 72234 bytes
+ - Texture:  (image/jpeg), size: 196876 bytes
+ - Texture:  (image/jpeg), size: 66842 bytes
+ - Texture:  (image/jpeg), size: 28736 bytes
+ - Texture:  (image/jpeg), size: 104670 bytes
+ - Texture:  (image/jpeg), size: 283 bytes
+ - Texture:  (image/jpeg), size: 8550 bytes
+ - Texture:  (image/png), size: 56098 bytes
+
+Hierarchy & Node Names (462 nodes):
+- Sketchfab_model 
+  - USDRoot 
+    - scene 
+      - Meshes 
+        - Sketchfab_model 
+          - _3a3b682e5d94ed3a34f1febe7345475_fbx 
+            - RootNode 
+              - amgprojone_tire 
+                - amgprojone_tire_amgprojone_tire_0 
+                  - amgprojone_tire_amgprojone_tire_0 [Mesh: amgprojone_tire_amgprojone_tire_0]
+              - amgprojone_headlightframe_R 
+                - amgprojone_headlightframe_R_amgprojone_runninglight_0 
+                  - amgprojone_headlightframe_R_amgprojone_runninglight_0 [Mesh: amgprojone_headlightframe_R_amgprojone_runninglight_0]
+              - amgprojone_headlightframe_L 
+                - amgprojone_headlightframe_L_amgprojone_runninglight_0 
+                  - amgprojone_headlightframe_L_amgprojone_runninglight_0 [Mesh: amgprojone_headlightframe_L_amgprojone_runninglight_0]
+              - amgprojone_windshield 
+                - amgprojone_windshield_amgprojone_clearglass2_0 
+                  - amgprojone_windshield_amgprojone_clearglass2_0 [Mesh: amgprojone_windshield_amgprojone_clearglass2_0]
+              - amgprojone_rim 
+                - amgprojone_rim_amgprojone_decal_star_0 
+                  - amgprojone_rim_amgprojone_decal_star_0 [Mesh: amgprojone_rim_amgprojone_decal_star_0]
+              - amgprojone_tailgate 
+                - amgprojone_tailgate_amgprojone_decal_grill1_0 
+                  - amgprojone_tailgate_amgprojone_decal_grill1_0 [Mesh: amgprojone_tailgate_amgprojone_decal_grill1_0]
+              - amgprojone_door_R 
+                - amgprojone_door_R_amgprojone_clearglass2_0 
+                  - amgprojone_door_R_amgprojone_clearglass2_0 [Mesh: amgprojone_door_R_amgprojone_clearglass2_0]
+              - amgprojone_door_L 
+                - amgprojone_door_L_amgprojone_clearglass2_0 
+                  - amgprojone_door_L_amgprojone_clearglass2_0 [Mesh: amgprojone_door_L_amgprojone_clearglass2_0]
+              - amgprojone_bumper_R 
+                - amgprojone_bumper_R_amgprojone_clearglass_0 
+                  - amgprojone_bumper_R_amgprojone_clearglass_0 [Mesh: amgprojone_bumper_R_amgprojone_clearglass_0]
+              - amgprojone_bumper_F 
+                - amgprojone_bumper_F_amgprojone_clearglass_0 
+                  - amgprojone_bumper_F_amgprojone_clearglass_0 [Mesh: amgprojone_bumper_F_amgprojone_clearglass_0]
+              - amgprojone_spoiler 
+                - amgprojone_spoiler_amgprojone_plastic_0 
+                  - amgprojone_spoiler_amgprojone_plastic_0 [Mesh: amgprojone_spoiler_amgprojone_plastic_0]
+              - amgprojone_steer 
+                - amgprojone_steer_amgprojone_coloured_0 
+                  - amgprojone_steer_amgprojone_coloured_0 [Mesh: amgprojone_steer_amgprojone_coloured_0]
+              - amgprojone_body 
+                - amgprojone_body_amgprojone_headlight_0 
+                  - amgprojone_body_amgprojone_headlight_0 [Mesh: amgprojone_body_amgprojone_headlight_0]
+              - amgprojone_tire_001 
+                - amgprojone_tire_001_amgprojone_tire_0 
+                  - amgprojone_tire_001_amgprojone_tire_0 [Mesh: amgprojone_tire_001_amgprojone_tire_0]
+              - amgprojone_rim_002 
+                - amgprojone_rim_002_amgprojone_decal_star_0 
+                  - amgprojone_rim_002_amgprojone_decal_star_0 [Mesh: amgprojone_rim_002_amgprojone_decal_star_0]
+              - amgprojone_tire_002 
+                - amgprojone_tire_002_amgprojone_tire_0 
+                  - amgprojone_tire_002_amgprojone_tire_0 [Mesh: amgprojone_tire_002_amgprojone_tire_0]
+              - amgprojone_rim_001 
+                - amgprojone_rim_001_amgprojone_decal_star_0 
+                  - amgprojone_rim_001_amgprojone_decal_star_0 [Mesh: amgprojone_rim_001_amgprojone_decal_star_0]
+              - amgprojone_tire_003 
+                - amgprojone_tire_003_amgprojone_tire_0 
+                  - amgprojone_tire_003_amgprojone_tire_0 [Mesh: amgprojone_tire_003_amgprojone_tire_0]
+              - amgprojone_rim_003 
+                - amgprojone_rim_003_amgprojone_decal_star_0 
+                  - amgprojone_rim_003_amgprojone_decal_star_0 [Mesh: amgprojone_rim_003_amgprojone_decal_star_0]
+              - amgprojone_headlightframe_R_001 
+                - amgprojone_headlightframe_R_001_amgprojone_glass_005_0 
+                  - amgprojone_headlightframe_R_001_amgprojone_glass_005_0 [Mesh: amgprojone_headlightframe_R_001_amgprojone_glass_005_0]
+              - amgprojone_headlightframe_R_002 
+                - amgprojone_headlightframe_R_002_amgprojone_headlight_0 
+                  - amgprojone_headlightframe_R_002_amgprojone_headlight_0 [Mesh: amgprojone_headlightframe_R_002_amgprojone_headlight_0]
+              - amgprojone_headlightframe_L_001 
+                - amgprojone_headlightframe_L_001_amgprojone_glass_005_0 
+                  - amgprojone_headlightframe_L_001_amgprojone_glass_005_0 [Mesh: amgprojone_headlightframe_L_001_amgprojone_glass_005_0]
+              - amgprojone_headlightframe_L_002 
+                - amgprojone_headlightframe_L_002_amgprojone_headlight_0 
+                  - amgprojone_headlightframe_L_002_amgprojone_headlight_0 [Mesh: amgprojone_headlightframe_L_002_amgprojone_headlight_0]
+              - amgprojone_rim_004 
+                - amgprojone_rim_004_amgprojone_wheels_0 
+                  - amgprojone_rim_004_amgprojone_wheels_0 [Mesh: amgprojone_rim_004_amgprojone_wheels_0]
+              - amgprojone_rim_005 
+                - amgprojone_rim_005_amgprojone_plastic_0 
+                  - amgprojone_rim_005_amgprojone_plastic_0 [Mesh: amgprojone_rim_005_amgprojone_plastic_0]
+              - amgprojone_rim_006 
+                - amgprojone_rim_006_amgprojone_carbon_0 
+                  - amgprojone_rim_006_amgprojone_carbon_0 [Mesh: amgprojone_rim_006_amgprojone_carbon_0]
+              - amgprojone_rim_007 
+                - amgprojone_rim_007_amgprojone_plastic2_0 
+                  - amgprojone_rim_007_amgprojone_plastic2_0 [Mesh: amgprojone_rim_007_amgprojone_plastic2_0]
+              - amgprojone_rim_008 
+                - amgprojone_rim_008_amgprojone_plastic3_0 
+                  - amgprojone_rim_008_amgprojone_plastic3_0 [Mesh: amgprojone_rim_008_amgprojone_plastic3_0]
+              - amgprojone_rim_009 
+                - amgprojone_rim_009_amgprojone_hubdecal_amg_0 
+                  - amgprojone_rim_009_amgprojone_hubdecal_amg_0 [Mesh: amgprojone_rim_009_amgprojone_hubdecal_amg_0]
+              - amgprojone_rim_010 
+                - amgprojone_rim_010_amgprojone_grey_0 
+                  - amgprojone_rim_010_amgprojone_grey_0 [Mesh: amgprojone_rim_010_amgprojone_grey_0]
+              - amgprojone_rim_011 
+                - amgprojone_rim_011_amgprojone_decal_bolt1_0 
+                  - amgprojone_rim_011_amgprojone_decal_bolt1_0 [Mesh: amgprojone_rim_011_amgprojone_decal_bolt1_0]
+              - amgprojone_tailgate_001 
+                - amgprojone_tailgate_001_amgprojone_carbon_0 
+                  - amgprojone_tailgate_001_amgprojone_carbon_0 [Mesh: amgprojone_tailgate_001_amgprojone_carbon_0]
+              - amgprojone_tailgate_002 
+                - amgprojone_tailgate_002_amgprojone_carbon5_0 
+                  - amgprojone_tailgate_002_amgprojone_carbon5_0 [Mesh: amgprojone_tailgate_002_amgprojone_carbon5_0]
+              - amgprojone_door_R_001 
+                - amgprojone_door_R_001_amgprojone_paint_0 
+                  - amgprojone_door_R_001_amgprojone_paint_0 [Mesh: amgprojone_door_R_001_amgprojone_paint_0]
+              - amgprojone_door_R_002 
+                - amgprojone_door_R_002_amgprojone_plastic3_0 
+                  - amgprojone_door_R_002_amgprojone_plastic3_0 [Mesh: amgprojone_door_R_002_amgprojone_plastic3_0]
+              - amgprojone_door_R_003 
+                - amgprojone_door_R_003_amgprojone_plastic_0 
+                  - amgprojone_door_R_003_amgprojone_plastic_0 [Mesh: amgprojone_door_R_003_amgprojone_plastic_0]
+              - amgprojone_door_R_004 
+                - amgprojone_door_R_004_amgprojone_carbon_0 
+                  - amgprojone_door_R_004_amgprojone_carbon_0 [Mesh: amgprojone_door_R_004_amgprojone_carbon_0]
+              - amgprojone_door_R_005 
+                - amgprojone_door_R_005_amgprojone_decal_livery_0 
+                  - amgprojone_door_R_005_amgprojone_decal_livery_0 [Mesh: amgprojone_door_R_005_amgprojone_decal_livery_0]
+              - amgprojone_door_R_006 
+                - amgprojone_door_R_006_amgprojone_carbon5_0 
+                  - amgprojone_door_R_006_amgprojone_carbon5_0 [Mesh: amgprojone_door_R_006_amgprojone_carbon5_0]
+              - amgprojone_door_R_007 
+                - amgprojone_door_R_007_amgprojone_grey_0 
+                  - amgprojone_door_R_007_amgprojone_grey_0 [Mesh: amgprojone_door_R_007_amgprojone_grey_0]
+              - amgprojone_door_R_008 
+                - amgprojone_door_R_008_amgprojone_decal_bolt2_0 
+                  - amgprojone_door_R_008_amgprojone_decal_bolt2_0 [Mesh: amgprojone_door_R_008_amgprojone_decal_bolt2_0]
+              - amgprojone_door_R_009 
+                - amgprojone_door_R_009_amgprojone_interior_9_0 
+                  - amgprojone_door_R_009_amgprojone_interior_9_0 [Mesh: amgprojone_door_R_009_amgprojone_interior_9_0]
+              - amgprojone_door_R_010 
+                - amgprojone_door_R_010_amgprojone_plastic2_0 
+                  - amgprojone_door_R_010_amgprojone_plastic2_0 [Mesh: amgprojone_door_R_010_amgprojone_plastic2_0]
+              - amgprojone_door_R_011 
+                - amgprojone_door_R_011_amgprojone_signal_R_0 
+                  - amgprojone_door_R_011_amgprojone_signal_R_0 [Mesh: amgprojone_door_R_011_amgprojone_signal_R_0]
+              - amgprojone_door_R_012 
+                - amgprojone_door_R_012_amgprojone_interior_alcantara_0 
+                  - amgprojone_door_R_012_amgprojone_interior_alcantara_0 [Mesh: amgprojone_door_R_012_amgprojone_interior_alcantara_0]
+              - amgprojone_door_R_013 
+                - amgprojone_door_R_013_amgprojone_decal_symbol_0 
+                  - amgprojone_door_R_013_amgprojone_decal_symbol_0 [Mesh: amgprojone_door_R_013_amgprojone_decal_symbol_0]
+              - amgprojone_door_R_014 
+                - amgprojone_door_R_014_amgprojone_stitches_0 
+                  - amgprojone_door_R_014_amgprojone_stitches_0 [Mesh: amgprojone_door_R_014_amgprojone_stitches_0]
+              - amgprojone_door_R_015 
+                - amgprojone_door_R_015_amgprojone_speakers_0 
+                  - amgprojone_door_R_015_amgprojone_speakers_0 [Mesh: amgprojone_door_R_015_amgprojone_speakers_0]
+              - amgprojone_door_L_001 
+                - amgprojone_door_L_001_amgprojone_paint_0 
+                  - amgprojone_door_L_001_amgprojone_paint_0 [Mesh: amgprojone_door_L_001_amgprojone_paint_0]
+              - amgprojone_door_L_002 
+                - amgprojone_door_L_002_amgprojone_plastic3_0 
+                  - amgprojone_door_L_002_amgprojone_plastic3_0 [Mesh: amgprojone_door_L_002_amgprojone_plastic3_0]
+              - amgprojone_door_L_003 
+                - amgprojone_door_L_003_amgprojone_plastic_0 
+                  - amgprojone_door_L_003_amgprojone_plastic_0 [Mesh: amgprojone_door_L_003_amgprojone_plastic_0]
+              - amgprojone_door_L_004 
+                - amgprojone_door_L_004_amgprojone_carbon_0 
+                  - amgprojone_door_L_004_amgprojone_carbon_0 [Mesh: amgprojone_door_L_004_amgprojone_carbon_0]
+              - amgprojone_door_L_005 
+                - amgprojone_door_L_005_amgprojone_decal_livery_0 
+                  - amgprojone_door_L_005_amgprojone_decal_livery_0 [Mesh: amgprojone_door_L_005_amgprojone_decal_livery_0]
+              - amgprojone_door_L_006 
+                - amgprojone_door_L_006_amgprojone_carbon5_0 
+                  - amgprojone_door_L_006_amgprojone_carbon5_0 [Mesh: amgprojone_door_L_006_amgprojone_carbon5_0]
+              - amgprojone_door_L_007 
+                - amgprojone_door_L_007_amgprojone_grey_0 
+                  - amgprojone_door_L_007_amgprojone_grey_0 [Mesh: amgprojone_door_L_007_amgprojone_grey_0]
+              - amgprojone_door_L_008 
+                - amgprojone_door_L_008_amgprojone_decal_bolt2_0 
+                  - amgprojone_door_L_008_amgprojone_decal_bolt2_0 [Mesh: amgprojone_door_L_008_amgprojone_decal_bolt2_0]
+              - amgprojone_door_L_009 
+                - amgprojone_door_L_009_amgprojone_interior_9_0 
+                  - amgprojone_door_L_009_amgprojone_interior_9_0 [Mesh: amgprojone_door_L_009_amgprojone_interior_9_0]
+              - amgprojone_door_L_010 
+                - amgprojone_door_L_010_amgprojone_plastic2_0 
+                  - amgprojone_door_L_010_amgprojone_plastic2_0 [Mesh: amgprojone_door_L_010_amgprojone_plastic2_0]
+              - amgprojone_door_L_011 
+                - amgprojone_door_L_011_amgprojone_signal_L_0 
+                  - amgprojone_door_L_011_amgprojone_signal_L_0 [Mesh: amgprojone_door_L_011_amgprojone_signal_L_0]
+              - amgprojone_door_L_012 
+                - amgprojone_door_L_012_amgprojone_interior_alcantara_0 
+                  - amgprojone_door_L_012_amgprojone_interior_alcantara_0 [Mesh: amgprojone_door_L_012_amgprojone_interior_alcantara_0]
+              - amgprojone_door_L_013 
+                - amgprojone_door_L_013_amgprojone_decal_symbol_0 
+                  - amgprojone_door_L_013_amgprojone_decal_symbol_0 [Mesh: amgprojone_door_L_013_amgprojone_decal_symbol_0]
+              - amgprojone_door_L_014 
+                - amgprojone_door_L_014_amgprojone_stitches_0 
+                  - amgprojone_door_L_014_amgprojone_stitches_0 [Mesh: amgprojone_door_L_014_amgprojone_stitches_0]
+              - amgprojone_door_L_015 
+                - amgprojone_door_L_015_amgprojone_speakers_0 
+                  - amgprojone_door_L_015_amgprojone_speakers_0 [Mesh: amgprojone_door_L_015_amgprojone_speakers_0]
+              - amgprojone_bumper_R_001 
+                - amgprojone_bumper_R_001_amgprojone_redglass_0 
+                  - amgprojone_bumper_R_001_amgprojone_redglass_0 [Mesh: amgprojone_bumper_R_001_amgprojone_redglass_0]
+              - amgprojone_bumper_R_002 
+                - amgprojone_bumper_R_002_amgprojone_plastic2_0 
+                  - amgprojone_bumper_R_002_amgprojone_plastic2_0 [Mesh: amgprojone_bumper_R_002_amgprojone_plastic2_0]
+              - amgprojone_bumper_R_003 
+                - amgprojone_bumper_R_003_amgprojone_paint_0 
+                  - amgprojone_bumper_R_003_amgprojone_paint_0 [Mesh: amgprojone_bumper_R_003_amgprojone_paint_0]
+              - amgprojone_bumper_R_004 
+                - amgprojone_bumper_R_004_amgprojone_carbon_0 
+                  - amgprojone_bumper_R_004_amgprojone_carbon_0 [Mesh: amgprojone_bumper_R_004_amgprojone_carbon_0]
+              - amgprojone_bumper_R_005 
+                - amgprojone_bumper_R_005_amgprojone_plastic3_0 
+                  - amgprojone_bumper_R_005_amgprojone_plastic3_0 [Mesh: amgprojone_bumper_R_005_amgprojone_plastic3_0]
+              - amgprojone_bumper_R_006 
+                - amgprojone_bumper_R_006_amgprojone_plastic_0 
+                  - amgprojone_bumper_R_006_amgprojone_plastic_0 [Mesh: amgprojone_bumper_R_006_amgprojone_plastic_0]
+              - amgprojone_bumper_R_007 
+                - amgprojone_bumper_R_007_amgprojone_taillight_0 
+                  - amgprojone_bumper_R_007_amgprojone_taillight_0 [Mesh: amgprojone_bumper_R_007_amgprojone_taillight_0]
+              - amgprojone_bumper_R_008 
+                - amgprojone_bumper_R_008_amgprojone_decal_grill1_0 
+                  - amgprojone_bumper_R_008_amgprojone_decal_grill1_0 [Mesh: amgprojone_bumper_R_008_amgprojone_decal_grill1_0]
+              - amgprojone_bumper_R_009 
+                - amgprojone_bumper_R_009_amgprojone_decal_bolt1_0 
+                  - amgprojone_bumper_R_009_amgprojone_decal_bolt1_0 [Mesh: amgprojone_bumper_R_009_amgprojone_decal_bolt1_0]
+              - amgprojone_bumper_R_010 
+                - amgprojone_bumper_R_010_amgprojone_headlight_0 
+                  - amgprojone_bumper_R_010_amgprojone_headlight_0 [Mesh: amgprojone_bumper_R_010_amgprojone_headlight_0]
+              - amgprojone_bumper_R_011 
+                - amgprojone_bumper_R_011_amgprojone_signal_R_0 
+                  - amgprojone_bumper_R_011_amgprojone_signal_R_0 [Mesh: amgprojone_bumper_R_011_amgprojone_signal_R_0]
+              - amgprojone_bumper_R_012 
+                - amgprojone_bumper_R_012_amgprojone_signal_L_0 
+                  - amgprojone_bumper_R_012_amgprojone_signal_L_0 [Mesh: amgprojone_bumper_R_012_amgprojone_signal_L_0]
+              - amgprojone_bumper_R_013 
+                - amgprojone_bumper_R_013_amgprojone_reverselight_0 
+                  - amgprojone_bumper_R_013_amgprojone_reverselight_0 [Mesh: amgprojone_bumper_R_013_amgprojone_reverselight_0]
+              - amgprojone_bumper_F_001 
+                - amgprojone_bumper_F_001_amgprojone_plastic2_0 
+                  - amgprojone_bumper_F_001_amgprojone_plastic2_0 [Mesh: amgprojone_bumper_F_001_amgprojone_plastic2_0]
+              - amgprojone_bumper_F_002 
+                - amgprojone_bumper_F_002_amgprojone_detailradiator2_0 
+                  - amgprojone_bumper_F_002_amgprojone_detailradiator2_0 [Mesh: amgprojone_bumper_F_002_amgprojone_detailradiator2_0]
+              - amgprojone_bumper_F_003 
+                - amgprojone_bumper_F_003_amgprojone_detail_radiator1_0 
+                  - amgprojone_bumper_F_003_amgprojone_detail_radiator1_0 [Mesh: amgprojone_bumper_F_003_amgprojone_detail_radiator1_0]
+              - amgprojone_bumper_F_004 
+                - amgprojone_bumper_F_004_amgprojone_paint_0 
+                  - amgprojone_bumper_F_004_amgprojone_paint_0 [Mesh: amgprojone_bumper_F_004_amgprojone_paint_0]
+              - amgprojone_bumper_F_005 
+                - amgprojone_bumper_F_005_amgprojone_carbon_0 
+                  - amgprojone_bumper_F_005_amgprojone_carbon_0 [Mesh: amgprojone_bumper_F_005_amgprojone_carbon_0]
+              - amgprojone_bumper_F_006 
+                - amgprojone_bumper_F_006_amgprojone_plastic3_0 
+                  - amgprojone_bumper_F_006_amgprojone_plastic3_0 [Mesh: amgprojone_bumper_F_006_amgprojone_plastic3_0]
+              - amgprojone_bumper_F_007 
+                - amgprojone_bumper_F_007_amgprojone_plastic_0 
+                  - amgprojone_bumper_F_007_amgprojone_plastic_0 [Mesh: amgprojone_bumper_F_007_amgprojone_plastic_0]
+              - amgprojone_bumper_F_008 
+                - amgprojone_bumper_F_008_amgprojone_runninglight_0 
+                  - amgprojone_bumper_F_008_amgprojone_runninglight_0 [Mesh: amgprojone_bumper_F_008_amgprojone_runninglight_0]
+              - amgprojone_bumper_F_009 
+                - amgprojone_bumper_F_009_amgprojone_decal_grill1_0 
+                  - amgprojone_bumper_F_009_amgprojone_decal_grill1_0 [Mesh: amgprojone_bumper_F_009_amgprojone_decal_grill1_0]
+              - amgprojone_bumper_F_010 
+                - amgprojone_bumper_F_010_amgprojone_decal_bolt1_0 
+                  - amgprojone_bumper_F_010_amgprojone_decal_bolt1_0 [Mesh: amgprojone_bumper_F_010_amgprojone_decal_bolt1_0]
+              - amgprojone_bumper_F_011 
+                - amgprojone_bumper_F_011_amgprojone_decal_livery_0 
+                  - amgprojone_bumper_F_011_amgprojone_decal_livery_0 [Mesh: amgprojone_bumper_F_011_amgprojone_decal_livery_0]
+              - amgprojone_spoiler_001 
+                - amgprojone_spoiler_001_amgprojone_paint_0 
+                  - amgprojone_spoiler_001_amgprojone_paint_0 [Mesh: amgprojone_spoiler_001_amgprojone_paint_0]
+              - amgprojone_spoiler_002 
+                - amgprojone_spoiler_002_amgprojone_carbon_0 
+                  - amgprojone_spoiler_002_amgprojone_carbon_0 [Mesh: amgprojone_spoiler_002_amgprojone_carbon_0]
+              - amgprojone_spoiler_003 
+                - amgprojone_spoiler_003_amgprojone_plastic2_0 
+                  - amgprojone_spoiler_003_amgprojone_plastic2_0 [Mesh: amgprojone_spoiler_003_amgprojone_plastic2_0]
+              - amgprojone_spoiler_004 
+                - amgprojone_spoiler_004_amgprojone_decal_emblem_0 
+                  - amgprojone_spoiler_004_amgprojone_decal_emblem_0 [Mesh: amgprojone_spoiler_004_amgprojone_decal_emblem_0]
+              - amgprojone_spoiler_005 
+                - amgprojone_spoiler_005_amgprojone_grey_0 
+                  - amgprojone_spoiler_005_amgprojone_grey_0 [Mesh: amgprojone_spoiler_005_amgprojone_grey_0]
+              - amgprojone_spoiler_006 
+                - amgprojone_spoiler_006_amgprojone_plastic3_0 
+                  - amgprojone_spoiler_006_amgprojone_plastic3_0 [Mesh: amgprojone_spoiler_006_amgprojone_plastic3_0]
+              - amgprojone_steer_001 
+                - amgprojone_steer_001_amgprojone_interior_alcantara_0 
+                  - amgprojone_steer_001_amgprojone_interior_alcantara_0 [Mesh: amgprojone_steer_001_amgprojone_interior_alcantara_0]
+              - amgprojone_steer_002 
+                - amgprojone_steer_002_amgprojone_carbon5_0 
+                  - amgprojone_steer_002_amgprojone_carbon5_0 [Mesh: amgprojone_steer_002_amgprojone_carbon5_0]
+              - amgprojone_steer_003 
+                - amgprojone_steer_003_amgprojone_grey_0 
+                  - amgprojone_steer_003_amgprojone_grey_0 [Mesh: amgprojone_steer_003_amgprojone_grey_0]
+              - amgprojone_steer_004 
+                - amgprojone_steer_004_amgprojone_plastic_0 
+                  - amgprojone_steer_004_amgprojone_plastic_0 [Mesh: amgprojone_steer_004_amgprojone_plastic_0]
+              - amgprojone_steer_005 
+                - amgprojone_steer_005_amgprojone_lightsnormal_0 
+                  - amgprojone_steer_005_amgprojone_lightsnormal_0 [Mesh: amgprojone_steer_005_amgprojone_lightsnormal_0]
+              - amgprojone_steer_006 
+                - amgprojone_steer_006_amgprojone_decal_bolt1_0 
+                  - amgprojone_steer_006_amgprojone_decal_bolt1_0 [Mesh: amgprojone_steer_006_amgprojone_decal_bolt1_0]
+              - amgprojone_steer_007 
+                - amgprojone_steer_007_amgprojone_plastic2_0 
+                  - amgprojone_steer_007_amgprojone_plastic2_0 [Mesh: amgprojone_steer_007_amgprojone_plastic2_0]
+              - amgprojone_steer_008 
+                - amgprojone_steer_008_amgprojone_decal_symbol_0 
+                  - amgprojone_steer_008_amgprojone_decal_symbol_0 [Mesh: amgprojone_steer_008_amgprojone_decal_symbol_0]
+              - amgprojone_steer_009 
+                - amgprojone_steer_009_amgprojone_stitches_0 
+                  - amgprojone_steer_009_amgprojone_stitches_0 [Mesh: amgprojone_steer_009_amgprojone_stitches_0]
+              - amgprojone_body_001 
+                - amgprojone_body_001_amgprojone_plastic2_0 
+                  - amgprojone_body_001_amgprojone_plastic2_0 [Mesh: amgprojone_body_001_amgprojone_plastic2_0]
+              - amgprojone_body_002 
+                - amgprojone_body_002_amgprojone_paint_0 
+                  - amgprojone_body_002_amgprojone_paint_0 [Mesh: amgprojone_body_002_amgprojone_paint_0]
+              - amgprojone_body_003 
+                - amgprojone_body_003_amgprojone_plastic_0 
+                  - amgprojone_body_003_amgprojone_plastic_0 [Mesh: amgprojone_body_003_amgprojone_plastic_0]
+                - amgprojone_body_003_amgprojone_plastic_0_1 
+                  - amgprojone_body_003_amgprojone_plastic_0 [Mesh: amgprojone_body_003_amgprojone_plastic_0]
+              - amgprojone_body_004 
+                - amgprojone_body_004_amgprojone_carbon_0 
+                  - amgprojone_body_004_amgprojone_carbon_0 [Mesh: amgprojone_body_004_amgprojone_carbon_0]
+              - amgprojone_body_005 
+                - amgprojone_body_005_amgprojone_detail_underbody_0 
+                  - amgprojone_body_005_amgprojone_detail_underbody_0 [Mesh: amgprojone_body_005_amgprojone_detail_underbody_0]
+              - amgprojone_body_006 
+                - amgprojone_body_006_amgprojone_carbon5_0 
+                  - amgprojone_body_006_amgprojone_carbon5_0 [Mesh: amgprojone_body_006_amgprojone_carbon5_0]
+              - amgprojone_body_007 
+                - amgprojone_body_007_amgprojone_grey_0 
+                  - amgprojone_body_007_amgprojone_grey_0 [Mesh: amgprojone_body_007_amgprojone_grey_0]
+              - amgprojone_body_008 
+                - amgprojone_body_008_amgprojone_plastic3_0 
+                  - amgprojone_body_008_amgprojone_plastic3_0 [Mesh: amgprojone_body_008_amgprojone_plastic3_0]
+              - amgprojone_body_009 
+                - amgprojone_body_009_engine2_3_0 
+                  - amgprojone_body_009_engine2_3_0 [Mesh: amgprojone_body_009_engine2_3_0]
+              - amgprojone_body_010 
+                - amgprojone_body_010_amgprojone_coloured_0 
+                  - amgprojone_body_010_amgprojone_coloured_0 [Mesh: amgprojone_body_010_amgprojone_coloured_0]
+              - amgprojone_body_011 
+                - amgprojone_body_011_amgprojone_clearglass2_0 
+                  - amgprojone_body_011_amgprojone_clearglass2_0 [Mesh: amgprojone_body_011_amgprojone_clearglass2_0]
+              - amgprojone_body_012 
+                - amgprojone_body_012_amgprojone_interior_alcantara_0 
+                  - amgprojone_body_012_amgprojone_interior_alcantara_0 [Mesh: amgprojone_body_012_amgprojone_interior_alcantara_0]
+              - amgprojone_body_013 
+                - amgprojone_body_013_amgprojone_beltinterior_0 
+                  - amgprojone_body_013_amgprojone_beltinterior_0 [Mesh: amgprojone_body_013_amgprojone_beltinterior_0]
+              - amgprojone_body_014 
+                - amgprojone_body_014_interior_001_0 
+                  - amgprojone_body_014_interior_001_0 [Mesh: amgprojone_body_014_interior_001_0]
+              - amgprojone_body_015 
+                - amgprojone_body_015_amgprojone_interior_9_0 
+                  - amgprojone_body_015_amgprojone_interior_9_0 [Mesh: amgprojone_body_015_amgprojone_interior_9_0]
+              - amgprojone_body_016 
+                - amgprojone_body_016_amgprojone_lightsnormal_0 
+                  - amgprojone_body_016_amgprojone_lightsnormal_0 [Mesh: amgprojone_body_016_amgprojone_lightsnormal_0]
+              - amgprojone_body_017 
+                - amgprojone_body_017_amgprojone_trim001_0 
+                  - amgprojone_body_017_amgprojone_trim001_0 [Mesh: amgprojone_body_017_amgprojone_trim001_0]
+              - amgprojone_body_018 
+                - amgprojone_body_018_amgprojone_decalamg_12interior_0 
+                  - amgprojone_body_018_amgprojone_decalamg_12interior_0 [Mesh: amgprojone_body_018_amgprojone_decalamg_12interior_0]
+              - amgprojone_body_019 
+                - amgprojone_body_019_amgprojone_decal_bolt2_0 
+                  - amgprojone_body_019_amgprojone_decal_bolt2_0 [Mesh: amgprojone_body_019_amgprojone_decal_bolt2_0]
+              - amgprojone_body_020 
+                - amgprojone_body_020_amgprojone_decal_livery_0 
+                  - amgprojone_body_020_amgprojone_decal_livery_0 [Mesh: amgprojone_body_020_amgprojone_decal_livery_0]
+              - amgprojone_body_021 
+                - amgprojone_body_021_amgprojone_decal_bolt1_0 
+                  - amgprojone_body_021_amgprojone_decal_bolt1_0 [Mesh: amgprojone_body_021_amgprojone_decal_bolt1_0]
+              - amgprojone_body_022 
+                - amgprojone_body_022_amgprojone_stitches_0 
+                  - amgprojone_body_022_amgprojone_stitches_0 [Mesh: amgprojone_body_022_amgprojone_stitches_0]
+              - amgprojone_body_023 
+                - amgprojone_body_023_amgprojone_decal_logo_0 
+                  - amgprojone_body_023_amgprojone_decal_logo_0 [Mesh: amgprojone_body_023_amgprojone_decal_logo_0]
+              - amgprojone_body_024 
+                - amgprojone_body_024_amgprojone_decal_star_0 
+                  - amgprojone_body_024_amgprojone_decal_star_0 [Mesh: amgprojone_body_024_amgprojone_decal_star_0]
+              - amgprojone_body_025 
+                - amgprojone_body_025_amgprojone_decal_grill1_0 
+                  - amgprojone_body_025_amgprojone_decal_grill1_0 [Mesh: amgprojone_body_025_amgprojone_decal_grill1_0]
+              - amgprojone_rim_012 
+                - amgprojone_rim_012_amgprojone_wheels_0 
+                  - amgprojone_rim_012_amgprojone_wheels_0 [Mesh: amgprojone_rim_012_amgprojone_wheels_0]
+              - amgprojone_rim_013 
+                - amgprojone_rim_013_amgprojone_plastic_0 
+                  - amgprojone_rim_013_amgprojone_plastic_0 [Mesh: amgprojone_rim_013_amgprojone_plastic_0]
+              - amgprojone_rim_014 
+                - amgprojone_rim_014_amgprojone_carbon_0 
+                  - amgprojone_rim_014_amgprojone_carbon_0 [Mesh: amgprojone_rim_014_amgprojone_carbon_0]
+              - amgprojone_rim_015 
+                - amgprojone_rim_015_amgprojone_plastic2_0 
+                  - amgprojone_rim_015_amgprojone_plastic2_0 [Mesh: amgprojone_rim_015_amgprojone_plastic2_0]
+              - amgprojone_rim_016 
+                - amgprojone_rim_016_amgprojone_plastic3_0 
+                  - amgprojone_rim_016_amgprojone_plastic3_0 [Mesh: amgprojone_rim_016_amgprojone_plastic3_0]
+              - amgprojone_rim_017 
+                - amgprojone_rim_017_amgprojone_hubdecal_amg_0 
+                  - amgprojone_rim_017_amgprojone_hubdecal_amg_0 [Mesh: amgprojone_rim_017_amgprojone_hubdecal_amg_0]
+              - amgprojone_rim_018 
+                - amgprojone_rim_018_amgprojone_grey_0 
+                  - amgprojone_rim_018_amgprojone_grey_0 [Mesh: amgprojone_rim_018_amgprojone_grey_0]
+              - amgprojone_rim_019 
+                - amgprojone_rim_019_amgprojone_decal_bolt1_0 
+                  - amgprojone_rim_019_amgprojone_decal_bolt1_0 [Mesh: amgprojone_rim_019_amgprojone_decal_bolt1_0]
+              - amgprojone_rim_020 
+                - amgprojone_rim_020_amgprojone_wheels_0 
+                  - amgprojone_rim_020_amgprojone_wheels_0 [Mesh: amgprojone_rim_020_amgprojone_wheels_0]
+              - amgprojone_rim_021 
+                - amgprojone_rim_021_amgprojone_plastic_0 
+                  - amgprojone_rim_021_amgprojone_plastic_0 [Mesh: amgprojone_rim_021_amgprojone_plastic_0]
+              - amgprojone_rim_022 
+                - amgprojone_rim_022_amgprojone_carbon_0 
+                  - amgprojone_rim_022_amgprojone_carbon_0 [Mesh: amgprojone_rim_022_amgprojone_carbon_0]
+              - amgprojone_rim_023 
+                - amgprojone_rim_023_amgprojone_plastic2_0 
+                  - amgprojone_rim_023_amgprojone_plastic2_0 [Mesh: amgprojone_rim_023_amgprojone_plastic2_0]
+              - amgprojone_rim_024 
+                - amgprojone_rim_024_amgprojone_plastic3_0 
+                  - amgprojone_rim_024_amgprojone_plastic3_0 [Mesh: amgprojone_rim_024_amgprojone_plastic3_0]
+              - amgprojone_rim_025 
+                - amgprojone_rim_025_amgprojone_hubdecal_amg_0 
+                  - amgprojone_rim_025_amgprojone_hubdecal_amg_0 [Mesh: amgprojone_rim_025_amgprojone_hubdecal_amg_0]
+              - amgprojone_rim_026 
+                - amgprojone_rim_026_amgprojone_grey_0 
+                  - amgprojone_rim_026_amgprojone_grey_0 [Mesh: amgprojone_rim_026_amgprojone_grey_0]
+              - amgprojone_rim_027 
+                - amgprojone_rim_027_amgprojone_decal_bolt1_0 
+                  - amgprojone_rim_027_amgprojone_decal_bolt1_0 [Mesh: amgprojone_rim_027_amgprojone_decal_bolt1_0]
+              - amgprojone_rim_028 
+                - amgprojone_rim_028_amgprojone_wheels_0 
+                  - amgprojone_rim_028_amgprojone_wheels_0 [Mesh: amgprojone_rim_028_amgprojone_wheels_0]
+              - amgprojone_rim_029 
+                - amgprojone_rim_029_amgprojone_plastic_0 
+                  - amgprojone_rim_029_amgprojone_plastic_0 [Mesh: amgprojone_rim_029_amgprojone_plastic_0]
+              - amgprojone_rim_030 
+                - amgprojone_rim_030_amgprojone_carbon_0 
+                  - amgprojone_rim_030_amgprojone_carbon_0 [Mesh: amgprojone_rim_030_amgprojone_carbon_0]
+              - amgprojone_rim_031 
+                - amgprojone_rim_031_amgprojone_plastic2_0 
+                  - amgprojone_rim_031_amgprojone_plastic2_0 [Mesh: amgprojone_rim_031_amgprojone_plastic2_0]
+              - amgprojone_rim_032 
+                - amgprojone_rim_032_amgprojone_plastic3_0 
+                  - amgprojone_rim_032_amgprojone_plastic3_0 [Mesh: amgprojone_rim_032_amgprojone_plastic3_0]
+              - amgprojone_rim_033 
+                - amgprojone_rim_033_amgprojone_hubdecal_amg_0 
+                  - amgprojone_rim_033_amgprojone_hubdecal_amg_0 [Mesh: amgprojone_rim_033_amgprojone_hubdecal_amg_0]
+              - amgprojone_rim_034 
+                - amgprojone_rim_034_amgprojone_grey_0 
+                  - amgprojone_rim_034_amgprojone_grey_0 [Mesh: amgprojone_rim_034_amgprojone_grey_0]
+              - amgprojone_rim_035 
+                - amgprojone_rim_035_amgprojone_decal_bolt1_0 
+                  - amgprojone_rim_035_amgprojone_decal_bolt1_0 [Mesh: amgprojone_rim_035_amgprojone_decal_bolt1_0]

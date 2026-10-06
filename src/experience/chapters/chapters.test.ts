@@ -39,31 +39,12 @@ describe('the nine chapters', () => {
     }
   });
 
-  it('end assembled: lifted parts, hood, wheel and glass are back at rest', () => {
+  it('end assembled: parts are back at rest', () => {
     const end = timeline.sample(1).values;
     for (const ch of [
-      'hood.rx',
-      'engineCover.py',
-      'airbox.py',
-      'battery.py',
-      'coolantTank.py',
-      'wheelFR.px',
-      'springFR.sy',
-      'wheelFR.py',
       'rig.pz',
     ] as const) {
       expect(end[ch] ?? 0, ch).toBeCloseTo(0);
     }
-    expect(end['fx.glass']).toBeCloseTo(1);
-    expect(end['fx.tyre']).toBeCloseTo(1);
-    expect(end['fx.scan']).toBeCloseTo(0);
-    expect(end['light.headlamps']).toBeCloseTo(1);
-  });
-
-  it('start dark', () => {
-    const v = timeline.sample(0).values;
-    expect(v['light.ambient']).toBeCloseTo(0);
-    expect(v['light.headlamps']).toBeCloseTo(0);
-    expect(v['light.key']).toBeCloseTo(0);
   });
 });

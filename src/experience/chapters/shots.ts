@@ -1,19 +1,17 @@
 import { shot } from './util';
 
-/**
- * Shots shared by neighbouring chapters. The compiler rejects any camera jump at a
- * chapter boundary, so each boundary is defined exactly once, here.
- *
- * Canonical frame: +y up, +z toward the car's front, +x toward the car's left.
- * Right-hand drive, so the driver sits on -x and the "FR" wheel is at -x.
- * Reference dimensions (metres): body 2.0 wide, 4.8 long, 1.95 tall; wheel radius 0.42.
- * Front-right wheel centre about (-0.9, 0.42, 1.42). Driver cluster about (-0.4, 1.0, 0.85).
- */
 export const B = {
-  open: shot([0, 1.15, 10], [0, 0.9, -2.6], 30),
-  openEnd: shot([0, 1.1, 8.4], [0, 0.9, -2.6], 30),
-  arrivalEnd: shot([-4.4, 1.1, 5.2], [0, 0.9, 0.4], 36),
-  revealEnd: shot([2.8, 1.5, 5.6], [0, 1.0, 1.0], 34),
+  // Hero render quality test shot (3/4 front, grounded, cinematic lens)
+  heroFront: shot([-3.2, 0.8, 3.8], [0.2, 0.5, 0.0], 32),
+  
+  open: shot([-4.2, 1.0, 4.8], [0.0, 0.4, 0.0], 35),
+  openEnd: shot([-4.0, 1.05, 4.6], [0.0, 0.42, 0.0], 35), // Micro push-in
+
+  // Car is at Z=0 for this test!
+  arrivalEnd: shot([-3.5, 0.4, -3.5], [0, 0.6, 0.5], 35),
+  revealEnd: shot([3.5, 0.8, 3.5], [0, 0.6, 0.5], 30),
+
+  // Dummies
   engineEnd: shot([-1.9, 1.5, 3.1], [-0.9, 0.7, 1.6], 30),
   brakesEnd: shot([-2.0, 0.6, 2.1], [-0.85, 0.45, 1.42], 26),
   suspensionEnd: shot([-2.3, 1.1, 0.4], [-0.9, 1.0, 0.1], 30),
