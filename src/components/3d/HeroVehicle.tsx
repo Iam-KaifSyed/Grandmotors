@@ -37,48 +37,55 @@ export function HeroVehicle() {
   };
 
   useEffect(() => {
-    // Fix materials that need transparency (glass/windows)
-    // The asset is a "Transparency Mercedes AMG One". The body panels (paint, carbon)
-    // are meant to be translucent so we can see the internal structure.
-    clonedScene.traverse((child) => {
-      if ((child as THREE.Mesh).isMesh) {
-        const mesh = child as THREE.Mesh;
-        const mat = mesh.material as THREE.MeshStandardMaterial;
+    // Preserve the SOURCE model's authored transparency.
+    //
+    // The GLB is a "Transparency / cutaway" edition of the AMG ONE. The cutaway
+    // look is NOT achieved with transmission. It is baked into the glTF materials
+    // as `alphaMode: BLEND` with low baseColorFactor alpha, e.g.:
+    //   amgprojone_paint   -> BLEND, baseColor alpha 0.1
+    //   amgprojone_carbon  -> BLEND, baseColor alpha 0.1
+    //   amgprojone_clearglass / clearglass2 / glass_005 -> BLEND, alpha 0.44..0.82
+    // The only material extensions present are KHR_materials_emissive_strength
+    // and KHR_materials_specular -- there is no KHR_materials_transmission.
+    //
+    // GLTFLoader already maps `alphaMode: BLEND` to `material.transparent = true`
+    // and carries the alpha into `material.opacity`. The previous implementation
+    // REPLACED paint/carbon with a transmission MeshPhysicalMaterial (opacity 1),
+    // which discarded the authored alpha and rendered the body as a solid shell.
+    //
+    // So instead of rebuilding materials, we keep every material exactly as the
+    // loader produced it and only correct render-ordering flags that make a
+    // multi-layered transparent model read correctly (see internals through the
+    // body): render both faces, and don't let transparent surfaces write depth
+    // (which would otherwise occlude the components behind them).
+    const seen = new Set<THREE.Material>();
+    const tune = (material: THREE.Material) => {
+      if (seen.has(material)) return;
+      seen.add(material);
 
-        // Upgrade body panels to translucent glassy physical materials
-        if (mat.name === 'amgprojone_paint' || mat.name === 'amgprojone_carbon') {
-          // Convert to MeshPhysicalMaterial for high fidelity transmission
-          const physicalMat = new THREE.MeshPhysicalMaterial({
-            color: mat.color,
-            map: mat.map,
-            metalness: 0.1,    // Lower metalness so transmission works better
-            roughness: 0.2,    // Glassy finish
-            normalMap: mat.normalMap,
-            // Transparency settings:
-            transparent: true,
-            transmission: 0.85, // Strong transmission to see through
-            opacity: 1,        // Opacity should be 1 if we're using transmission
-            thickness: 0.5,    // Refraction thickness
-            ior: 1.45,         // Glass IOR
-            side: THREE.DoubleSide,
-            depthWrite: false, // Prevents ordering issues with internal components
-          });
-
-          if (mat.name === 'amgprojone_carbon' && mat.map) {
-            // Keep the carbon look but slightly darker / tinted
-            physicalMat.color.setHex(0x222222);
-            physicalMat.roughness = 0.3;
-            physicalMat.transmission = 0.7; // Carbon a bit less transparent
-          }
-
-          mesh.material = physicalMat;
-        }
-        else if (mat.name.toLowerCase().includes('glass') || mat.name.toLowerCase().includes('windshield')) {
-          mat.transparent = true;
-          mat.side = THREE.DoubleSide;
-          mat.needsUpdate = true;
-        }
+      const m = material as THREE.MeshStandardMaterial;
+      // `transparent`/`opacity` come straight from the GLB's alphaMode + alpha.
+      // Only touch materials the source authored as blended.
+      if (m.transparent) {
+        // Show interior-facing geometry through the panels.
+        m.side = THREE.DoubleSide;
+        // Transparent panels must not write depth, otherwise they hide the
+        // chassis/engine/cockpit sitting behind them. depthTest stays on so
+        // opaque internals still occlude each other correctly.
+        m.depthWrite = false;
+        m.depthTest = true;
+        m.needsUpdate = true;
       }
+    };
+
+    clonedScene.traverse((child) => {
+      const mesh = child as THREE.Mesh;
+      if (!mesh.isMesh) return;
+      // Render transparent panels after opaque internals in the sort order.
+      mesh.renderOrder = 1;
+      const mat = mesh.material;
+      if (Array.isArray(mat)) mat.forEach(tune);
+      else if (mat) tune(mat);
     });
 
     // Capture resting poses for all nodes we will animate
