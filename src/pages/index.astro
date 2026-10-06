@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import { ExperienceRoot } from '../components/ExperienceRoot';
 ---
 
 <Base
@@ -8,5 +9,6 @@ import Base from '../layouts/Base.astro';
 >
   <main>
     <h1 class="sr-only">Grand Motor</h1>
+    <ExperienceRoot client:load />
   </main>
 </Base>
