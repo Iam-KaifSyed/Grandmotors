@@ -31,11 +31,14 @@ A scroll-driven cinematic 3D web experience exploring the Mercedes-AMG ONE, buil
 - **Deploy to Cloudflare:** `npm run deploy`
 
 ## Current Progress & Asset Details
-- **Asset Integration:** The AMG ONE `.glb` file has been added and inspected. (See `Asset-Inspection.md` for full breakdown).
-- **Physical limitations:** The model includes detailed wheels, tires, body panels, and glass. It *lacks* independent deep internal components as separate meshes (brake discs/calipers, independent suspension, deep engine block). These anchors have been omitted or fallback groups have been used for the respective chapters (engine, brakes, suspension).
-- **Rigging:** The vehicle rig has been hooked up in `HeroVehicle.tsx`.
-- **Environment:** Transitioned from a placeholder light setup to a sophisticated, cinematic lighting framework with tunable Tweakpane controls.
-- **HUD:** Integrated an overlay HUD to convey the chapter progress and technical readouts.
+- **Asset Integration:** The textured transparent AMG ONE `.glb` file (`transparency_mercedes_amg_one.glb`) is fully integrated and replaces the raw untextured mesh.
+- **Physical limitations:** The model includes detailed wheels, tires, body panels, and glass. It *lacks* independent deep internal components as separate meshes.
+- **Rigging:** The vehicle rig is active in `HeroVehicle.tsx`, supporting transparency rendering.
+- **Environment:**
+  - Upgraded to a Procedural Ground Plane simulating a premium charcoal sealed workshop with faint service-bay lines, contact shadows, and realistic anisotropic roughness tuning.
+  - Highly moody, cinematic lighting system linked directly to the animation timeline.
+- **Timeline:** The core scroll experience has been reversed. The user starts out fully blacked-out ("IGNITION" state) and scrolls downwards to power-on the lights sequentially, eventually zooming out to a full cinematic garage shot.
+- **HUD:** Integrated an overlay HUD to convey the chapter progress. The Cinematic Progress Bar is now fully interactive, allowing users to click and drag to scrub across the entire 3D timeline.
 
 ## Code Style & Conventions
 - Use functional React components with hooks.
