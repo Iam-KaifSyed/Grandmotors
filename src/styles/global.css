@@ -1,0 +1,34 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-ink: #050506;
+  --color-steel: #c9ccd1;
+  --color-smoke: #7b7f87;
+  --color-amber: #e8a24a;
+}
+
+:root {
+  color-scheme: dark;
+  background: #050506;
+}
+
+html,
+body {
+  margin: 0;
+  background: #050506;
+  color: #e9eaec;
+  font-family: system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Lenis */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}

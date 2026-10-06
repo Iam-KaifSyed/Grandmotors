@@ -1,0 +1,17 @@
+/
+  Cache-Control: public, max-age=0, must-revalidate
+
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Versioned filenames only (e.g. gwagen-v1.glb). Bump the suffix to invalidate.
+/models/*
+  Cache-Control: public, max-age=31536000, immutable
+/textures/*
+  Cache-Control: public, max-age=31536000, immutable
+/hdri/*
+  Cache-Control: public, max-age=31536000, immutable
+/sequences/*
+  Cache-Control: public, max-age=31536000, immutable
+/decoders/*
+  Cache-Control: public, max-age=31536000, immutable
