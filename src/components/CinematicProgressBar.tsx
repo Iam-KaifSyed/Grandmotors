@@ -242,15 +242,45 @@ export function CinematicProgressBar() {
     };
   }, []);
 
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    // Seek action
+    const seek = (clientX: number) => {
+      const rect = container.getBoundingClientRect();
+      const ratio = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+      const targetScroll = ratio * (document.documentElement.scrollHeight - window.innerHeight);
+      window.scrollTo({ top: targetScroll, behavior: 'auto' });
+    };
+
+    seek(e.clientX);
+
+    const onPointerMove = (moveEvent: PointerEvent) => {
+      seek(moveEvent.clientX);
+    };
+
+    const onPointerUp = () => {
+      window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('pointerup', onPointerUp);
+    };
+
+    window.addEventListener('pointermove', onPointerMove);
+    window.addEventListener('pointerup', onPointerUp);
+  };
+
   return (
     <div
       ref={containerRef}
-      className="relative w-[80vw] max-w-5xl h-7 flex items-center justify-center pointer-events-none select-none"
+      onPointerDown={handlePointerDown}
+      className="relative w-full h-8 flex items-center justify-center pointer-events-auto cursor-pointer select-none touch-none group"
       aria-hidden="true"
     >
+      {/* Invisible larger hit area for easier grabbing */}
+      <div className="absolute inset-x-0 -inset-y-4" />
       <canvas
         ref={canvasRef}
-        className="w-full h-full block"
+        className="w-full h-full block group-hover:brightness-125 transition-all"
       />
     </div>
   );
