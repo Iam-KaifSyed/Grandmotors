@@ -13,6 +13,7 @@ import { Environment } from './3d/Environment';
 import { HeroVehicle } from './3d/HeroVehicle';
 import { DebugPanel } from './3d/DebugPanel';
 import { HUD } from './HUD';
+import { CinematicIntro } from './CinematicIntro';
 import { MaterialDiagnostics } from './3d/MaterialDiagnostics';
 import { VH_PER_BEAT, timeline } from '../experience/chapters';
 
@@ -21,6 +22,8 @@ gsap.registerPlugin(ScrollTrigger);
 export function ExperienceRoot() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [ready, setReady] = useState(false);
+  const lenisRef = useRef<Lenis | null>(null);
+  const [introFinished, setIntroFinished] = useState(false);
 
   useEffect(() => {
     // Determine tier
@@ -30,12 +33,15 @@ export function ExperienceRoot() {
     const lenis = new Lenis({
       smoothWheel: true,
     });
+    lenisRef.current = lenis;
+    lenis.stop(); // Lock scroll during cinematic intro
 
     lenis.on('scroll', ScrollTrigger.update);
 
-    gsap.ticker.add((time) => {
+    const tick = (time: number) => {
       lenis.raf(time * 1000);
-    });
+    };
+    gsap.ticker.add(tick);
     gsap.ticker.lagSmoothing(0);
 
     const st = ScrollTrigger.create({
@@ -50,9 +56,16 @@ export function ExperienceRoot() {
     return () => {
       lenis.destroy();
       st.kill();
-      gsap.ticker.remove(lenis.raf);
+      gsap.ticker.remove(tick);
     };
   }, []);
+
+  // Start Lenis when intro finishes
+  useEffect(() => {
+    if (introFinished && lenisRef.current) {
+      lenisRef.current.start();
+    }
+  }, [introFinished]);
 
   const totalBeats = timeline.totalBeats;
   // Always aim for clean presentation
@@ -94,10 +107,12 @@ export function ExperienceRoot() {
       {/* HTML overlay injected below the canvas relative to pointer events */}
       <MaterialDiagnostics />
 
-      <div 
+      <div
         id="scroll-container"
-        style={{ width: '100%', height: `${totalBeats * VH_PER_BEAT}vh` }} 
+        style={{ width: '100%', height: `${totalBeats * VH_PER_BEAT}vh` }}
       />
+
+      {!introFinished && <CinematicIntro onComplete={() => setIntroFinished(true)} />}
     </>
   );
 }

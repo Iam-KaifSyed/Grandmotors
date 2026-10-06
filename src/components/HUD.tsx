@@ -71,7 +71,7 @@ export function HUD() {
         {/* Brand */}
         <div className="flex items-center gap-3">
           <span className="text-xs md:text-sm font-semibold tracking-[0.25em] text-[#F2F0EA] uppercase">
-            GRAND MOTOR
+            GRAND MOTORS
           </span>
           <span className="w-1.5 h-1.5 rounded-full bg-[#B88952] opacity-80" />
         </div>

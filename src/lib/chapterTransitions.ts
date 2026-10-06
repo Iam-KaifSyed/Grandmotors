@@ -113,7 +113,7 @@ export interface ChapterData {
 
 export const CHAPTER_DATA: readonly ChapterData[] = [
   {
-    eyebrowCategory: 'GRAND MOTOR',
+    eyebrowCategory: 'GRAND MOTORS',
     eyebrowName: 'PERFORMANCE SERVICE',
     titleLines: ['PRECISION', 'IN MOTION'],
     description: 'Performance-driven automotive service. Built around precision, diagnostics and care.',
@@ -121,7 +121,7 @@ export const CHAPTER_DATA: readonly ChapterData[] = [
     chapterLabel: 'GARAGE ARRIVAL',
   },
   {
-    eyebrowCategory: 'GRAND MOTOR',
+    eyebrowCategory: 'GRAND MOTORS',
     eyebrowName: 'ENGINEERING PHILOSOPHY',
     titleLines: ['ENGINEERED', 'FOR THE ROAD'],
     description: 'Meticulous attention to every tolerance, system and surface.',
@@ -129,7 +129,7 @@ export const CHAPTER_DATA: readonly ChapterData[] = [
     chapterLabel: 'VEHICLE ARRIVAL',
   },
   {
-    eyebrowCategory: 'GRAND MOTOR',
+    eyebrowCategory: 'GRAND MOTORS',
     eyebrowName: 'SYSTEMS & DIAGNOSTICS',
     titleLines: ['POWER', 'STARTS WITHIN'],
     description: 'Precision diagnostics uncovering pure Formula 1 hybrid capability.',
@@ -137,7 +137,7 @@ export const CHAPTER_DATA: readonly ChapterData[] = [
     chapterLabel: 'AERO & REVEAL',
   },
   {
-    eyebrowCategory: 'GRAND MOTOR',
+    eyebrowCategory: 'GRAND MOTORS',
     eyebrowName: 'POWERTRAIN ARCHITECTURE',
     titleLines: ['HYBRID', 'CORE V6'],
     description: '1.6L turbocharged V6 with quad electric motor assist producing over 1,000 HP.',
@@ -145,7 +145,7 @@ export const CHAPTER_DATA: readonly ChapterData[] = [
     chapterLabel: 'POWERTRAIN',
   },
   {
-    eyebrowCategory: 'GRAND MOTOR',
+    eyebrowCategory: 'GRAND MOTORS',
     eyebrowName: 'BRAKING SYSTEMS',
     titleLines: ['CARBON', 'CERAMIC'],
     description: 'High-temperature ceramic composite braking with instant thermal dissipation.',
@@ -153,7 +153,7 @@ export const CHAPTER_DATA: readonly ChapterData[] = [
     chapterLabel: 'DECELERATION',
   },
   {
-    eyebrowCategory: 'GRAND MOTOR',
+    eyebrowCategory: 'GRAND MOTORS',
     eyebrowName: 'CHASSIS DYNAMICS',
     titleLines: ['ACTIVE', 'SUSPENSION'],
     description: 'Pushrod architecture with adaptive damping and active aerodynamic lowering.',
@@ -161,7 +161,7 @@ export const CHAPTER_DATA: readonly ChapterData[] = [
     chapterLabel: 'KINEMATICS',
   },
   {
-    eyebrowCategory: 'GRAND MOTOR',
+    eyebrowCategory: 'GRAND MOTORS',
     eyebrowName: 'SYSTEM DIAGNOSTICS',
     titleLines: ['DIGITAL', 'TELEMETRY'],
     description: 'Continuous sensor analysis monitoring high-voltage and powertrain vitals.',
@@ -169,7 +169,7 @@ export const CHAPTER_DATA: readonly ChapterData[] = [
     chapterLabel: 'DIAGNOSTICS',
   },
   {
-    eyebrowCategory: 'GRAND MOTOR',
+    eyebrowCategory: 'GRAND MOTORS',
     eyebrowName: 'INTEGRATION',
     titleLines: ['TOTAL', 'SYNTHESIS'],
     description: 'Every subsystem calibrated in harmony for track-level reliability.',
@@ -177,7 +177,7 @@ export const CHAPTER_DATA: readonly ChapterData[] = [
     chapterLabel: 'SYNTHESIS',
   },
   {
-    eyebrowCategory: 'GRAND MOTOR',
+    eyebrowCategory: 'GRAND MOTORS',
     eyebrowName: 'FINAL CALIBRATION',
     titleLines: ['READY', 'TO IGNITE'],
     description: 'System checks complete. Schedule your performance service today.',
