@@ -4,7 +4,7 @@ import { getFrame } from '../lib/directorState';
 import { CHAPTER_DATA, getChapterAnimationState } from '../lib/chapterTransitions';
 import { CinematicProgressBar } from './CinematicProgressBar';
 import { ScrollExploreButton } from './ScrollExploreButton';
-import { scrollToSite } from '../lib/heroScroll';
+
 
 export function HUD() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -72,41 +72,29 @@ export function HUD() {
       {/* ============================================================ */}
       <header className="hero-nav w-full px-6 md:px-12 lg:px-16 pt-8 md:pt-10 flex items-start justify-between">
         {/* Brand */}
-        <div className="flex items-center gap-3">
-          <span className="text-xs md:text-sm font-semibold tracking-[0.25em] text-[#F2F0EA] uppercase">
+        <a href="/" className="flex items-center gap-3 pointer-events-auto group">
+          <span className="text-xs md:text-sm font-semibold tracking-[0.25em] text-[#F2F0EA] uppercase group-hover:text-[#B88952] transition-colors">
             GRAND MOTORS
           </span>
-          <span className="w-1.5 h-1.5 rounded-full bg-[#B88952] opacity-80" />
-        </div>
+          <span className="w-1.5 h-1.5 rounded-full bg-[#B88952] opacity-80 group-hover:opacity-100 transition-opacity" />
+        </a>
 
         {/* Minimal Navigation Links */}
         <nav className="hidden md:flex items-center gap-8 lg:gap-12 pointer-events-auto">
           <a
-            href="#services"
-            onClick={(e) => {
-              e.preventDefault();
-              scrollToSite('services');
-            }}
+            href="/services"
             className="text-[11px] font-medium tracking-[0.2em] text-[#D8D6D0]/70 hover:text-[#F2F0EA] transition-colors duration-200 uppercase"
           >
             SERVICES
           </a>
           <a
-            href="#about"
-            onClick={(e) => {
-              e.preventDefault();
-              scrollToSite('about');
-            }}
+            href="/about"
             className="text-[11px] font-medium tracking-[0.2em] text-[#D8D6D0]/70 hover:text-[#F2F0EA] transition-colors duration-200 uppercase"
           >
             ABOUT
           </a>
           <a
-            href="#contact"
-            onClick={(e) => {
-              e.preventDefault();
-              scrollToSite('contact');
-            }}
+            href="/contact"
             className="text-[11px] font-medium tracking-[0.2em] text-[#D8D6D0]/70 hover:text-[#F2F0EA] transition-colors duration-200 uppercase"
           >
             CONTACT
