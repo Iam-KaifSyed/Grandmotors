@@ -105,6 +105,12 @@ export function HUD() {
           >
             CONTACT
           </a>
+          <a
+            href="/contact"
+            className="inline-flex items-center justify-center px-5 py-2 text-xs font-semibold tracking-[0.15em] uppercase text-[#0A0C0D] bg-[#B88952] hover:bg-[#caa066] rounded-full transition-colors"
+          >
+            Book Service
+          </a>
         </nav>
 
         {/* Dynamic Chapter Indicator */}
