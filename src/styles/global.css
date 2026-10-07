@@ -67,3 +67,99 @@ html.lenis body {
 .hero-scroll {
   /* Bottom telemetry & exploration cues */
 }
+
+/* ============================================================ */
+/* Site content (below the locked 3D hero) — scroll reveal      */
+/* ============================================================ */
+.gm-reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+.gm-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gm-reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* The 3D hero is position:fixed and the #scroll-container spacer drives it.
+   Site content follows in normal flow, scrolls up over the fixed canvas,
+   and carries its own opaque background so the hero never bleeds through. */
+#site-content {
+  position: relative;
+  z-index: 10;
+}
+
+/* ============================================================ */
+/* HUD "Scroll to Explore" cue — 3D interactive button styling  */
+/* ============================================================ */
+.btn-3d-perspective-container {
+  perspective: 1000px;
+}
+
+.btn-3d-card {
+  transform-style: preserve-3d;
+  will-change: transform;
+  transform: perspective(1000px) translateZ(0);
+}
+
+.btn-3d-card:not(.is-hovered):not(:active) {
+  animation: btn-3d-idle-float 4s ease-in-out infinite;
+}
+
+@keyframes btn-3d-idle-float {
+  0%, 100% {
+    transform: perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px);
+  }
+  50% {
+    transform: perspective(1000px) rotateX(3deg) rotateY(-2deg) translateY(-3px);
+  }
+}
+
+.btn-3d-text {
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.9), 0 0 12px rgba(184, 137, 82, 0.3);
+  transform-style: preserve-3d;
+}
+
+.btn-3d-badge {
+  transform-style: preserve-3d;
+}
+
+@keyframes btn-arrow-3d-bounce {
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 0.85;
+  }
+  50% {
+    transform: translateY(3px);
+    opacity: 1;
+  }
+}
+
+.btn-3d-arrow {
+  animation: btn-arrow-3d-bounce 1.6s ease-in-out infinite;
+  will-change: transform;
+}
+
+.group:hover .btn-3d-arrow {
+  animation-duration: 0.8s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-3d-card:not(.is-hovered):not(:active) {
+    animation: none;
+  }
+  .btn-3d-arrow {
+    animation: none;
+  }
+}

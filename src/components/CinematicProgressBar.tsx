@@ -276,8 +276,8 @@ export function CinematicProgressBar() {
       className="relative w-full h-8 flex items-center justify-center pointer-events-auto cursor-pointer select-none touch-none group"
       aria-hidden="true"
     >
-      {/* Invisible larger hit area for easier grabbing */}
-      <div className="absolute inset-x-0 -inset-y-4" />
+      {/* Invisible hit area for easier grabbing (extends upwards only to avoid blocking bottom cues) */}
+      <div className="absolute inset-x-0 -top-4 bottom-0 pointer-events-none" />
       <canvas
         ref={canvasRef}
         className="w-full h-full block group-hover:brightness-125 transition-all"

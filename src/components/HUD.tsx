@@ -3,6 +3,8 @@ import gsap from 'gsap';
 import { getFrame } from '../lib/directorState';
 import { CHAPTER_DATA, getChapterAnimationState } from '../lib/chapterTransitions';
 import { CinematicProgressBar } from './CinematicProgressBar';
+import { ScrollExploreButton } from './ScrollExploreButton';
+import { scrollToSite } from '../lib/heroScroll';
 
 export function HUD() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -81,18 +83,30 @@ export function HUD() {
         <nav className="hidden md:flex items-center gap-8 lg:gap-12 pointer-events-auto">
           <a
             href="#services"
+            onClick={(e) => {
+              e.preventDefault();
+              scrollToSite('services');
+            }}
             className="text-[11px] font-medium tracking-[0.2em] text-[#D8D6D0]/70 hover:text-[#F2F0EA] transition-colors duration-200 uppercase"
           >
             SERVICES
           </a>
           <a
             href="#about"
+            onClick={(e) => {
+              e.preventDefault();
+              scrollToSite('about');
+            }}
             className="text-[11px] font-medium tracking-[0.2em] text-[#D8D6D0]/70 hover:text-[#F2F0EA] transition-colors duration-200 uppercase"
           >
             ABOUT
           </a>
           <a
             href="#contact"
+            onClick={(e) => {
+              e.preventDefault();
+              scrollToSite('contact');
+            }}
             className="text-[11px] font-medium tracking-[0.2em] text-[#D8D6D0]/70 hover:text-[#F2F0EA] transition-colors duration-200 uppercase"
           >
             CONTACT
@@ -197,11 +211,8 @@ export function HUD() {
             <span>ENGINEERED FOR THE DRIVE</span>
           </div>
 
-          {/* Bottom Right Cue */}
-          <div className="flex items-center gap-1.5 text-[#F2F0EA]/90 tracking-[0.2em]">
-            <span>SCROLL TO EXPLORE</span>
-            <span className="text-[#B88952] text-xs">↓</span>
-          </div>
+          {/* Bottom Right Cue — 3D interactive button to smoothly scroll to the website */}
+          <ScrollExploreButton />
         </div>
       </footer>
     </div>

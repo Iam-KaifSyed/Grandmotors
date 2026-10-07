@@ -5,6 +5,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { detectTier, getTier } from '../lib/DeviceTier';
 import { scrollState } from '../lib/progress';
+import { registerLenis } from '../lib/heroScroll';
 import * as THREE from 'three';
 
 import { Director } from './3d/Director';
@@ -16,6 +17,7 @@ import { HUD } from './HUD';
 import { CinematicIntro } from './CinematicIntro';
 import { MaterialDiagnostics } from './3d/MaterialDiagnostics';
 import { VH_PER_BEAT, timeline } from '../experience/chapters';
+import { SiteContent } from './site/SiteContent';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -24,6 +26,10 @@ export function ExperienceRoot() {
   const [ready, setReady] = useState(false);
   const lenisRef = useRef<Lenis | null>(null);
   const [introFinished, setIntroFinished] = useState(false);
+  // When the 3D hero scroll completes, fade the fixed canvas/HUD layer out so
+  // the website below sits cleanly on its own. The 3D experience itself is
+  // untouched — this only controls the opacity of the fixed overlay layer.
+  const [heroComplete, setHeroComplete] = useState(false);
 
   useEffect(() => {
     // Determine tier
@@ -32,8 +38,10 @@ export function ExperienceRoot() {
     // Setup Lenis
     const lenis = new Lenis({
       smoothWheel: true,
+      anchors: true,
     });
     lenisRef.current = lenis;
+    registerLenis(lenis); // expose for the HUD "Scroll to Explore" cue
     lenis.stop(); // Lock scroll during cinematic intro
 
     lenis.on('scroll', ScrollTrigger.update);
@@ -50,11 +58,17 @@ export function ExperienceRoot() {
       end: 'bottom bottom',
       onUpdate: (self) => {
         scrollState.target = self.progress;
-      }
+        // Fade the fixed hero layer out once its scroll range is complete, so the
+        // website content below is not overlaid by the canvas/HUD.
+        setHeroComplete(self.progress >= 0.999);
+      },
+      onLeave: () => setHeroComplete(true),
+      onEnterBack: () => setHeroComplete(false),
     });
 
     return () => {
       lenis.destroy();
+      registerLenis(null);
       st.kill();
       gsap.ticker.remove(tick);
     };
@@ -75,7 +89,14 @@ export function ExperienceRoot() {
 
   return (
     <>
-      <div ref={containerRef} className="fixed inset-0 w-full h-full pointer-events-none bg-[#07090A] overflow-hidden">
+      <div
+        ref={containerRef}
+        className="fixed inset-0 w-full h-full pointer-events-none bg-[#07090A] overflow-hidden transition-opacity duration-700 ease-out"
+        style={{
+          opacity: heroComplete ? 0 : 1,
+          visibility: heroComplete ? 'hidden' : 'visible',
+        }}
+      >
         {ready && (
           <Canvas
             className="w-full h-full"
@@ -111,6 +132,9 @@ export function ExperienceRoot() {
         id="scroll-container"
         style={{ width: '100%', height: `${totalBeats * VH_PER_BEAT}vh` }}
       />
+
+      {/* Main website — begins below the 3D hero as its own scroll section. */}
+      <SiteContent />
 
       {!introFinished && <CinematicIntro onComplete={() => setIntroFinished(true)} />}
     </>
