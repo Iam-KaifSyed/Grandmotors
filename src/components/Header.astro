@@ -1,0 +1,48 @@
+---
+const pathname = new URL(Astro.request.url).pathname;
+const links = [
+  { href: '/', label: 'Home' },
+  { href: '/services', label: 'Services' },
+  { href: '/about', label: 'About' },
+  { href: '/contact', label: 'Contact' },
+];
+---
+
+<header class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 transition-all duration-300 pointer-events-none">
+  <!-- Backdrop -->
+  <div class="absolute inset-0 bg-gradient-to-b from-[#07090A]/80 to-transparent pointer-events-none"></div>
+  
+  <a href="/" class="relative z-10 flex items-center gap-2.5 pointer-events-auto group">
+    <span class="text-sm font-semibold tracking-[0.25em] text-[#F2F0EA] uppercase group-hover:text-[#B88952] transition-colors">
+      Grand Motors
+    </span>
+    <span class="w-1.5 h-1.5 rounded-full bg-[#B88952]"></span>
+  </a>
+
+  <nav class="relative z-10 pointer-events-auto flex items-center bg-black/40 backdrop-blur-md border border-white/10 rounded-full px-2 py-1.5">
+    {links.map(link => {
+      const isActive = link.href === '/' ? pathname === '/' : pathname.startsWith(link.href);
+      return (
+        <a 
+          href={link.href} 
+          class={`px-4 py-1.5 text-xs font-semibold tracking-[0.1em] uppercase rounded-full transition-all duration-300 ${
+            isActive 
+              ? 'bg-[#B88952]/20 text-[#B88952]' 
+              : 'text-[#A7AAAD] hover:text-[#F2F0EA] hover:bg-white/5'
+          }`}
+        >
+          {link.label}
+        </a>
+      )
+    })}
+  </nav>
+
+  <div class="relative z-10 pointer-events-auto hidden sm:block">
+    <a 
+      href="/contact" 
+      class="inline-flex items-center justify-center px-5 py-2 text-xs font-semibold tracking-[0.15em] uppercase text-[#0A0C0D] bg-[#B88952] hover:bg-[#caa066] rounded-full transition-colors"
+    >
+      Book Service
+    </a>
+  </div>
+</header>

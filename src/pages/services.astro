@@ -1,0 +1,136 @@
+---
+import Base from '../layouts/Base.astro';
+import { SERVICES } from '../components/site/servicesData';
+import { ArrowRightIcon, ShieldCheckIcon, UsersIcon, GaugeIcon, BadgeIcon, EyeIcon, SearchIcon, WrenchIcon, CheckIcon, TruckIcon } from '../components/site/Icons';
+import Reveal from '../components/site/Reveal.astro';
+import SectionHeading from '../components/site/SectionHeading.astro';
+
+const PROCESS_STEPS = [
+  {
+    n: '01',
+    icon: EyeIcon,
+    title: 'Inspect',
+    body: 'A thorough multi-point check to understand the full condition of your vehicle before any work begins.',
+  },
+  {
+    n: '02',
+    icon: SearchIcon,
+    title: 'Diagnose',
+    body: 'Computerised scanning and expert assessment isolate the root cause, not just the symptom.',
+  },
+  {
+    n: '03',
+    icon: WrenchIcon,
+    title: 'Repair',
+    body: 'Skilled technicians carry out the work to specification using genuine-quality parts.',
+  },
+  {
+    n: '04',
+    icon: CheckIcon,
+    title: 'Test',
+    body: 'Every repair is verified and road-tested so the fix is confirmed before it reaches you.',
+  },
+  {
+    n: '05',
+    icon: TruckIcon,
+    title: 'Deliver',
+    body: 'Your car is returned clean, documented and ready, with a clear summary of the work done.',
+  },
+];
+---
+
+<Base 
+  title="Services | Grand Motors" 
+  description="Explore our comprehensive range of automotive services in Moosapet, Hyderabad."
+>
+  <main class="pt-32 pb-20">
+    <section class="px-6 md:px-12 lg:px-16">
+      <div class="max-w-7xl mx-auto">
+        <SectionHeading
+          eyebrow="What We Do"
+          intro="A complete workshop under one roof. From diagnostics to detailing, every service is delivered with the same precision you expect from a premium garage."
+        >
+          <Fragment slot="title">Services, Engineered<br class="hidden sm:block" /> Around Your Car</Fragment>
+        </SectionHeading>
+
+        <div class="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {SERVICES.map((service, i) => {
+            const Icon = service.icon;
+            return (
+              <Reveal
+                delay={(i % 3) * 70}
+                class="group relative rounded-xl border border-white/8 bg-[#111315] p-7 md:p-8 transition-colors duration-200 hover:border-[#B88952]/30 hover:bg-[#181B1E]"
+              >
+                <div class="flex items-start gap-4 mb-4">
+                  <span class="grid place-items-center w-12 h-12 rounded-lg border border-white/10 text-[#B88952] transition-colors duration-200 group-hover:border-[#B88952]/40 group-hover:bg-[#B88952]/10 shrink-0">
+                    <Icon className="w-6 h-6" />
+                  </span>
+                  <div>
+                    <h3 class="text-lg font-semibold tracking-[-0.01em] text-[#F2F0EA]">
+                      {service.title}
+                    </h3>
+                    <p class="mt-1 text-[13.5px] leading-relaxed text-[#A7AAAD]">
+                      {service.summary}
+                    </p>
+                  </div>
+                </div>
+                
+                <div class="pt-4 border-t border-white/5">
+                  <ul class="grid gap-2.5">
+                    {service.items.map((item) => (
+                      <li class="flex items-start gap-2.5 text-[13px] text-[#A7AAAD]">
+                        <CheckIcon className="w-4 h-4 mt-0.5 shrink-0 text-[#B88952]" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </Reveal>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+
+    <!-- OUR PROCESS -->
+    <section class="mt-24 px-6 md:px-12 lg:px-16 py-20 md:py-28 bg-[#0A0C0D] border-y border-white/5">
+      <div class="max-w-7xl mx-auto">
+        <SectionHeading
+          eyebrow="Our Process"
+          intro="A disciplined workflow that keeps your car — and you — informed from drop-off to delivery."
+        >
+          <Fragment slot="title">Five Steps, Zero Guesswork</Fragment>
+        </SectionHeading>
+
+        <div class="mt-16 relative">
+          <!-- Connecting line (desktop) -->
+          <div
+            aria-hidden="true"
+            class="hidden lg:block absolute top-6 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#B88952]/30 to-transparent"
+          ></div>
+          <ol class="grid gap-10 sm:grid-cols-2 lg:grid-cols-5">
+            {PROCESS_STEPS.map((step, i) => {
+              const Icon = step.icon;
+              return (
+                <Reveal delay={i * 90} as="li" class="relative">
+                  <div class="flex items-center gap-3 lg:flex-col lg:items-start">
+                    <span class="relative z-10 grid place-items-center w-12 h-12 rounded-full border border-[#B88952]/40 bg-[#0A0C0D] text-[#B88952]">
+                      <Icon className="w-5 h-5" />
+                    </span>
+                    <span class="font-mono text-[11px] tracking-[0.3em] text-[#A7AAAD]/70">
+                      {step.n}
+                    </span>
+                  </div>
+                  <h3 class="mt-5 text-lg font-semibold tracking-[-0.01em] text-[#F2F0EA]">
+                    {step.title}
+                  </h3>
+                  <p class="mt-2 text-[13.5px] leading-relaxed text-[#A7AAAD]">{step.body}</p>
+                </Reveal>
+              );
+            })}
+          </ol>
+        </div>
+      </div>
+    </section>
+  </main>
+</Base>

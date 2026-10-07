@@ -1,0 +1,36 @@
+---
+import Reveal from './Reveal.astro';
+
+interface Props {
+  eyebrow: string;
+  intro?: string;
+  align?: 'left' | 'center';
+}
+const { eyebrow, intro, align = 'left' } = Astro.props;
+const isCenter = align === 'center';
+---
+
+<div class={`max-w-2xl ${isCenter ? 'mx-auto text-center' : ''}`}>
+  <Reveal class={`flex items-center gap-2.5 mb-5 ${isCenter ? 'justify-center' : ''}`}>
+    <span class="w-6 h-px bg-[#B88952]"></span>
+    <span class="text-[11px] font-semibold tracking-[0.3em] text-[#B88952] uppercase">
+      {eyebrow}
+    </span>
+  </Reveal>
+  <Reveal
+    as="h2"
+    delay={80}
+    class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-[-0.03em] text-[#F2F0EA] leading-[1.03] uppercase"
+  >
+    <slot name="title" />
+  </Reveal>
+  {intro && (
+    <Reveal
+      as="p"
+      delay={160}
+      class="mt-5 text-sm md:text-[15px] leading-relaxed text-[#A7AAAD]"
+    >
+      {intro}
+    </Reveal>
+  )}
+</div>
