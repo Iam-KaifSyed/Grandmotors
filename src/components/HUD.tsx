@@ -184,16 +184,6 @@ export function HUD() {
             <span>ENGINEERED FOR THE DRIVE</span>
           </div>
 
-          {/* Attribution (Unobtrusive) */}
-          <a
-            href="https://sketchfab.com/3d-models/cafe-nhan-sam-hoa-tan-queen-food-e28a0fb813ad49e0ba610c7fa0137146"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hidden xl:inline-block pointer-events-auto text-[9px] tracking-normal text-[#A7AAAD]/30 hover:text-[#A7AAAD]/60 transition-colors"
-          >
-            Mercedes-AMG ONE (CC-BY-4.0)
-          </a>
-
           {/* Bottom Right Cue */}
           <div className="flex items-center gap-1.5 text-[#F2F0EA]/90 tracking-[0.2em]">
             <span>SCROLL TO EXPLORE</span>
