@@ -39,15 +39,16 @@ export function HUD() {
         const el = chapterRefs.current[idx];
         if (!el) return;
 
-        const { opacity, translateX, isVisible } = getChapterAnimationState(
+        const { opacity, transform, isVisible } = getChapterAnimationState(
           idx,
           currentChapter,
           localProgress,
+          CHAPTER_DATA[idx].direction,
           CHAPTER_DATA.length
         );
 
         el.style.opacity = opacity.toFixed(3);
-        el.style.transform = `translateX(${translateX.toFixed(1)}px)`;
+        el.style.transform = transform;
         el.style.visibility = isVisible ? 'visible' : 'hidden';
         el.style.pointerEvents = isVisible ? 'auto' : 'none';
       });
@@ -159,9 +160,21 @@ export function HUD() {
                 </h1>
 
                 {/* Supporting Description */}
-                <p className="hero-description text-xs sm:text-sm md:text-[15px] font-normal tracking-[0.02em] text-[#A7AAAD] leading-relaxed max-w-md">
+                <p className="hero-description text-xs sm:text-sm md:text-[15px] font-normal tracking-[0.02em] text-[#A7AAAD] leading-relaxed max-w-md mb-6">
                   {chapter.description}
                 </p>
+
+                {/* Services List (for chapters 02-09) */}
+                {chapter.services && chapter.services.length > 0 && (
+                  <ul className="flex flex-col gap-2 mt-2 border-l border-[#B88952]/40 pl-4 py-1">
+                    {chapter.services.map((service, sIdx) => (
+                      <li key={sIdx} className="text-[11px] md:text-xs font-medium tracking-[0.15em] text-[#A7AAAD]/90 uppercase flex items-center gap-2">
+                        <span className="w-1 h-1 rounded-full bg-[#B88952]/60"></span>
+                        {service}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
             );
           })}

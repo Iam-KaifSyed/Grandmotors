@@ -1,103 +1,89 @@
 export interface ChapterAnimationState {
   opacity: number;
-  translateX: number;
+  transform: string;
   isVisible: boolean;
 }
 
-/**
- * Computes deterministic transition states for chapter typography groups.
- * 
- * Rules:
- * - EXACTLY ONE chapter's typography may be visible at any given moment.
- * - Old text exits completely (opacity 1 -> 0, transform 0 -> -50px).
- * - A brief clean visual gap occurs where no headline is visible.
- * - New text enters cleanly (opacity 0 -> 1, transform 50px -> 0).
- * - Full hold state in the middle of each chapter.
- */
+export type Direction = 'left' | 'right' | 'up' | 'down';
+
 export function getChapterAnimationState(
   chapterIndex: number,
   currentChapter: number,
   localProgress: number,
+  direction: Direction = 'right',
   totalChapters = 9
 ): ChapterAnimationState {
-  // If not the active chapter, guaranteed to be 100% invisible
   if (chapterIndex !== currentChapter) {
-    return { opacity: 0, translateX: 0, isVisible: false };
+    return { opacity: 0, transform: 'translate(0px, 0px)', isVisible: false };
   }
 
   const isFirstChapter = chapterIndex === 0;
   const isLastChapter = chapterIndex === totalChapters - 1;
 
   let opacity = 0;
-  let translateX = 0;
+  let tx = 0;
+  let ty = 0;
+
+  const dx = direction === 'left' ? -50 : direction === 'right' ? 50 : 0;
+  const dy = direction === 'up' ? 50 : direction === 'down' ? -50 : 0;
 
   if (isFirstChapter) {
-    // Chapter 0 (Landing Hero): starts fully visible
     if (localProgress < 0.70) {
-      // Hold phase
       opacity = 1;
-      translateX = 0;
+      tx = 0; ty = 0;
     } else if (localProgress < 0.90) {
-      // Exit phase: 0.70 -> 0.90
       const exitT = (localProgress - 0.70) / 0.20;
-      const smoothT = exitT * exitT * (3 - 2 * exitT); // smoothstep
+      const smoothT = exitT * exitT * (3 - 2 * exitT);
       opacity = 1 - smoothT;
-      translateX = -50 * smoothT;
+      tx = -dx * smoothT;
+      ty = -dy * smoothT;
     } else {
-      // Complete exit / transition gap (0.90 -> 1.00)
       opacity = 0;
-      translateX = -50;
+      tx = -dx; ty = -dy;
     }
   } else if (isLastChapter) {
-    // Last chapter: enters and holds
     if (localProgress < 0.08) {
-      // Pre-entry gap
       opacity = 0;
-      translateX = 50;
+      tx = dx; ty = dy;
     } else if (localProgress < 0.25) {
-      // Entry phase: 0.08 -> 0.25
       const enterT = (localProgress - 0.08) / 0.17;
       const smoothT = enterT * enterT * (3 - 2 * enterT);
       opacity = smoothT;
-      translateX = 50 * (1 - smoothT);
+      tx = dx * (1 - smoothT);
+      ty = dy * (1 - smoothT);
     } else {
-      // Hold through end
       opacity = 1;
-      translateX = 0;
+      tx = 0; ty = 0;
     }
   } else {
-    // Intermediate chapters (1 through N-2)
     if (localProgress < 0.08) {
-      // Pre-entry gap: complete visual cleanliness
       opacity = 0;
-      translateX = 50;
+      tx = dx; ty = dy;
     } else if (localProgress < 0.25) {
-      // Entry phase: 0.08 -> 0.25
       const enterT = (localProgress - 0.08) / 0.17;
       const smoothT = enterT * enterT * (3 - 2 * enterT);
       opacity = smoothT;
-      translateX = 50 * (1 - smoothT);
+      tx = dx * (1 - smoothT);
+      ty = dy * (1 - smoothT);
     } else if (localProgress <= 0.72) {
-      // Hold phase
       opacity = 1;
-      translateX = 0;
+      tx = 0; ty = 0;
     } else if (localProgress < 0.92) {
-      // Exit phase: 0.72 -> 0.92
       const exitT = (localProgress - 0.72) / 0.20;
       const smoothT = exitT * exitT * (3 - 2 * exitT);
       opacity = 1 - smoothT;
-      translateX = -50 * smoothT;
+      tx = -dx * smoothT;
+      ty = -dy * smoothT;
     } else {
-      // Exit gap: complete visual cleanliness (0.92 -> 1.00)
       opacity = 0;
-      translateX = -50;
+      tx = -dx; ty = -dy;
     }
   }
 
   const isVisible = opacity > 0.001;
   return {
     opacity: isVisible ? opacity : 0,
-    translateX,
+    transform: `translate(${tx.toFixed(1)}px, ${ty.toFixed(1)}px)`,
     isVisible,
   };
 }
@@ -107,87 +93,143 @@ export interface ChapterData {
   eyebrowName: string;
   titleLines: string[];
   description: string;
+  services?: string[];
   chapterNumber: string;
   chapterLabel: string;
+  direction: Direction;
 }
 
-const RAW_CHAPTER_DATA: readonly ChapterData[] = [
-  {
-    eyebrowCategory: 'GRAND MOTORS',
-    eyebrowName: 'PERFORMANCE SERVICE',
-    titleLines: ['PRECISION', 'IN MOTION'],
-    description: 'Performance-driven automotive service. Built around precision, diagnostics and care.',
-    chapterNumber: '01',
-    chapterLabel: 'GARAGE ARRIVAL',
-  },
-  {
-    eyebrowCategory: 'GRAND MOTORS',
-    eyebrowName: 'ENGINEERING PHILOSOPHY',
-    titleLines: ['ENGINEERED', 'FOR THE ROAD'],
-    description: 'Meticulous attention to every tolerance, system and surface.',
-    chapterNumber: '02',
-    chapterLabel: 'VEHICLE ARRIVAL',
-  },
-  {
-    eyebrowCategory: 'GRAND MOTORS',
-    eyebrowName: 'SYSTEMS & DIAGNOSTICS',
-    titleLines: ['POWER', 'STARTS WITHIN'],
-    description: 'Precision diagnostics uncovering pure Formula 1 hybrid capability.',
-    chapterNumber: '03',
-    chapterLabel: 'AERO & REVEAL',
-  },
-  {
-    eyebrowCategory: 'GRAND MOTORS',
-    eyebrowName: 'POWERTRAIN ARCHITECTURE',
-    titleLines: ['HYBRID', 'CORE V6'],
-    description: '1.6L turbocharged V6 with quad electric motor assist producing over 1,000 HP.',
-    chapterNumber: '04',
-    chapterLabel: 'POWERTRAIN',
-  },
-  {
-    eyebrowCategory: 'GRAND MOTORS',
-    eyebrowName: 'BRAKING SYSTEMS',
-    titleLines: ['CARBON', 'CERAMIC'],
-    description: 'High-temperature ceramic composite braking with instant thermal dissipation.',
-    chapterNumber: '05',
-    chapterLabel: 'DECELERATION',
-  },
-  {
-    eyebrowCategory: 'GRAND MOTORS',
-    eyebrowName: 'CHASSIS DYNAMICS',
-    titleLines: ['ACTIVE', 'SUSPENSION'],
-    description: 'Pushrod architecture with adaptive damping and active aerodynamic lowering.',
-    chapterNumber: '06',
-    chapterLabel: 'KINEMATICS',
-  },
-  {
-    eyebrowCategory: 'GRAND MOTORS',
-    eyebrowName: 'SYSTEM DIAGNOSTICS',
-    titleLines: ['DIGITAL', 'TELEMETRY'],
-    description: 'Continuous sensor analysis monitoring high-voltage and powertrain vitals.',
-    chapterNumber: '07',
-    chapterLabel: 'DIAGNOSTICS',
-  },
-  {
-    eyebrowCategory: 'GRAND MOTORS',
-    eyebrowName: 'INTEGRATION',
-    titleLines: ['TOTAL', 'SYNTHESIS'],
-    description: 'Every subsystem calibrated in harmony for track-level reliability.',
-    chapterNumber: '08',
-    chapterLabel: 'SYNTHESIS',
-  },
+export const CHAPTER_DATA: readonly ChapterData[] = [
   {
     eyebrowCategory: 'GRAND MOTORS',
     eyebrowName: 'FINAL CALIBRATION',
     titleLines: ['READY', 'TO IGNITE'],
     description: 'System checks complete. Schedule your performance service today.',
-    chapterNumber: '09',
+    services: [],
+    chapterNumber: '01',
     chapterLabel: 'IGNITION',
+    direction: 'left',
   },
-] as const;
-
-/** Reversed order: scene 9 (ignition) is first, scene 1 (open) is last */
-export const CHAPTER_DATA: readonly ChapterData[] = [...RAW_CHAPTER_DATA].reverse().map((ch, idx) => ({
-  ...ch,
-  chapterNumber: String(idx + 1).padStart(2, '0'),
-}));
+  {
+    eyebrowCategory: 'GRAND MOTORS',
+    eyebrowName: 'ENGINE & DIAGNOSTICS',
+    titleLines: ['HEART', 'OF THE MACHINE'],
+    description: 'Specialised engine services ensuring peak powertrain performance.',
+    services: [
+      'Engine repair',
+      'Engine tuning',
+      'Vehicle engine diagnostics',
+      'Tune-up & inspection',
+      'Emissions testing'
+    ],
+    chapterNumber: '02',
+    chapterLabel: 'ENGINE & DIAGNOSTICS',
+    direction: 'right',
+  },
+  {
+    eyebrowCategory: 'GRAND MOTORS',
+    eyebrowName: 'BRAKES',
+    titleLines: ['DECELERATION', 'CONTROL'],
+    description: 'High-performance braking maintenance and safety inspections.',
+    services: [
+      'Brake repair',
+      'Brake replacement',
+      'Safety inspection'
+    ],
+    chapterNumber: '03',
+    chapterLabel: 'BRAKES',
+    direction: 'up',
+  },
+  {
+    eyebrowCategory: 'GRAND MOTORS',
+    eyebrowName: 'TYRES & WHEELS',
+    titleLines: ['ROAD', 'CONNECTION'],
+    description: 'Comprehensive wheel services from alignment to pressure monitoring.',
+    services: [
+      'Tyres & replacement',
+      'Tyre rotation',
+      'Pressure testing',
+      'Wheel alignment',
+      'Tyre air pump'
+    ],
+    chapterNumber: '04',
+    chapterLabel: 'TYRES & WHEELS',
+    direction: 'down',
+  },
+  {
+    eyebrowCategory: 'GRAND MOTORS',
+    eyebrowName: 'STEERING & SUSPENSION',
+    titleLines: ['PRECISION', 'KINEMATICS'],
+    description: 'Adaptive damping and steering geometry calibration.',
+    services: [
+      'Steering/suspension repair',
+      'Steering/suspension replacement',
+      'Steering wheel repair'
+    ],
+    chapterNumber: '05',
+    chapterLabel: 'STEERING & SUSPENSION',
+    direction: 'left',
+  },
+  {
+    eyebrowCategory: 'GRAND MOTORS',
+    eyebrowName: 'ELECTRICAL & BATTERY',
+    titleLines: ['ENERGY', 'SYSTEMS'],
+    description: 'High-voltage analysis and complete electrical system repairs.',
+    services: [
+      'Electrical repair',
+      'Battery maintenance/replacement',
+      'Lighting repair',
+      'Power window repair'
+    ],
+    chapterNumber: '06',
+    chapterLabel: 'ELECTRICAL & BATTERY',
+    direction: 'right',
+  },
+  {
+    eyebrowCategory: 'GRAND MOTORS',
+    eyebrowName: 'A/C & CLIMATE',
+    titleLines: ['THERMAL', 'COMFORT'],
+    description: 'Climate control installation, diagnostics, and continuous maintenance.',
+    services: [
+      'A/C installation/repair',
+      'A/C services',
+      'Re-gas/recharge',
+      'A/C filter replacement',
+      'Vehicle A/C recharge'
+    ],
+    chapterNumber: '07',
+    chapterLabel: 'A/C & CLIMATE',
+    direction: 'up',
+  },
+  {
+    eyebrowCategory: 'GRAND MOTORS',
+    eyebrowName: 'BODY, GLASS & INTERIOR',
+    titleLines: ['STRUCTURAL', 'INTEGRITY'],
+    description: 'Restoration of aerodynamics, chassis strength, and interior refinement.',
+    services: [
+      'Body/trim/chassis repair',
+      'Body painting',
+      'Glass/windshield handling',
+      'Windows',
+      'Upholstery/interior restoration'
+    ],
+    chapterNumber: '08',
+    chapterLabel: 'BODY, GLASS & INTERIOR',
+    direction: 'down',
+  },
+  {
+    eyebrowCategory: 'GRAND MOTORS',
+    eyebrowName: 'MAINTENANCE & CUSTOM',
+    titleLines: ['BESPOKE', 'SERVICE'],
+    description: 'General maintenance, detailing, and custom performance builds.',
+    services: [
+      'General maintenance',
+      'Oil change',
+      'Wipers & detailing',
+      'Modifications & custom builds'
+    ],
+    chapterNumber: '09',
+    chapterLabel: 'MAINTENANCE & CUSTOM',
+    direction: 'up',
+  },
+];

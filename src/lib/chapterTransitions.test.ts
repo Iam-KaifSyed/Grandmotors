@@ -13,22 +13,23 @@ describe('getChapterAnimationState', () => {
 
   it('chapter 0 starts fully visible and holds before smooth exit', () => {
     // Beginning
-    const start = getChapterAnimationState(0, 0, 0.0);
+    const start = getChapterAnimationState(0, 0, 0.0, 'left', 9);
     expect(start.opacity).toBe(1);
-    expect(start.translateX).toBe(0);
+    expect(start.transform).toBe('translate(0.0px, 0.0px)');
     expect(start.isVisible).toBe(true);
 
     // Mid hold
-    const mid = getChapterAnimationState(0, 0, 0.5);
+    const mid = getChapterAnimationState(0, 0, 0.5, 'left', 9);
     expect(mid.opacity).toBe(1);
-    expect(mid.translateX).toBe(0);
+    expect(mid.transform).toBe('translate(0.0px, 0.0px)');
     expect(mid.isVisible).toBe(true);
 
     // Exiting
-    const exiting = getChapterAnimationState(0, 0, 0.8);
+    const exiting = getChapterAnimationState(0, 0, 0.8, 'left', 9);
     expect(exiting.opacity).toBeLessThan(1);
     expect(exiting.opacity).toBeGreaterThan(0);
-    expect(exiting.translateX).toBeLessThan(0);
+    // Since dx is -50 for 'left', tx = -(-50) * smoothT = 50 * smoothT (> 0)
+    expect(exiting.transform).toContain('px, 0.0px)');
 
     // Completely exited / clean gap
     const end = getChapterAnimationState(0, 0, 0.95);

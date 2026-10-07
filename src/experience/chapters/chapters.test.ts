@@ -6,15 +6,15 @@ const EPS = 1e-7;
 describe('the nine chapters', () => {
   it('compile in the approved order', () => {
     expect(CHAPTERS.map((c) => c.id)).toEqual([
-      'open',
-      'arrival',
-      'reveal',
-      'engine',
-      'brakes',
-      'suspension',
-      'diagnostics',
-      'reassembly',
       'ignition',
+      'reassembly',
+      'diagnostics',
+      'suspension',
+      'brakes',
+      'engine',
+      'reveal',
+      'arrival',
+      'open',
     ]);
     expect(timeline.ranges).toHaveLength(9);
     expect(timeline.ranges.at(-1)!.end).toBeCloseTo(1);
