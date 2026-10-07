@@ -7,11 +7,12 @@ export const ignition: Chapter = {
   beats: 1,
   camera: [cam(0, B.reassemblyEnd, true), cam(1, B.ignitionEnd)],
   tracks: [
-    // Fade completely to black starting from previous chapter's intensity
-    track('light.ambient', [0, 0.2], [1, 0.0]),
-    track('light.headlamps', [0, 0.8], [1, 0.0]),
-    track('light.key', [0, 1.0], [1, 0.0]),
-    track('light.floor', [0, 0.8], [1, 0.0])
+    // Scene 1 inverted: it starts with a faint glow, holds, then fades to
+    // full black over the final quarter.
+    track('light.ambient', [0, 0.04], [0.25, 0.04], [1, 0.0]),
+    track('light.headlamps', [0, 0.12], [0.25, 0.12], [1, 0.0]),
+    track('light.key', [0, 0.15], [0.25, 0.15], [1, 0.0]),
+    track('light.floor', [0, 0.12], [0.25, 0.12], [1, 0.0])
   ],
   overlays: []
 };
