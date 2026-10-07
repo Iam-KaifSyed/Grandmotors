@@ -6,9 +6,10 @@ import { Footer } from '../components/site/Footer';
 interface Props {
   title: string;
   description: string;
+  showHeader?: boolean;
   showFooter?: boolean;
 }
-const { title, description, showFooter = true } = Astro.props;
+const { title, description, showHeader = true, showFooter = true } = Astro.props;
 ---
 
 <!doctype html>
@@ -27,7 +28,7 @@ const { title, description, showFooter = true } = Astro.props;
     />
   </head>
   <body class="bg-[#07090A] text-[#F2F0EA] overflow-x-hidden selection:bg-[#B88952]/30 selection:text-[#F2F0EA]">
-    <Header />
+    {showHeader && <Header />}
     <slot />
     {showFooter && <Footer client:idle />}
   </body>
