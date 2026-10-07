@@ -82,6 +82,12 @@ export function HUD() {
         {/* Minimal Navigation Links */}
         <nav className="hidden md:flex items-center gap-8 lg:gap-12 pointer-events-auto">
           <a
+            href="/"
+            className="text-[11px] font-medium tracking-[0.2em] text-[#D8D6D0]/70 hover:text-[#F2F0EA] transition-colors duration-200 uppercase"
+          >
+            HOME
+          </a>
+          <a
             href="/services"
             className="text-[11px] font-medium tracking-[0.2em] text-[#D8D6D0]/70 hover:text-[#F2F0EA] transition-colors duration-200 uppercase"
           >
