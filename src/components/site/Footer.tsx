@@ -1,11 +1,15 @@
 import { SERVICES } from './servicesData';
 import { PinIcon, PhoneIcon, WhatsAppIcon } from './Icons';
 
-const PHONE_DISPLAY = '+91 90000 00000';
-const PHONE_TEL = '+919000000000';
-const WHATSAPP_URL = 'https://wa.me/919000000000';
-const ADDRESS_LINE_1 = 'Habeeb Nagar, Moosapet';
-const ADDRESS_LINE_2 = 'Hyderabad, Telangana 500018';
+const PHONE_DISPLAY = '+91 86239 48898';
+const PHONE_TEL = '+918623948898';
+const WHATSAPP_URL = 'https://wa.me/918623948898';
+const ADDRESS_LINE_1 = 'Metro Pillar No. 842, 5-7-73/NR';
+const ADDRESS_LINE_2 = 'Beside JSP Honda Showroom, Habeeb Nagar';
+const ADDRESS_LINE_3 = 'Moosapet, Hyderabad, Telangana 500072';
+const MAPS_LINK = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+  'Grand Motors, Metro Pillar No. 842, 5-7-73/NR, beside JSP Honda Showroom, Habeeb Nagar, Moosapet, Hyderabad, Telangana 500072'
+)}`;
 
 export function Footer() {
   return (
@@ -75,13 +79,22 @@ export function Footer() {
               Reach Us
             </h3>
             <ul className="mt-4 flex flex-col gap-3 text-[13.5px] text-[#D8D6D0]/80">
-              <li className="flex items-start gap-2.5">
-                <PinIcon className="w-4 h-4 mt-0.5 shrink-0 text-[#B88952]" />
-                <span>
-                  {ADDRESS_LINE_1}
-                  <br />
-                  {ADDRESS_LINE_2}
-                </span>
+              <li>
+                <a
+                  href={MAPS_LINK}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-start gap-2.5 hover:text-[#B88952] transition-colors duration-200 cursor-pointer"
+                >
+                  <PinIcon className="w-4 h-4 mt-0.5 shrink-0 text-[#B88952]" />
+                  <span>
+                    {ADDRESS_LINE_1}
+                    <br />
+                    {ADDRESS_LINE_2}
+                    <br />
+                    {ADDRESS_LINE_3}
+                  </span>
+                </a>
               </li>
               <li>
                 <a href={`tel:${PHONE_TEL}`} className="flex items-center gap-2.5 hover:text-[#B88952] transition-colors duration-200 cursor-pointer">

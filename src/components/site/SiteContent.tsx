@@ -2,9 +2,11 @@ import { createElement } from 'react';
 import { Reveal, SectionHeading } from './Shared';
 import { ArrowRightIcon, PhoneIcon, WhatsAppIcon, PinIcon } from './Icons';
 
-const PHONE_TEL = '+919000000000';
-const WHATSAPP_URL = 'https://wa.me/919000000000';
-const MAPS_LINK = `https://www.google.com/maps/search/?api=1&query=Grand+Motors+Moosapet+Hyderabad`;
+const PHONE_TEL = '+918623948898';
+const WHATSAPP_URL = 'https://wa.me/918623948898';
+const MAPS_LINK = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+  'Grand Motors, Metro Pillar No. 842, 5-7-73/NR, beside JSP Honda Showroom, Habeeb Nagar, Moosapet, Hyderabad, Telangana 500072'
+)}`;
 
 /* ------------------------------------------------------------------ */
 /* Home page simplified content                                       */

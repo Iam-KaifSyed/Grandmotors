@@ -2,16 +2,18 @@
 import Base from '../layouts/Base.astro';
 import Reveal from '../components/site/Reveal.astro';
 import SectionHeading from '../components/site/SectionHeading.astro';
-import { PinIcon, PhoneIcon, MailIcon, ClockIcon } from '../components/site/Icons';
+import { PinIcon, PhoneIcon, ClockIcon } from '../components/site/Icons';
 
-const PHONE_DISPLAY = '+91 90000 00000';
-const PHONE_TEL = '+919000000000';
-const MAPS_QUERY = 'Grand+Motors+Moosapet+Hyderabad';
+const PHONE_DISPLAY = '+91 86239 48898';
+const PHONE_TEL = '+918623948898';
+const MAPS_QUERY = encodeURIComponent(
+  'Grand Motors, Metro Pillar No. 842, 5-7-73/NR, beside JSP Honda Showroom, Habeeb Nagar, Moosapet, Hyderabad, Telangana 500072'
+);
 const MAPS_LINK = `https://www.google.com/maps/search/?api=1&query=${MAPS_QUERY}`;
-const MAPS_EMBED = `https://maps.google.com/maps?q=${MAPS_QUERY}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
-const ADDRESS_LINE_1 = 'Habeeb Nagar, Moosapet';
-const ADDRESS_LINE_2 = 'Hyderabad, Telangana 500018';
-const EMAIL = 'service@grandmotors.in';
+const MAPS_EMBED = `https://maps.google.com/maps?q=${MAPS_QUERY}&t=&z=16&ie=UTF8&iwloc=&output=embed`;
+const ADDRESS_LINE_1 = 'Metro Pillar No. 842, 5-7-73/NR';
+const ADDRESS_LINE_2 = 'Beside JSP Honda Showroom, Habeeb Nagar';
+const ADDRESS_LINE_3 = 'Moosapet, Hyderabad, Telangana 500072';
 ---
 
 <Base 
@@ -33,16 +35,15 @@ const EMAIL = 'service@grandmotors.in';
             {
               icon: PinIcon,
               label: 'Workshop',
-              lines: ['Grand Motors', ADDRESS_LINE_1, ADDRESS_LINE_2],
+              lines: ['Grand Motors', ADDRESS_LINE_1, ADDRESS_LINE_2, ADDRESS_LINE_3],
               href: MAPS_LINK,
               external: true,
             },
             { icon: PhoneIcon, label: 'Phone', lines: [PHONE_DISPLAY], href: `tel:${PHONE_TEL}` },
-            { icon: MailIcon, label: 'Email', lines: [EMAIL], href: `mailto:${EMAIL}` },
             {
               icon: ClockIcon,
               label: 'Hours',
-              lines: ['Mon – Sat · 9:30 AM – 8:00 PM', 'Sunday · By appointment'],
+              lines: ['Open 24 hours'],
             },
           ].map((row) => {
             const Icon = row.icon;
