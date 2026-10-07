@@ -105,16 +105,22 @@ export function HUD() {
           >
             CONTACT
           </a>
-          <a
-            href="/contact"
-            className="inline-flex items-center justify-center px-5 py-2 text-xs font-semibold tracking-[0.15em] uppercase text-[#0A0C0D] bg-[#B88952] hover:bg-[#caa066] rounded-full transition-colors"
-          >
-            Book Service
-          </a>
         </nav>
 
-        {/* Dynamic Chapter Indicator */}
-        <div className="hero-chapter text-right">
+        {/* Right Side Controls */}
+        <div className="flex items-center gap-6 md:gap-10 pointer-events-auto">
+          {/* Book Service Button */}
+          <div className="hidden sm:block">
+            <a 
+              href="/contact" 
+              className="inline-flex items-center justify-center px-5 py-2 text-xs font-semibold tracking-[0.15em] uppercase text-[#0A0C0D] bg-[#B88952] hover:bg-[#caa066] rounded-full transition-colors pointer-events-auto"
+            >
+              Book Service
+            </a>
+          </div>
+
+          {/* Dynamic Chapter Indicator */}
+          <div className="hero-chapter text-right pointer-events-none">
           <div className="flex items-baseline justify-end gap-1 font-mono text-xs md:text-sm tracking-wider">
             <span ref={indicatorNumberRef} className="text-[#F2F0EA] font-semibold">
               01
@@ -128,6 +134,7 @@ export function HUD() {
           >
             GARAGE ARRIVAL
           </div>
+        </div>
         </div>
       </header>
 
