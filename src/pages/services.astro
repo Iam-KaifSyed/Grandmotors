@@ -1,9 +1,34 @@
 ---
 import Base from '../layouts/Base.astro';
 import { SERVICES } from '../components/site/servicesData';
-import { ArrowRightIcon, ShieldCheckIcon, UsersIcon, GaugeIcon, BadgeIcon, EyeIcon, SearchIcon, WrenchIcon, CheckIcon, TruckIcon } from '../components/site/Icons';
+import {
+  ArrowRightIcon,
+  ShieldCheckIcon,
+  UsersIcon,
+  GaugeIcon,
+  BadgeIcon,
+  EyeIcon,
+  SearchIcon,
+  WrenchIcon,
+  CheckIcon,
+  TruckIcon,
+  PhoneIcon,
+  ClockIcon,
+} from '../components/site/Icons';
 import Reveal from '../components/site/Reveal.astro';
 import SectionHeading from '../components/site/SectionHeading.astro';
+
+const HERO_IMAGE = '/images/services-hero.jpg';
+
+const CTA_IMAGE =
+  'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=2000&q=80';
+
+const STATS = [
+  { value: '15+', label: 'Years in the workshop' },
+  { value: '20k+', label: 'Vehicles serviced' },
+  { value: '8', label: 'Specialist service bays' },
+  { value: '4.9★', label: 'Average customer rating' },
+];
 
 const PROCESS_STEPS = [
   {
@@ -37,46 +62,168 @@ const PROCESS_STEPS = [
     body: 'Your car is returned clean, documented and ready, with a clear summary of the work done.',
   },
 ];
+
+const PROMISES = [
+  {
+    icon: ShieldCheckIcon,
+    title: 'Genuine-quality parts',
+    body: 'OEM and premium-grade components only, with a clear warranty on parts and labour.',
+  },
+  {
+    icon: GaugeIcon,
+    title: 'Factory-level diagnostics',
+    body: 'Dealer-grade scanning tools read every module so nothing is missed or guessed.',
+  },
+  {
+    icon: UsersIcon,
+    title: 'Certified technicians',
+    body: 'Brand-trained specialists who treat performance and luxury vehicles with real care.',
+  },
+  {
+    icon: BadgeIcon,
+    title: 'Transparent pricing',
+    body: 'A detailed quote before work starts. No surprise charges, no unnecessary jobs.',
+  },
+];
 ---
 
-<Base 
-  title="Services | Grand Motors" 
-  description="Explore our comprehensive range of automotive services in Moosapet, Hyderabad."
+<Base
+  title="Services | Grand Motors"
+  description="Explore the full range of automotive services at Grand Motors, Moosapet, Hyderabad — from engine diagnostics and brakes to body, paint and detailing."
 >
-  <main class="pt-32 pb-20">
-    <section class="px-6 md:px-12 lg:px-16">
+  <main class="pb-20">
+    <!-- ============================================================ -->
+    <!-- HERO                                                         -->
+    <!-- ============================================================ -->
+    <section class="relative isolate overflow-hidden">
+      <!-- Background image -->
+      <div aria-hidden="true" class="absolute inset-0 -z-10">
+        <img
+          src={HERO_IMAGE}
+          alt=""
+          loading="eager"
+          decoding="async"
+          class="h-full w-full object-cover object-center"
+        />
+        <div class="absolute inset-0 bg-[#07090A]/82"></div>
+        <div
+          class="absolute inset-0 bg-gradient-to-t from-[#07090A] via-[#07090A]/60 to-[#07090A]/30"
+        ></div>
+      </div>
+
+      <div class="px-6 md:px-12 lg:px-16 pt-40 pb-24 md:pt-48 md:pb-32">
+        <div class="max-w-7xl mx-auto">
+          <Reveal class="flex items-center gap-2.5 mb-6">
+            <span class="w-6 h-px bg-[#B88952]"></span>
+            <span class="text-[11px] font-semibold tracking-[0.3em] text-[#B88952] uppercase">
+              What We Do
+            </span>
+          </Reveal>
+          <Reveal
+            as="h1"
+            delay={80}
+            class="max-w-3xl text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-[-0.035em] text-[#F2F0EA] leading-[0.98] uppercase"
+          >
+            Services, Engineered<br class="hidden sm:block" /> Around Your Car
+          </Reveal>
+          <Reveal
+            as="p"
+            delay={160}
+            class="mt-6 max-w-xl text-sm md:text-base leading-relaxed text-[#D8D6D0]/90"
+          >
+            A complete workshop under one roof. From diagnostics to detailing, every service is
+            delivered with the same precision you expect from a premium garage.
+          </Reveal>
+
+          <Reveal delay={240} class="mt-9 flex flex-col sm:flex-row items-start sm:items-center gap-3.5">
+            <a
+              href="/contact"
+              class="group inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-full bg-[#B88952] text-[#0A0C0D] font-semibold tracking-[0.02em] transition-colors duration-200 hover:bg-[#caa066] cursor-pointer"
+            >
+              Book a Service
+              <ArrowRightIcon className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+            </a>
+            <a
+              href="#catalogue"
+              class="group inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-full border border-white/15 text-[#F2F0EA] font-semibold tracking-[0.02em] transition-colors duration-200 hover:border-[#B88952]/50 hover:bg-[#B88952]/10 cursor-pointer"
+            >
+              Browse Services
+            </a>
+          </Reveal>
+        </div>
+      </div>
+
+      <!-- Stats band -->
+      <div class="relative border-t border-white/5 bg-[#0A0C0D]/80 backdrop-blur-sm">
+        <div class="max-w-7xl mx-auto px-6 md:px-12 lg:px-16">
+          <dl class="grid grid-cols-2 lg:grid-cols-4 divide-x divide-white/5">
+            {STATS.map((s, i) => (
+              <Reveal
+                delay={i * 80}
+                class="py-7 px-4 first:pl-0 text-center lg:text-left"
+              >
+                <dt class="text-3xl md:text-4xl font-extrabold tracking-[-0.02em] text-[#F2F0EA]">
+                  {s.value}
+                </dt>
+                <dd class="mt-1 text-[12px] md:text-[13px] tracking-[0.08em] uppercase text-[#A7AAAD]">
+                  {s.label}
+                </dd>
+              </Reveal>
+            ))}
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- SERVICE CATALOGUE (image cards)                              -->
+    <!-- ============================================================ -->
+    <section id="catalogue" class="scroll-mt-28 px-6 md:px-12 lg:px-16 pt-20 md:pt-28">
       <div class="max-w-7xl mx-auto">
         <SectionHeading
-          eyebrow="What We Do"
-          intro="A complete workshop under one roof. From diagnostics to detailing, every service is delivered with the same precision you expect from a premium garage."
+          eyebrow="The Catalogue"
+          intro="Eight specialist areas, each handled by technicians who do that work every day. Tap any service to book it directly."
         >
-          <Fragment slot="title">Services, Engineered<br class="hidden sm:block" /> Around Your Car</Fragment>
+          <Fragment slot="title">Everything Your Car Needs</Fragment>
         </SectionHeading>
 
-        <div class="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {SERVICES.map((service, i) => {
             const Icon = service.icon;
             return (
               <Reveal
                 delay={(i % 3) * 70}
-                class="group relative rounded-xl border border-white/8 bg-[#111315] p-7 md:p-8 transition-colors duration-200 hover:border-[#B88952]/30 hover:bg-[#181B1E]"
+                as="article"
+                class="group relative flex flex-col overflow-hidden rounded-2xl border border-white/8 bg-[#111315] transition-colors duration-200 hover:border-[#B88952]/35"
               >
-                <div class="flex items-start gap-4 mb-4">
-                  <span class="grid place-items-center w-12 h-12 rounded-lg border border-white/10 text-[#B88952] transition-colors duration-200 group-hover:border-[#B88952]/40 group-hover:bg-[#B88952]/10 shrink-0">
-                    <Icon className="w-6 h-6" />
+                {/* Image */}
+                <div class="relative aspect-[16/10] overflow-hidden">
+                  <img
+                    src={service.image}
+                    alt={service.imageAlt}
+                    loading="lazy"
+                    decoding="async"
+                    class="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                  />
+                  <div
+                    aria-hidden="true"
+                    class="absolute inset-0 bg-gradient-to-t from-[#111315] via-[#111315]/35 to-transparent"
+                  ></div>
+                  <span class="absolute left-4 top-4 grid place-items-center w-11 h-11 rounded-xl border border-white/15 bg-[#0A0C0D]/70 text-[#B88952] backdrop-blur-sm">
+                    <Icon className="w-5 h-5" />
                   </span>
-                  <div>
-                    <h3 class="text-lg font-semibold tracking-[-0.01em] text-[#F2F0EA]">
-                      {service.title}
-                    </h3>
-                    <p class="mt-1 text-[13.5px] leading-relaxed text-[#A7AAAD]">
-                      {service.summary}
-                    </p>
-                  </div>
                 </div>
-                
-                <div class="pt-4 border-t border-white/5">
-                  <ul class="grid gap-2.5">
+
+                {/* Body */}
+                <div class="flex flex-1 flex-col p-6 md:p-7">
+                  <h3 class="text-lg font-semibold tracking-[-0.01em] text-[#F2F0EA]">
+                    {service.title}
+                  </h3>
+                  <p class="mt-1.5 text-[13.5px] leading-relaxed text-[#A7AAAD]">
+                    {service.summary}
+                  </p>
+
+                  <ul class="mt-5 grid gap-2.5 border-t border-white/5 pt-5">
                     {service.items.map((item) => (
                       <li class="flex items-start gap-2.5 text-[13px] text-[#A7AAAD]">
                         <CheckIcon className="w-4 h-4 mt-0.5 shrink-0 text-[#B88952]" />
@@ -84,6 +231,14 @@ const PROCESS_STEPS = [
                       </li>
                     ))}
                   </ul>
+
+                  <a
+                    href="/contact"
+                    class="mt-6 inline-flex items-center gap-2 self-start text-[13px] font-semibold tracking-[0.02em] text-[#B88952] transition-colors duration-200 hover:text-[#caa066] cursor-pointer"
+                  >
+                    Book this service
+                    <ArrowRightIcon className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                  </a>
                 </div>
               </Reveal>
             );
@@ -92,7 +247,9 @@ const PROCESS_STEPS = [
       </div>
     </section>
 
-    <!-- OUR PROCESS -->
+    <!-- ============================================================ -->
+    <!-- OUR PROCESS                                                  -->
+    <!-- ============================================================ -->
     <section class="mt-24 px-6 md:px-12 lg:px-16 py-20 md:py-28 bg-[#0A0C0D] border-y border-white/5">
       <div class="max-w-7xl mx-auto">
         <SectionHeading
@@ -103,7 +260,6 @@ const PROCESS_STEPS = [
         </SectionHeading>
 
         <div class="mt-16 relative">
-          <!-- Connecting line (desktop) -->
           <div
             aria-hidden="true"
             class="hidden lg:block absolute top-6 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#B88952]/30 to-transparent"
@@ -130,6 +286,95 @@ const PROCESS_STEPS = [
             })}
           </ol>
         </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- WHY GRAND MOTORS                                             -->
+    <!-- ============================================================ -->
+    <section class="px-6 md:px-12 lg:px-16 pt-20 md:pt-28">
+      <div class="max-w-7xl mx-auto">
+        <SectionHeading
+          eyebrow="The Promise"
+          intro="Premium service is as much about trust as it is about tools. Here is what every job comes with."
+        >
+          <Fragment slot="title">Why Owners Choose Us</Fragment>
+        </SectionHeading>
+
+        <div class="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {PROMISES.map((p, i) => {
+            const Icon = p.icon;
+            return (
+              <Reveal
+                delay={(i % 4) * 70}
+                class="group rounded-2xl border border-white/8 bg-[#111315] p-7 transition-colors duration-200 hover:border-[#B88952]/30 hover:bg-[#181B1E]"
+              >
+                <span class="grid place-items-center w-12 h-12 rounded-xl border border-white/10 text-[#B88952] transition-colors duration-200 group-hover:border-[#B88952]/40 group-hover:bg-[#B88952]/10">
+                  <Icon className="w-6 h-6" />
+                </span>
+                <h3 class="mt-5 text-base font-semibold tracking-[-0.01em] text-[#F2F0EA]">
+                  {p.title}
+                </h3>
+                <p class="mt-2 text-[13.5px] leading-relaxed text-[#A7AAAD]">{p.body}</p>
+              </Reveal>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- CTA BANNER (image)                                           -->
+    <!-- ============================================================ -->
+    <section class="px-6 md:px-12 lg:px-16 pt-20 md:pt-28">
+      <div class="max-w-7xl mx-auto">
+        <Reveal class="relative isolate overflow-hidden rounded-3xl border border-white/8">
+          <div aria-hidden="true" class="absolute inset-0 -z-10">
+            <img
+              src={CTA_IMAGE}
+              alt=""
+              loading="lazy"
+              decoding="async"
+              class="h-full w-full object-cover object-center"
+            />
+            <div class="absolute inset-0 bg-[#07090A]/80"></div>
+            <div
+              class="absolute inset-0 bg-gradient-to-r from-[#07090A] via-[#07090A]/70 to-transparent"
+            ></div>
+          </div>
+
+          <div class="px-7 py-14 md:px-14 md:py-20">
+            <h2 class="max-w-xl text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-[-0.03em] text-[#F2F0EA] leading-[1.03] uppercase">
+              Ready when<br /> your car is
+            </h2>
+            <p class="mt-5 max-w-md text-sm md:text-[15px] leading-relaxed text-[#D8D6D0]/90">
+              Book online in under a minute, or call the workshop and speak to a technician directly.
+              Pickup and drop within Moosapet available on request.
+            </p>
+
+            <div class="mt-9 flex flex-col sm:flex-row items-start sm:items-center gap-3.5">
+              <a
+                href="/contact"
+                class="group inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-full bg-[#B88952] text-[#0A0C0D] font-semibold tracking-[0.02em] transition-colors duration-200 hover:bg-[#caa066] cursor-pointer"
+              >
+                Book a Service
+                <ArrowRightIcon className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+              </a>
+              <a
+                href="tel:+919000000000"
+                class="group inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-full border border-white/15 text-[#F2F0EA] font-semibold tracking-[0.02em] transition-colors duration-200 hover:border-[#B88952]/50 hover:bg-[#B88952]/10 cursor-pointer"
+              >
+                <PhoneIcon className="w-4 h-4 text-[#B88952]" />
+                Call the Workshop
+              </a>
+            </div>
+
+            <p class="mt-7 inline-flex items-center gap-2 text-[12.5px] tracking-[0.06em] text-[#A7AAAD]">
+              <ClockIcon className="w-4 h-4 text-[#B88952]" />
+              Open Mon–Sat, 9:00 AM – 8:00 PM
+            </p>
+          </div>
+        </Reveal>
       </div>
     </section>
   </main>

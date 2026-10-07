@@ -18,7 +18,15 @@ export interface ServiceCategory {
   icon: IconType;
   summary: string;
   items: string[];
+  /** High-resolution Unsplash CDN image for the service card (free for commercial use). */
+  image: string;
+  /** Descriptive alt text for accessibility. */
+  imageAlt: string;
 }
+
+/** Shared Unsplash CDN sizing params for consistent, optimised delivery. */
+const IMG = (id: string) =>
+  `https://images.unsplash.com/${id}?auto=format&fit=crop&w=1200&q=80`;
 
 /**
  * Eight major service categories with their detailed service lists.
@@ -31,6 +39,8 @@ export const SERVICES: ServiceCategory[] = [
     icon: EngineIcon,
     summary:
       'Computerised fault scanning and precision engine work to keep performance exactly where it should be.',
+    image: IMG('photo-1486262715619-67b85e0b08d3'),
+    imageAlt: 'Technician inspecting a car engine bay under the hood',
     items: [
       'Computerised OBD / ECU diagnostics',
       'Engine tuning & performance checks',
@@ -47,6 +57,8 @@ export const SERVICES: ServiceCategory[] = [
     icon: BrakeIcon,
     summary:
       'Complete braking system service tuned for confident, repeatable stopping power.',
+    image: '/images/service-brakes.jpg',
+    imageAlt: 'Red Brembo brake caliper over a drilled disc rotor on a performance car wheel',
     items: [
       'Brake pad & disc replacement',
       'Brake fluid flush & bleed',
@@ -62,6 +74,8 @@ export const SERVICES: ServiceCategory[] = [
     icon: TyreIcon,
     summary:
       'Precision alignment and balancing for even wear, cleaner handling and longer tyre life.',
+    image: '/images/service-tyres.jpeg',
+    imageAlt: 'Alloy wheel and performance tyre during a tyre and alignment service',
     items: [
       'Tyre fitting & replacement',
       'Computerised wheel alignment',
@@ -77,6 +91,8 @@ export const SERVICES: ServiceCategory[] = [
     icon: BoltIcon,
     summary:
       'Climate comfort and electrical reliability, from compressor service to battery and wiring diagnostics.',
+    image: '/images/service-ac-electrical.jpg',
+    imageAlt: 'Automotive air-conditioning and electrical diagnostics work',
     items: [
       'AC gas recharge & leak detection',
       'Compressor & condenser service',
@@ -92,6 +108,8 @@ export const SERVICES: ServiceCategory[] = [
     icon: SuspensionIcon,
     summary:
       'Shocks, struts and steering components restored for a planted, controlled ride.',
+    image: '/images/service-suspension.jpg',
+    imageAlt: 'Suspension coil spring and shock absorber assembly',
     items: [
       'Shock & strut replacement',
       'Suspension bush & arm repair',
@@ -107,6 +125,8 @@ export const SERVICES: ServiceCategory[] = [
     icon: WrenchIcon,
     summary:
       'Scheduled periodic service that keeps the whole vehicle healthy and warranty-ready.',
+    image: '/images/service-general.jpg',
+    imageAlt: 'Mechanic performing routine maintenance in a modern workshop',
     items: [
       'Periodic / scheduled service',
       'Multi-point vehicle inspection',
@@ -122,6 +142,8 @@ export const SERVICES: ServiceCategory[] = [
     icon: PaintIcon,
     summary:
       'Collision repair and factory-grade refinishing with precise colour matching.',
+    image: IMG('photo-1550355291-bbee04a92027'),
+    imageAlt: 'Freshly painted car body panel with a deep gloss finish',
     items: [
       'Dent & scratch repair',
       'Panel beating & body work',
@@ -137,6 +159,8 @@ export const SERVICES: ServiceCategory[] = [
     icon: SparkleIcon,
     summary:
       'Deep cleaning, protection and finishing that returns the cabin and paint to showroom condition.',
+    image: '/images/service-detailing.jpg',
+    imageAlt: 'Polished car exterior with a deep mirror-gloss finish',
     items: [
       'Interior deep cleaning',
       'Exterior wash & polish',
