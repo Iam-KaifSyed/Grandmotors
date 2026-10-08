@@ -1,5 +1,6 @@
 import { useState, useId } from 'react';
 import { SERVICES } from './servicesData';
+import { saveBooking, type Booking } from '../../lib/bookings';
 
 export interface BookingFormData {
   fullName: string;
@@ -118,6 +119,24 @@ export const BookServiceForm = ({ onSubmit }: BookServiceFormProps = {}) => {
           bookingRef: refNum,
         };
 
+        const newBookingRecord: Booking = {
+          id: refNum,
+          status: 'Pending',
+          fullName: formState.fullName.trim(),
+          phoneNumber: formState.phoneNumber.trim(),
+          email: formState.email.trim(),
+          vehicleMake: formState.vehicleMake.trim(),
+          vehicleModel: formState.vehicleModel.trim(),
+          registrationNumber: formState.registrationNumber.trim().toUpperCase(),
+          serviceCategory: formState.serviceCategory,
+          specificService: formState.specificService,
+          preferredDate: formState.preferredDate,
+          preferredTime: formState.preferredTime,
+          additionalMessage: formState.additionalMessage.trim(),
+          createdAt: new Date().toISOString(),
+        };
+
+        saveBooking(newBookingRecord);
         setSubmittedData(finalData);
         setIsSubmitting(false);
 
@@ -140,7 +159,7 @@ export const BookServiceForm = ({ onSubmit }: BookServiceFormProps = {}) => {
 
   if (submittedData) {
     return (
-      <div class="bg-[#111315] border border-white/10 rounded-2xl p-6 sm:p-10 md:p-12 text-left relative overflow-hidden">
+      <div className="bg-[#111315] border border-white/10 rounded-2xl p-6 sm:p-10 md:p-12 text-left relative overflow-hidden">
         {/* Subtle accent glow */}
         <div className="absolute top-0 right-0 -mt-12 -mr-12 w-64 h-64 bg-[#B88952]/10 rounded-full blur-3xl pointer-events-none"></div>
 
@@ -217,6 +236,13 @@ export const BookServiceForm = ({ onSubmit }: BookServiceFormProps = {}) => {
             className="inline-flex items-center justify-center px-6 py-3.5 text-xs font-semibold tracking-[0.15em] uppercase text-[#0A0C0D] bg-[#B88952] hover:bg-[#caa066] rounded-lg transition-colors text-center"
           >
             Back to Home
+          </a>
+
+          <a
+            href={`/my-bookings?ref=${encodeURIComponent(submittedData.bookingRef || '')}&phone=${encodeURIComponent(submittedData.phoneNumber || '')}`}
+            className="inline-flex items-center justify-center px-6 py-3.5 text-xs font-semibold tracking-[0.15em] uppercase text-[#F2F0EA] bg-[#B88952]/10 hover:bg-[#B88952]/20 text-[#B88952] border border-[#B88952]/20 rounded-lg transition-colors text-center"
+          >
+            View My Bookings
           </a>
 
           <a
