@@ -1,5 +1,6 @@
 import { useState, useId } from 'react';
 import { SERVICES } from './servicesData';
+import { saveBookingRecord, type BookingRecord } from '../../lib/bookingStore';
 
 export interface BookingFormData {
   fullName: string;
@@ -139,6 +140,24 @@ export const BookServiceForm = ({ onSubmit }: BookServiceFormProps = {}) => {
           bookingRef: refNum,
         };
 
+        const newRecord: BookingRecord = {
+          id: refNum,
+          status: 'Pending',
+          fullName: formState.fullName.trim(),
+          phoneNumber: formState.phoneNumber.trim(),
+          email: formState.email.trim(),
+          vehicleMake: formState.vehicleMake.trim(),
+          vehicleModel: formState.vehicleModel.trim(),
+          registrationNumber: formState.registrationNumber.trim().toUpperCase(),
+          serviceCategory: formState.serviceCategory,
+          specificService: formState.specificService,
+          preferredDate: formState.preferredDate,
+          preferredTime: formState.preferredTime,
+          additionalMessage: formState.additionalMessage.trim(),
+          createdAt: new Date().toISOString(),
+        };
+
+        saveBookingRecord(newRecord);
         setSubmittedData(finalData);
         setIsSubmitting(false);
 
@@ -192,7 +211,7 @@ export const BookServiceForm = ({ onSubmit }: BookServiceFormProps = {}) => {
               </div>
             </div>
 
-            <div>
+            <div className="flex flex-wrap items-center gap-3">
               <button
                 type="button"
                 onClick={handleCopyBookingId}
@@ -212,6 +231,13 @@ export const BookServiceForm = ({ onSubmit }: BookServiceFormProps = {}) => {
                   </>
                 )}
               </button>
+
+              <a
+                href={`/track-booking?id=${encodeURIComponent(submittedData.bookingRef || '')}`}
+                className="inline-flex items-center justify-center gap-2 px-5 py-3.5 text-xs font-semibold tracking-[0.18em] uppercase text-[#F2F0EA] bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-colors"
+              >
+                Track Status &rarr;
+              </a>
             </div>
           </div>
 
