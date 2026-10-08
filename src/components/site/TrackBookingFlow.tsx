@@ -250,49 +250,143 @@ export const TrackBookingFlow = () => {
               </div>
             </div>
 
-            {/* Visual Step Progress Indicator */}
+            {/* Visual Step Progress Indicator — connected timeline */}
             {activeBooking.status !== 'Cancelled' ? (
               <div>
-                <div className="text-[11px] font-semibold tracking-[0.2em] uppercase text-[#A7AAAD] mb-6">
+                <div className="text-[11px] font-semibold tracking-[0.2em] uppercase text-[#A7AAAD] mb-8">
                   Service Stage
                 </div>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {STATUS_STEPS.map((step, idx) => {
-                    const stepState = getStepStatus(step.key, activeBooking.status);
-                    return (
-                      <div
-                        key={step.key}
-                        className={`p-4 rounded-xl border transition-all ${
-                          stepState === 'current'
-                            ? 'bg-[#B88952]/10 border-[#B88952] text-[#F2F0EA]'
-                            : stepState === 'completed'
-                            ? 'bg-white/5 border-white/15 text-[#D8D6D0]'
-                            : 'bg-black/20 border-white/5 text-[#A7AAAD]/40'
-                        }`}
-                      >
-                        <div className="flex items-center gap-2 mb-2">
-                          <span
-                            className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${
-                              stepState === 'current'
-                                ? 'bg-[#B88952] text-[#0A0C0D]'
-                                : stepState === 'completed'
-                                ? 'bg-white/20 text-[#F2F0EA]'
-                                : 'border border-white/10 text-[#A7AAAD]/50'
-                            }`}
-                          >
-                            {stepState === 'completed' ? '✓' : idx + 1}
-                          </span>
-                          <span className="text-xs font-bold tracking-tight">
-                            {step.label}
-                          </span>
+
+                {(() => {
+                  const stepOrder = ['Pending', 'Confirmed', 'In Progress', 'Completed'];
+                  const currentIndex = stepOrder.indexOf(activeBooking.status);
+                  // Fill fraction of the connecting line (0 at first dot, 1 at last dot)
+                  const fillPct =
+                    STATUS_STEPS.length > 1
+                      ? (Math.max(0, currentIndex) / (STATUS_STEPS.length - 1)) * 100
+                      : 0;
+
+                  return (
+                    <>
+                      {/* ---------- Desktop / tablet: horizontal timeline ---------- */}
+                      <div className="hidden sm:block">
+                        <div className="relative">
+                          {/* Base + progress line (sits behind the dots, centered on them) */}
+                          <div className="absolute left-0 right-0 top-5 h-[3px] mx-[11%]">
+                            <div className="absolute inset-0 rounded-full bg-white/10" />
+                            <div
+                              className="absolute inset-y-0 left-0 rounded-full bg-[#B88952] transition-[width] duration-700 ease-out"
+                              style={{ width: `${fillPct}%` }}
+                            />
+                          </div>
+
+                          <div className="relative grid grid-cols-4 gap-4">
+                            {STATUS_STEPS.map((step, idx) => {
+                              const stepState = getStepStatus(step.key, activeBooking.status);
+                              return (
+                                <div key={step.key} className="flex flex-col items-center text-center">
+                                  <span
+                                    className={`relative z-10 grid place-items-center w-10 h-10 rounded-full transition-all duration-300 ${
+                                      stepState === 'current'
+                                        ? 'bg-[#B88952]/15 border-2 border-[#B88952] text-[#B88952]'
+                                        : stepState === 'completed'
+                                        ? 'bg-[#B88952] text-[#0A0C0D] border-2 border-[#B88952]'
+                                        : 'bg-[#0A0C0D] border border-white/15 text-[#A7AAAD]/50'
+                                    }`}
+                                  >
+                                    {stepState === 'current' && (
+                                      <span className="absolute inset-0 rounded-full border-2 border-[#B88952]/50 animate-ping" />
+                                    )}
+                                    {stepState === 'completed' ? (
+                                      <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                        <path d="m4 12 5 5L20 6" />
+                                      </svg>
+                                    ) : stepState === 'current' ? (
+                                      <span className="w-2.5 h-2.5 rounded-full bg-[#B88952]" />
+                                    ) : (
+                                      <span className="text-[12px] font-bold">{idx + 1}</span>
+                                    )}
+                                  </span>
+                                  <span
+                                    className={`mt-4 text-[13px] font-bold tracking-tight ${
+                                      stepState === 'upcoming' ? 'text-[#A7AAAD]/50' : 'text-[#F2F0EA]'
+                                    }`}
+                                  >
+                                    {step.label}
+                                  </span>
+                                  <span
+                                    className={`mt-1 text-[11px] leading-tight ${
+                                      stepState === 'upcoming' ? 'text-[#A7AAAD]/40' : 'text-[#A7AAAD]/80'
+                                    }`}
+                                  >
+                                    {step.desc}
+                                  </span>
+                                </div>
+                              );
+                            })}
+                          </div>
                         </div>
-                        <p className="text-[11px] leading-tight text-[#A7AAAD]/80">
-                          {step.desc}
-                        </p>
                       </div>
-                    );
-                  })}
-                </div>
+
+                      {/* ---------- Mobile: vertical connected timeline ---------- */}
+                      <ol className="sm:hidden relative pl-2">
+                        {STATUS_STEPS.map((step, idx) => {
+                          const stepState = getStepStatus(step.key, activeBooking.status);
+                          const isLast = idx === STATUS_STEPS.length - 1;
+                          const nextDone =
+                            getStepStatus(STATUS_STEPS[Math.min(idx + 1, STATUS_STEPS.length - 1)].key, activeBooking.status) !== 'upcoming';
+                          return (
+                            <li key={step.key} className="relative flex gap-4 pb-7 last:pb-0">
+                              {/* Connector line */}
+                              {!isLast && (
+                                <span
+                                  className={`absolute left-[19px] top-10 bottom-0 w-[2px] ${
+                                    nextDone ? 'bg-[#B88952]' : 'bg-white/10'
+                                  }`}
+                                />
+                              )}
+                              <span
+                                className={`relative z-10 grid place-items-center w-10 h-10 shrink-0 rounded-full transition-all duration-300 ${
+                                  stepState === 'current'
+                                    ? 'bg-[#B88952]/15 border-2 border-[#B88952] text-[#B88952]'
+                                    : stepState === 'completed'
+                                    ? 'bg-[#B88952] text-[#0A0C0D] border-2 border-[#B88952]'
+                                    : 'bg-[#0A0C0D] border border-white/15 text-[#A7AAAD]/50'
+                                }`}
+                              >
+                                {stepState === 'completed' ? (
+                                  <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                    <path d="m4 12 5 5L20 6" />
+                                  </svg>
+                                ) : stepState === 'current' ? (
+                                  <span className="w-2.5 h-2.5 rounded-full bg-[#B88952]" />
+                                ) : (
+                                  <span className="text-[12px] font-bold">{idx + 1}</span>
+                                )}
+                              </span>
+                              <div className="pt-1">
+                                <span
+                                  className={`block text-[14px] font-bold tracking-tight ${
+                                    stepState === 'upcoming' ? 'text-[#A7AAAD]/50' : 'text-[#F2F0EA]'
+                                  }`}
+                                >
+                                  {step.label}
+                                </span>
+                                <span
+                                  className={`block mt-0.5 text-[12px] leading-tight ${
+                                    stepState === 'upcoming' ? 'text-[#A7AAAD]/40' : 'text-[#A7AAAD]/80'
+                                  }`}
+                                >
+                                  {step.desc}
+                                </span>
+                              </div>
+                            </li>
+                          );
+                        })}
+                      </ol>
+                    </>
+                  );
+                })()}
               </div>
             ) : (
               <div className="p-4 rounded-xl bg-red-950/20 border border-red-500/30 text-xs text-red-200">

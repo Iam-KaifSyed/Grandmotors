@@ -142,17 +142,23 @@ export const BookServiceForm = ({ onSubmit }: BookServiceFormProps = {}) => {
 
         const newRecord: BookingRecord = {
           id: refNum,
-          status: 'Pending',
+          bookingId: refNum,
           fullName: formState.fullName.trim(),
+          customerName: formState.fullName.trim(),
           phoneNumber: formState.phoneNumber.trim(),
+          phone: formState.phoneNumber.trim(),
           email: formState.email.trim(),
+          vehicle: `${formState.vehicleMake.trim()} ${formState.vehicleModel.trim()}`.trim(),
           vehicleMake: formState.vehicleMake.trim(),
           vehicleModel: formState.vehicleModel.trim(),
           registrationNumber: formState.registrationNumber.trim().toUpperCase(),
           serviceCategory: formState.serviceCategory,
           specificService: formState.specificService,
           preferredDate: formState.preferredDate,
+          requestedDate: formState.preferredDate,
           preferredTime: formState.preferredTime,
+          requestedTime: formState.preferredTime,
+          status: 'Pending',
           additionalMessage: formState.additionalMessage.trim(),
           createdAt: new Date().toISOString(),
         };
@@ -196,7 +202,7 @@ export const BookServiceForm = ({ onSubmit }: BookServiceFormProps = {}) => {
           Service Request Received
         </h2>
         <p className="text-sm sm:text-base text-[#A7AAAD] leading-relaxed max-w-2xl mb-8">
-          Thank you, <span className="text-[#F2F0EA] font-semibold">{submittedData.fullName}</span>. Your request has been received. Our team will review the details and contact you to confirm your appointment.
+          Thank you, <span className="text-[#F2F0EA] font-semibold">{submittedData.fullName}</span>. Your service request has been received and saved to your device. Our workshop team will review the requirements and contact you to confirm your appointment.
         </p>
 
         {/* Visually Prominent Booking ID Hero Card */}
@@ -233,20 +239,23 @@ export const BookServiceForm = ({ onSubmit }: BookServiceFormProps = {}) => {
               </button>
 
               <a
-                href={`/track-booking?id=${encodeURIComponent(submittedData.bookingRef || '')}`}
-                className="inline-flex items-center justify-center gap-2 px-5 py-3.5 text-xs font-semibold tracking-[0.18em] uppercase text-[#F2F0EA] bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-colors"
+                href={`/my-bookings?id=${encodeURIComponent(submittedData.bookingRef || '')}`}
+                className="inline-flex items-center justify-center gap-2 px-5 py-3.5 text-xs font-semibold tracking-[0.18em] uppercase text-[#F2F0EA] bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-colors cursor-pointer"
               >
-                Track Status &rarr;
+                View My Bookings &rarr;
               </a>
             </div>
           </div>
 
-          <p className="mt-5 pt-4 border-t border-white/5 text-xs sm:text-sm text-[#A7AAAD] leading-relaxed">
-            Please save your Booking ID for future reference. You can provide this ID when contacting Grand Motors about your service request.
-          </p>
+          <div className="mt-5 pt-4 border-t border-white/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs sm:text-sm text-[#A7AAAD]">
+            <p className="leading-relaxed">
+              Saved to <span className="text-[#F2F0EA] font-medium">My Bookings</span> on this device for instant access.
+            </p>
+            <span className="text-[11px] text-[#B88952] uppercase tracking-wider font-semibold">No Login Required</span>
+          </div>
         </div>
 
-        {/* Existing Booking Summary */}
+        {/* Booking Summary */}
         <div className="bg-[#0A0C0D] border border-white/5 rounded-xl p-6 sm:p-8 mb-8 space-y-4">
           <div className="pb-3 border-b border-white/5">
             <span className="text-xs font-semibold tracking-[0.18em] uppercase text-[#F2F0EA]">
@@ -306,17 +315,17 @@ export const BookServiceForm = ({ onSubmit }: BookServiceFormProps = {}) => {
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
           <a
-            href="/"
-            className="inline-flex items-center justify-center px-6 py-3.5 text-xs font-semibold tracking-[0.15em] uppercase text-[#0A0C0D] bg-[#B88952] hover:bg-[#caa066] rounded-lg transition-colors text-center"
+            href="/my-bookings"
+            className="inline-flex items-center justify-center px-6 py-3.5 text-xs font-semibold tracking-[0.15em] uppercase text-[#0A0C0D] bg-[#B88952] hover:bg-[#caa066] rounded-lg transition-colors text-center font-bold"
           >
-            Back to Home
+            Go to My Bookings
           </a>
 
           <a
             href="tel:+918623948898"
             className="inline-flex items-center justify-center px-6 py-3.5 text-xs font-semibold tracking-[0.15em] uppercase text-[#F2F0EA] bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-colors text-center"
           >
-            Call Us Directly
+            Call Grand Motors
           </a>
 
           <a
@@ -325,7 +334,7 @@ export const BookServiceForm = ({ onSubmit }: BookServiceFormProps = {}) => {
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center px-6 py-3.5 text-xs font-semibold tracking-[0.15em] uppercase text-[#F2F0EA] bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-colors text-center"
           >
-            WhatsApp Support
+            WhatsApp Grand Motors
           </a>
         </div>
       </div>

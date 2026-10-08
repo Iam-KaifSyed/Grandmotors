@@ -269,6 +269,11 @@ export function MyBookingsView() {
 
   return (
     <div className="space-y-10">
+      {/* ============================================================ */}
+      {/* SEARCH + LIST (shown only when no booking is selected)       */}
+      {/* ============================================================ */}
+      {!selectedBooking && (
+      <>
       {/* 1. TRACK BOOKING VIA BOOKING ID SEARCH BAR */}
       <div className="bg-[#111315] border border-white/8 rounded-2xl p-6 sm:p-8 shadow-xl relative overflow-hidden">
         {/* Subtle Gold Accent Glow */}
@@ -480,38 +485,49 @@ export function MyBookingsView() {
           </div>
         </div>
       )}
+      </>
+      )}
 
-      {/* 3. BOOKING DETAILS & LIVE STAGE MODAL */}
+      {/* ============================================================ */}
+      {/* BOOKING DETAILS — inline panel (replaces list, like Track)   */}
+      {/* ============================================================ */}
       {selectedBooking && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-[#040404]/80 backdrop-blur-md overflow-y-auto"
-          style={{ animation: 'fade-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards' }}
-          onClick={handleCloseDetails}
-        >
+        <div className="space-y-6" style={{ animation: 'detail-enter 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards' }}>
           <style>{`
-            @keyframes fade-in {
-              0% { opacity: 0; backdrop-filter: blur(0px); }
-              100% { opacity: 1; backdrop-filter: blur(12px); }
-            }
-            @keyframes modal-enter {
-              0% { opacity: 0; transform: scale(0.96) translateY(20px); }
-              100% { opacity: 1; transform: scale(1) translateY(0); }
+            @keyframes detail-enter {
+              0% { opacity: 0; transform: translateY(14px); }
+              100% { opacity: 1; transform: translateY(0); }
             }
           `}</style>
-          <div
-            className="bg-[#0c0d10]/60 backdrop-blur-2xl border border-white/5 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.8),_0_0_0_1px_rgba(184,137,82,0.1)_inset] rounded-[2rem] max-w-[900px] w-full p-6 sm:p-10 relative overflow-hidden my-auto text-left"
-            style={{ animation: 'modal-enter 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards' }}
-            onClick={(e) => e.stopPropagation()}
-          >
+
+          {/* Top actions: back + new booking */}
+          <div className="flex items-center justify-between gap-4">
+            <button
+              type="button"
+              onClick={handleCloseDetails}
+              className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.15em] uppercase text-[#A7AAAD] hover:text-[#F2F0EA] transition-colors cursor-pointer"
+            >
+              <ArrowRightIcon className="w-4 h-4 rotate-180" />
+              <span>Back to My Bookings</span>
+            </button>
+
+            <a
+              href="/book-service"
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 text-xs font-semibold tracking-[0.14em] uppercase text-[#0A0C0D] bg-[#B88952] hover:bg-[#caa066] rounded-lg transition-colors cursor-pointer font-bold"
+            >
+              <span>+ New Booking</span>
+            </a>
+          </div>
+
+          {/* Detail Card */}
+          <div className="bg-[#111315] border border-white/8 rounded-[1.75rem] relative overflow-hidden shadow-2xl text-left">
             {/* Soft Ambient Glows */}
             <div className="absolute top-[-20%] right-[-10%] w-[50%] h-[50%] bg-[#B88952]/10 rounded-full blur-[100px] pointer-events-none" />
             <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-[#B88952]/5 rounded-full blur-[80px] pointer-events-none" />
             <div className="absolute inset-0 bg-gradient-to-b from-white/[0.03] to-transparent pointer-events-none" />
 
-            <div className="relative z-10 space-y-10">
-              {/* Modal Header */}
+            {/* Header */}
+            <div className="relative z-10 px-6 sm:px-10 pt-6 sm:pt-9 pb-6 border-b border-white/5">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-0">
                 <div>
                   <span className="text-[10px] font-semibold tracking-[0.3em] text-[#B88952] uppercase block mb-2 opacity-80">
@@ -533,17 +549,12 @@ export function MyBookingsView() {
 
                 <div className="flex items-center gap-4 self-start sm:self-center">
                   <StatusIndicator status={selectedBooking.status} />
-                  <button
-                    type="button"
-                    onClick={handleCloseDetails}
-                    aria-label="Close booking details"
-                    className="w-10 h-10 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 flex items-center justify-center text-[#A7AAAD] hover:text-[#F2F0EA] hover:scale-105 transition-all cursor-pointer backdrop-blur-md shadow-sm"
-                  >
-                    ✕
-                  </button>
                 </div>
               </div>
+            </div>
 
+            {/* Body */}
+            <div className="relative z-10 px-6 sm:px-10 py-8 sm:py-10 space-y-10">
               {/* Live Service Stage Timeline */}
               <div className="bg-black/20 rounded-3xl p-6 border border-white/5 shadow-inner">
                 <TrackingStageTimeline status={selectedBooking.status} />
@@ -685,7 +696,7 @@ export function MyBookingsView() {
                     onClick={handleCloseDetails}
                     className="inline-flex items-center justify-center px-6 py-4 text-[11px] font-bold tracking-[0.2em] uppercase text-[#A7AAAD] hover:text-[#F2F0EA] bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl transition-all cursor-pointer backdrop-blur-md"
                   >
-                    Close
+                    Back to My Bookings
                   </button>
                 </div>
 
