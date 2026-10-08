@@ -111,8 +111,8 @@ export function HUD() {
         <div className="flex items-center gap-6 md:gap-10 pointer-events-auto">
           {/* Book Service Button */}
           <div className="hidden sm:block">
-            <a 
-              href="/contact" 
+            <a
+              href="/book-service"
               className="inline-flex items-center justify-center px-5 py-2 text-xs font-semibold tracking-[0.15em] uppercase text-[#0A0C0D] bg-[#B88952] hover:bg-[#caa066] rounded-full transition-colors pointer-events-auto"
             >
               Book Service

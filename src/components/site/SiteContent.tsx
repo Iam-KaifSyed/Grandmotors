@@ -46,7 +46,7 @@ export function SiteContent() {
 
           <Reveal delay={200} className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3.5">
             <a
-              href="/contact"
+              href="/book-service"
               className="group inline-flex items-center justify-center gap-2.5 w-full sm:w-auto px-7 py-3.5 rounded-full bg-[#B88952] text-[#0A0C0D] font-semibold tracking-[0.02em] transition-colors duration-200 hover:bg-[#caa066] cursor-pointer"
             >
               Book Service
