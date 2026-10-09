@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { SERVICES } from '../site/servicesData';
+import { calculateRepeatCustomers } from '../../lib/customerMatching';
 
 type Status = 'Pending' | 'Confirmed' | 'In Progress' | 'Completed' | 'Cancelled';
 
@@ -133,6 +134,10 @@ export function AdminDashboard() {
       if (base[b.status] !== undefined) base[b.status] += 1;
     });
     return base;
+  }, [bookings]);
+
+  const repeatCustomerMap = useMemo(() => {
+    return calculateRepeatCustomers(bookings || []);
   }, [bookings]);
 
   const filtered = useMemo(() => {
@@ -342,6 +347,7 @@ export function AdminDashboard() {
                     const reqTime = b.preferredTime;
                     const phoneNum = b.phoneNumber || b.phone || '—';
                     const custName = b.customerName || b.fullName || '—';
+                    const repeatInfo = repeatCustomerMap.get(b.id);
 
                     return (
                       <tr
@@ -372,6 +378,37 @@ export function AdminDashboard() {
                               title={b.email}
                             >
                               {b.email}
+                            </div>
+                          )}
+                          {repeatInfo?.isRepeatCustomer && (
+                            <div className="mt-1.5 space-y-1">
+                              <span
+                                className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold tracking-wider uppercase bg-[#E5A84B]/15 text-[#E5A84B] border border-[#E5A84B]/35"
+                                title={`Repeat customer with ${repeatInfo.totalBookingCount} total bookings`}
+                              >
+                                <span className="w-1.5 h-1.5 rounded-full bg-[#E5A84B]" />
+                                Multiple Bookings Found ({repeatInfo.totalBookingCount})
+                              </span>
+                              <div className="flex flex-wrap items-center gap-1 text-[11px]">
+                                <span className="text-[10px] text-[#A7AAAD]/70">Other:</span>
+                                {repeatInfo.otherBookingIds.map((otherId) => {
+                                  const otherBooking = (bookings || []).find((x) => x.id === otherId);
+                                  return (
+                                    <button
+                                      key={otherId}
+                                      type="button"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        if (otherBooking) openDetails(otherBooking);
+                                      }}
+                                      className="font-mono text-[11px] font-semibold text-[#B88952] hover:text-[#E5A84B] underline decoration-[#B88952]/40 hover:decoration-[#E5A84B] transition-colors cursor-pointer"
+                                      title={`View booking ${otherId}`}
+                                    >
+                                      {otherId}
+                                    </button>
+                                  );
+                                })}
+                              </div>
                             </div>
                           )}
                         </td>
@@ -484,6 +521,7 @@ export function AdminDashboard() {
                 const categoryName = serviceTitle(b.serviceCategory);
                 const phoneNum = b.phoneNumber || b.phone;
                 const custName = b.customerName || b.fullName || '—';
+                const repeatInfo = repeatCustomerMap.get(b.id);
 
                 return (
                   <div
@@ -553,6 +591,40 @@ export function AdminDashboard() {
                         </div>
                       )}
                     </div>
+
+                    {/* Repeat Customer Alert in Card */}
+                    {repeatInfo?.isRepeatCustomer && (
+                      <div className="p-3 rounded-lg bg-[#E5A84B]/10 border border-[#E5A84B]/30 space-y-1.5 text-xs">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="inline-flex items-center gap-1.5 font-bold text-[10px] tracking-wider uppercase text-[#E5A84B]">
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#E5A84B]" />
+                            Multiple Bookings Found
+                          </span>
+                          <span className="text-[10px] font-semibold text-[#F2F0EA] bg-white/10 px-2 py-0.5 rounded-full border border-white/10">
+                            {repeatInfo.totalBookingCount} Total
+                          </span>
+                        </div>
+                        <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+                          <span className="text-[10px] text-[#A7AAAD]/80">Other Bookings:</span>
+                          {repeatInfo.otherBookingIds.map((otherId) => {
+                            const otherBooking = (bookings || []).find((x) => x.id === otherId);
+                            return (
+                              <button
+                                key={otherId}
+                                type="button"
+                                onClick={() => {
+                                  if (otherBooking) openDetails(otherBooking);
+                                }}
+                                className="px-2 py-0.5 rounded bg-[#0A0C0D] border border-white/10 hover:border-[#B88952] font-mono text-[10px] font-medium text-[#B88952] hover:text-[#E5A84B] transition-colors cursor-pointer"
+                                title={`Open booking ${otherId}`}
+                              >
+                                {otherId}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
 
                     {/* Details Grid */}
                     <div className="grid grid-cols-2 gap-2.5 p-3 rounded-lg bg-[#0A0C0D]/60 border border-white/5 text-xs">
@@ -647,6 +719,55 @@ export function AdminDashboard() {
             </div>
 
             <div className="px-6 sm:px-8 py-6 space-y-6">
+              {(() => {
+                const selectedRepeatInfo = repeatCustomerMap.get(selected.id);
+                if (!selectedRepeatInfo?.isRepeatCustomer) return null;
+                return (
+                  <div className="p-4 rounded-xl bg-[#E5A84B]/10 border border-[#E5A84B]/35 space-y-2.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-[#E5A84B] animate-pulse" />
+                        <span className="text-xs font-bold tracking-wider uppercase text-[#E5A84B]">
+                          Multiple Bookings Found
+                        </span>
+                      </div>
+                      <span className="text-[11px] font-semibold text-[#F2F0EA] bg-[#B88952]/20 px-2.5 py-0.5 rounded-full border border-[#B88952]/30">
+                        {selectedRepeatInfo.totalBookingCount} Total Bookings
+                      </span>
+                    </div>
+                    <p className="text-xs text-[#A7AAAD] leading-relaxed">
+                      This customer has {selectedRepeatInfo.totalBookingCount} bookings with matching normalized phone number or email address.
+                    </p>
+                    <div className="flex flex-wrap items-center gap-2 pt-1">
+                      <span className="text-xs font-semibold text-[#A7AAAD]/80">Switch to:</span>
+                      {selectedRepeatInfo.otherBookingIds.map((otherId) => {
+                        const other = (bookings || []).find((b) => b.id === otherId);
+                        return (
+                          <button
+                            key={otherId}
+                            type="button"
+                            onClick={() => {
+                              if (other) {
+                                openDetails(other);
+                              }
+                            }}
+                            className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-mono font-semibold text-[#F2F0EA] bg-[#0A0C0D] hover:bg-[#B88952] hover:text-[#0A0C0D] border border-white/10 hover:border-[#B88952] rounded-lg transition-all cursor-pointer"
+                            title={`Switch to booking ${otherId}`}
+                          >
+                            <span>{otherId}</span>
+                            {other && (
+                              <span className="text-[10px] font-sans opacity-70">
+                                ({other.status})
+                              </span>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })()}
+
               <div className="grid sm:grid-cols-2 gap-x-10 gap-y-5 text-sm">
                 <Field label="Customer Name" value={selected.customerName} />
                 <Field label="Phone" value={selected.phoneNumber} mono />
