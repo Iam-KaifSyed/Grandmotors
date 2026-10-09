@@ -2,6 +2,7 @@ export const prerender = false;
 import type { APIRoute } from 'astro';
 import { normalizeBooking } from '../../../lib/bookingStore';
 import { isAuthorizedAdmin } from '../../../lib/serverAuth';
+import { getAppEnv, getDatabase } from '../../../lib/env';
 
 const PHONE_REGEX = /^\+?[\d\s-]{8,18}$/;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -9,15 +10,17 @@ const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 
 export const GET: APIRoute = async ({ request, locals }) => {
   try {
+    const env = getAppEnv(locals);
+
     // Priority 2: Admin-only access for listing all customer records
-    if (!isAuthorizedAdmin(request, locals.runtime?.env)) {
+    if (!isAuthorizedAdmin(request, env)) {
       return new Response(
         JSON.stringify({ error: 'Unauthorized: Admin authentication required to list customer bookings.' }),
         { status: 401, headers: { 'Content-Type': 'application/json' } }
       );
     }
 
-    const db = locals.runtime?.env?.DB;
+    const db = getDatabase(locals, env);
     if (!db) {
       return new Response(JSON.stringify({ error: 'Database binding DB is not available in runtime environment' }), {
         status: 503,
@@ -68,7 +71,8 @@ export const GET: APIRoute = async ({ request, locals }) => {
 
 export const POST: APIRoute = async ({ request, locals }) => {
   try {
-    const db = locals.runtime?.env?.DB;
+    const env = getAppEnv(locals);
+    const db = getDatabase(locals, env);
     if (!db) {
       return new Response(JSON.stringify({ error: 'Database service is temporarily unavailable. Please retry shortly.' }), {
         status: 503,

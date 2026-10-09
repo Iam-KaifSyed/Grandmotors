@@ -1,0 +1,70 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  /** When true, renders the admin top bar with brand + logout. */
+  chrome?: boolean;
+}
+const { title, chrome = true } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" class="bg-[#07090A] text-[#F2F0EA] antialiased">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#07090A" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>{title}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="min-h-screen bg-[#07090A] text-[#F2F0EA] selection:bg-[#B88952]/30 selection:text-[#F2F0EA]">
+    {chrome && (
+      <header class="sticky top-0 z-30 border-b border-white/8 bg-[#0A0C0D]/90 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between">
+          <a href="/admin" class="flex items-center gap-2.5 cursor-pointer group">
+            <span class="text-sm font-semibold tracking-[0.25em] text-[#F2F0EA] uppercase group-hover:text-[#B88952] transition-colors">
+              Grand Motors
+            </span>
+            <span class="w-1.5 h-1.5 rounded-full bg-[#B88952]"></span>
+            <span class="ml-2 text-[10px] font-semibold tracking-[0.22em] uppercase text-[#A7AAAD]/70 border border-white/10 rounded-full px-2.5 py-0.5">
+              Admin
+            </span>
+          </a>
+          <button
+            type="button"
+            id="admin-logout"
+            class="inline-flex items-center gap-2 px-4 py-2 text-[11px] font-semibold tracking-[0.16em] uppercase text-[#A7AAAD] hover:text-[#F2F0EA] bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-colors cursor-pointer"
+          >
+            Log out
+          </button>
+        </div>
+      </header>
+    )}
+
+    <main class="max-w-7xl mx-auto px-5 sm:px-8 py-8 sm:py-10">
+      <slot />
+    </main>
+
+    {chrome && (
+      <script>
+        const btn = document.getElementById('admin-logout');
+        btn?.addEventListener('click', async () => {
+          btn.setAttribute('disabled', 'true');
+          try {
+            await fetch('/api/admin/logout', { method: 'POST' });
+          } catch {
+            /* ignore */
+          }
+          window.location.href = '/admin/login';
+        });
+      </script>
+    )}
+  </body>
+</html>

@@ -1,0 +1,123 @@
+---
+export const prerender = false;
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { isValidAdminSession } from '../../lib/serverAuth';
+
+// If already authenticated, skip the login form.
+let alreadyAuthed = false;
+try {
+  const admin = await Astro.session?.get('admin');
+  const adminSince = await Astro.session?.get('adminSince');
+  alreadyAuthed = isValidAdminSession({ admin, adminSince });
+} catch {
+  alreadyAuthed = false;
+}
+if (alreadyAuthed) {
+  return Astro.redirect('/admin', 302);
+}
+---
+
+<AdminLayout title="Admin Login | Grand Motors" chrome={false}>
+  <div class="min-h-[70vh] flex items-center justify-center">
+    <div class="w-full max-w-md">
+      <div class="flex items-center justify-center gap-2.5 mb-8">
+        <span class="text-sm font-semibold tracking-[0.25em] text-[#F2F0EA] uppercase">Grand Motors</span>
+        <span class="w-1.5 h-1.5 rounded-full bg-[#B88952]"></span>
+      </div>
+
+      <div class="bg-[#111315] border border-white/8 rounded-2xl p-7 sm:p-9 shadow-2xl relative overflow-hidden">
+        <div aria-hidden="true" class="absolute top-0 right-0 -mt-10 -mr-10 w-56 h-56 bg-[#B88952]/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="relative">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="w-4 h-px bg-[#B88952]"></span>
+            <span class="text-[10px] font-semibold tracking-[0.25em] text-[#B88952] uppercase">Workshop Console</span>
+          </div>
+          <h1 class="text-2xl font-extrabold tracking-[-0.01em] text-[#F2F0EA] uppercase">Admin Sign In</h1>
+          <p class="mt-2 text-[13px] text-[#A7AAAD] leading-relaxed">
+            Enter your admin access key to manage bookings.
+          </p>
+
+          <div
+            id="login-error"
+            class="hidden mt-5 p-3.5 rounded-lg bg-red-950/40 border border-red-500/30 text-red-200 text-[13px] leading-relaxed"
+            role="alert"
+          ></div>
+
+          <form id="login-form" class="mt-6 space-y-4" novalidate>
+            <div>
+              <label for="admin-password" class="block text-[11px] font-semibold tracking-[0.14em] text-[#F2F0EA] uppercase mb-2">
+                Access Key
+              </label>
+              <input
+                id="admin-password"
+                name="password"
+                type="password"
+                autocomplete="current-password"
+                required
+                placeholder="••••••••••••"
+                class="w-full bg-[#0A0C0D] border border-white/10 rounded-lg px-4 py-3.5 text-base text-[#F2F0EA] placeholder-[#A7AAAD]/40 focus:border-[#B88952] focus:outline-none transition-colors"
+              />
+            </div>
+
+            <button
+              type="submit"
+              id="login-submit"
+              class="w-full inline-flex items-center justify-center px-6 py-3.5 text-xs font-semibold tracking-[0.2em] uppercase text-[#0A0C0D] bg-[#B88952] hover:bg-[#caa066] active:bg-[#a67943] disabled:opacity-50 rounded-lg transition-all shadow-lg shadow-[#B88952]/10 cursor-pointer"
+            >
+              Sign In
+            </button>
+          </form>
+
+          <p class="mt-6 text-center text-[11px] text-[#A7AAAD]/50">
+            <a href="/" class="hover:text-[#B88952] transition-colors cursor-pointer">&larr; Back to site</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('login-form') as HTMLFormElement | null;
+    const errorBox = document.getElementById('login-error') as HTMLDivElement | null;
+    const submitBtn = document.getElementById('login-submit') as HTMLButtonElement | null;
+    const pwInput = document.getElementById('admin-password') as HTMLInputElement | null;
+
+    const showError = (msg: string) => {
+      if (!errorBox) return;
+      errorBox.textContent = msg;
+      errorBox.classList.remove('hidden');
+    };
+
+    form?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorBox?.classList.add('hidden');
+      const password = pwInput?.value ?? '';
+      if (!password) {
+        showError('Please enter your access key.');
+        return;
+      }
+      submitBtn?.setAttribute('disabled', 'true');
+      if (submitBtn) submitBtn.textContent = 'Signing in…';
+      try {
+        const resp = await fetch('/api/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password }),
+        });
+        if (resp.ok) {
+          window.location.href = '/admin';
+          return;
+        }
+        const data = await resp.json().catch(() => ({}));
+        showError(data.error || 'Sign in failed. Please try again.');
+      } catch {
+        showError('Network error. Please check your connection and try again.');
+      } finally {
+        submitBtn?.removeAttribute('disabled');
+        if (submitBtn) submitBtn.textContent = 'Sign In';
+        if (pwInput) pwInput.value = '';
+      }
+    });
+  </script>
+</AdminLayout>

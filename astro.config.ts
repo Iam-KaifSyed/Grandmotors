@@ -12,5 +12,8 @@ export default defineConfig({
     build: {
       assetsInlineLimit: 0,
     },
+    optimizeDeps: {
+      exclude: ['astro:middleware', 'astro/virtual-modules/middleware.js'],
+    },
   },
 });

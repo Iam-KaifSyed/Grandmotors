@@ -1,0 +1,23 @@
+---
+export const prerender = false;
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { AdminDashboard } from '../../components/admin/AdminDashboard';
+import { isValidAdminSession } from '../../lib/serverAuth';
+
+// Defense in depth: middleware already gates /admin/*, but re-check here too.
+let authed = false;
+try {
+  const admin = await Astro.session?.get('admin');
+  const adminSince = await Astro.session?.get('adminSince');
+  authed = isValidAdminSession({ admin, adminSince });
+} catch {
+  authed = false;
+}
+if (!authed) {
+  return Astro.redirect('/admin/login', 302);
+}
+---
+
+<AdminLayout title="Admin Dashboard | Grand Motors">
+  <AdminDashboard client:load />
+</AdminLayout>

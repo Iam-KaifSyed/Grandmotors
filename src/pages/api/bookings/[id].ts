@@ -1,13 +1,15 @@
 export const prerender = false;
 import type { APIRoute } from 'astro';
 import { isAuthorizedAdmin } from '../../../lib/serverAuth';
+import { getAppEnv, getDatabase } from '../../../lib/env';
 
 const ALLOWED_STATUSES = ['Pending', 'Confirmed', 'In Progress', 'Completed', 'Cancelled'] as const;
 const ID_FORMAT_REGEX = /^(?:GM-)?[0-9A-Z]{4,12}$/i;
 
 export const GET: APIRoute = async ({ params, request, locals }) => {
   try {
-    const db = locals.runtime?.env?.DB;
+    const env = getAppEnv(locals);
+    const db = getDatabase(locals, env);
     if (!db) {
       return new Response(JSON.stringify({ error: 'Database binding DB is not available in runtime environment' }), {
         status: 503,
@@ -39,7 +41,7 @@ export const GET: APIRoute = async ({ params, request, locals }) => {
     }
     
     const row = results[0];
-    const isAdmin = isAuthorizedAdmin(request, locals.runtime?.env);
+    const isAdmin = isAuthorizedAdmin(request, env);
 
     // Public tracking response: omit sensitive PII (phone number, email, internal messages)
     const mapped = {
@@ -81,15 +83,17 @@ export const GET: APIRoute = async ({ params, request, locals }) => {
 
 export const PATCH: APIRoute = async ({ params, request, locals }) => {
   try {
+    const env = getAppEnv(locals);
+
     // Priority 2: Admin authorization required to change booking status
-    if (!isAuthorizedAdmin(request, locals.runtime?.env)) {
+    if (!isAuthorizedAdmin(request, env)) {
       return new Response(
         JSON.stringify({ error: 'Unauthorized: Admin authentication required to modify booking status.' }),
         { status: 401, headers: { 'Content-Type': 'application/json' } }
       );
     }
 
-    const db = locals.runtime?.env?.DB;
+    const db = getDatabase(locals, env);
     if (!db) {
       return new Response(JSON.stringify({ error: 'Database binding DB is not available in runtime environment' }), {
         status: 503,
