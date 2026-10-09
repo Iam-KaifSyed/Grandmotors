@@ -3,11 +3,7 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "grand-motor",
   "compatibility_date": "2026-10-01",
-  "main": "./dist/server/entry.mjs",
-  "assets": {
-    "directory": "./dist/client",
-    "not_found_handling": "404-page"
-  },
+  "compatibility_flags": ["nodejs_compat"],
   "d1_databases": [
     {
       "binding": "DB",

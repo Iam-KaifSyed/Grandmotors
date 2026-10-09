@@ -79,19 +79,17 @@ export const TrackBookingFlow = () => {
       console.warn('Backend fetch failed, falling back to local DB', err);
     }
 
-    // Fallback block if backend isn't ready or ID is from purely local/demo mockup
-    setTimeout(() => {
-      const match = getBookingById(trimmed);
-      if (match) {
-        setActiveBooking(match);
-      } else {
-        setActiveBooking(null);
-        setErrorMessage(
-          `No active booking found for ID "${trimmed}". Please double-check your reference code or contact support.`
-        );
-      }
-      setIsLoading(false);
-    }, 400);
+    // Fallback block if backend isn't ready or ID is from local/demo mockup
+    const match = getBookingById(trimmed);
+    if (match) {
+      setActiveBooking(match);
+    } else {
+      setActiveBooking(null);
+      setErrorMessage(
+        `No active booking found for ID "${trimmed}". Please double-check your reference code or contact support.`
+      );
+    }
+    setIsLoading(false);
   };
 
   const handleSubmit = (e: React.FormEvent) => {

@@ -178,4 +178,56 @@ describe('Customer Booking Store (localStorage)', () => {
     removeCustomerBooking('GM-777777');
     expect(getCustomerBookings().length).toBe(0);
   });
+
+  it('preserves list position when updating an existing booking in-place', () => {
+    saveBookingRecord({ id: 'GM-000001', fullName: 'First', phoneNumber: '1', vehicleMake: 'A', vehicleModel: '1', registrationNumber: 'R1', serviceCategory: 'c1', preferredDate: '2026-10-01', preferredTime: 't1', status: 'Pending', createdAt: '2026-10-01' });
+    saveBookingRecord({ id: 'GM-000002', fullName: 'Second', phoneNumber: '2', vehicleMake: 'B', vehicleModel: '2', registrationNumber: 'R2', serviceCategory: 'c2', preferredDate: '2026-10-02', preferredTime: 't2', status: 'Pending', createdAt: '2026-10-02' });
+    saveBookingRecord({ id: 'GM-000003', fullName: 'Third', phoneNumber: '3', vehicleMake: 'C', vehicleModel: '3', registrationNumber: 'R3', serviceCategory: 'c3', preferredDate: '2026-10-03', preferredTime: 't3', status: 'Pending', createdAt: '2026-10-03' });
+
+    // Initial order: 3, 2, 1
+    let bookings = getCustomerBookings();
+    expect(bookings.map((b) => b.id)).toEqual(['GM-000003', 'GM-000002', 'GM-000001']);
+
+    // Update middle item (GM-000002)
+    saveBookingRecord({ id: 'GM-000002', status: 'In Progress' });
+    bookings = getCustomerBookings();
+
+    // Order must remain 3, 2, 1
+    expect(bookings.map((b) => b.id)).toEqual(['GM-000003', 'GM-000002', 'GM-000001']);
+    expect(bookings[1].status).toBe('In Progress');
+    expect(bookings[1].fullName).toBe('Second');
+    expect(bookings[1].phoneNumber).toBe('2');
+  });
+
+  it('preserves existing local customer PII when updating with partial server response', () => {
+    saveBookingRecord({
+      id: 'GM-999999',
+      fullName: 'Private User',
+      phoneNumber: '+91 99999 88888',
+      email: 'private@example.com',
+      vehicleMake: 'Ferrari',
+      vehicleModel: 'Roma',
+      registrationNumber: 'TS 09 F 9999',
+      serviceCategory: 'performance',
+      preferredDate: '2026-10-25',
+      preferredTime: 'Morning',
+      status: 'Pending',
+      createdAt: '2026-10-05',
+    });
+
+    // Simulate update from sanitized public tracking API (no phone, no email)
+    saveBookingRecord({
+      id: 'GM-999999',
+      status: 'Completed',
+      preferredDate: '2026-10-26'
+    });
+
+    const stored = getBookingById('GM-999999');
+    expect(stored).not.toBeNull();
+    expect(stored?.status).toBe('Completed');
+    expect(stored?.preferredDate).toBe('2026-10-26');
+    expect(stored?.phoneNumber).toBe('+91 99999 88888');
+    expect(stored?.email).toBe('private@example.com');
+    expect(stored?.vehicleMake).toBe('Ferrari');
+  });
 });

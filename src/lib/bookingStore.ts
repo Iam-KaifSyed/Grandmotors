@@ -28,16 +28,20 @@ const LEGACY_STORAGE_KEY = 'gm_active_bookings';
 
 /**
  * Normalizes a BookingRecord to ensure all alias fields are populated.
+ * Optionally merges with an existing record to preserve user fields during partial updates.
  */
-export function normalizeBooking(raw: Partial<BookingRecord> & { id: string }): BookingRecord {
-  const id = raw.id || raw.bookingId || '';
-  const fullName = (raw.fullName || raw.customerName || '').trim();
-  const phoneNumber = (raw.phoneNumber || raw.phone || '').trim();
-  const vehicleMake = (raw.vehicleMake || '').trim();
-  const vehicleModel = (raw.vehicleModel || '').trim();
-  const vehicle = raw.vehicle || [vehicleMake, vehicleModel].filter(Boolean).join(' ') || 'Vehicle';
-  const preferredDate = raw.preferredDate || raw.requestedDate || '';
-  const preferredTime = raw.preferredTime || raw.requestedTime || '';
+export function normalizeBooking(
+  raw: Partial<BookingRecord> & { id: string },
+  existing?: BookingRecord
+): BookingRecord {
+  const id = raw.id || raw.bookingId || existing?.id || '';
+  const fullName = (raw.fullName || raw.customerName || existing?.fullName || '').trim();
+  const phoneNumber = (raw.phoneNumber || raw.phone || existing?.phoneNumber || '').trim();
+  const vehicleMake = (raw.vehicleMake || existing?.vehicleMake || '').trim();
+  const vehicleModel = (raw.vehicleModel || existing?.vehicleModel || '').trim();
+  const vehicle = raw.vehicle || existing?.vehicle || [vehicleMake, vehicleModel].filter(Boolean).join(' ') || 'Vehicle';
+  const preferredDate = raw.preferredDate || raw.requestedDate || existing?.preferredDate || '';
+  const preferredTime = raw.preferredTime || raw.requestedTime || existing?.preferredTime || '';
 
   return {
     id,
@@ -46,20 +50,20 @@ export function normalizeBooking(raw: Partial<BookingRecord> & { id: string }): 
     customerName: fullName,
     phoneNumber,
     phone: phoneNumber,
-    email: raw.email?.trim() || '',
+    email: (raw.email !== undefined ? raw.email : existing?.email || '').trim(),
     vehicle,
     vehicleMake: vehicleMake || vehicle,
     vehicleModel: vehicleModel || '',
-    registrationNumber: (raw.registrationNumber || '').trim().toUpperCase(),
-    serviceCategory: raw.serviceCategory || '',
-    specificService: raw.specificService || '',
+    registrationNumber: (raw.registrationNumber || existing?.registrationNumber || '').trim().toUpperCase(),
+    serviceCategory: raw.serviceCategory || existing?.serviceCategory || '',
+    specificService: raw.specificService || existing?.specificService || '',
     preferredDate,
     requestedDate: preferredDate,
     preferredTime,
     requestedTime: preferredTime,
-    status: raw.status || 'Pending',
-    additionalMessage: raw.additionalMessage?.trim() || '',
-    createdAt: raw.createdAt || new Date().toISOString(),
+    status: raw.status || existing?.status || 'Pending',
+    additionalMessage: (raw.additionalMessage !== undefined ? raw.additionalMessage : existing?.additionalMessage || '').trim(),
+    createdAt: raw.createdAt || existing?.createdAt || new Date().toISOString(),
   };
 }
 
@@ -86,7 +90,6 @@ export function getCustomerBookings(): BookingRecord[] {
       try {
         const legacyParsed = JSON.parse(legacyRaw);
         if (Array.isArray(legacyParsed) && legacyParsed.length > 0) {
-          // Filter out purely mock entries if user made their own
           const migrated = legacyParsed.map((item) => normalizeBooking(item));
           localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
           return migrated;
@@ -105,20 +108,31 @@ export function getCustomerBookings(): BookingRecord[] {
 
 /**
  * Saves a customer booking to localStorage under `grandmotors_bookings`.
- * Ensures newest booking is at the front and prevents duplicate IDs.
+ * If updating an existing booking ID, preserves its position in the list.
+ * If creating a new booking, prepends it to the top.
  */
 export function saveBookingRecord(booking: BookingRecord | Partial<BookingRecord> & { id: string }): void {
   if (typeof window === 'undefined') return;
   try {
-    const normalized = normalizeBooking(booking);
     const current = getCustomerBookings();
-    
-    // Prevent duplicates by ID (case-insensitive)
-    const filtered = current.filter(
-      (b) => b.id.trim().toUpperCase() !== normalized.id.trim().toUpperCase()
+    const cleanId = (booking.id || booking.bookingId || '').trim().toUpperCase();
+    const existingIndex = current.findIndex(
+      (b) => b.id.trim().toUpperCase() === cleanId
     );
 
-    const updated = [normalized, ...filtered];
+    const existing = existingIndex >= 0 ? current[existingIndex] : undefined;
+    const normalized = normalizeBooking(booking, existing);
+
+    let updated: BookingRecord[];
+    if (existingIndex >= 0) {
+      // In-place update to preserve ordering
+      updated = [...current];
+      updated[existingIndex] = normalized;
+    } else {
+      // Prepend newest booking
+      updated = [normalized, ...current];
+    }
+
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
   } catch (err) {
     console.error('Failed to save customer booking to localStorage', err);

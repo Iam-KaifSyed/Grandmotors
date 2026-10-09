@@ -4,6 +4,7 @@ import {
   getCustomerBookings,
   getBookingById,
   saveBookingRecord,
+  STORAGE_KEY,
   type BookingRecord,
   type BookingStatus,
 } from '../../lib/bookingStore';
@@ -175,21 +176,47 @@ export function MyBookingsView() {
           const resp = await fetch(`/api/bookings/${encodeURIComponent(bk.id)}`);
           if (resp.ok) {
             const data = await resp.json();
-            if (data.status !== bk.status) {
+            let changed = false;
+            const updated: BookingRecord = { ...bk };
+
+            // Server-managed fields to synchronize if provided by server
+            const syncableFields: Array<keyof BookingRecord> = [
+              'status',
+              'preferredDate',
+              'requestedDate',
+              'preferredTime',
+              'requestedTime',
+              'specificService',
+              'serviceCategory',
+              'vehicleMake',
+              'vehicleModel',
+              'registrationNumber'
+            ];
+
+            for (const key of syncableFields) {
+              if (data[key] !== undefined && data[key] !== '' && data[key] !== bk[key]) {
+                (updated as any)[key] = data[key];
+                changed = true;
+              }
+            }
+
+            if (changed) {
               modified = true;
-              return { ...bk, ...data };
+              return updated;
             }
           }
         } catch (e) {
-          // ignore
+          // ignore offline / network errors
         }
         return bk;
       }));
 
       if (modified) {
-        // save the synced back to local storage
-        synced.forEach(s => saveBookingRecord(s));
-        setBookings(getCustomerBookings());
+        // save the synced list directly to preserve user booking ordering
+        if (typeof window !== 'undefined') {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(synced));
+        }
+        setBookings(synced);
       }
     }
   };
@@ -268,8 +295,11 @@ export function MyBookingsView() {
     setIsSearching(true);
     setTrackError(null);
 
+    const normalized = clean.toUpperCase();
+    const queryId = normalized.startsWith('GM-') ? normalized : `GM-${normalized}`;
+
     try {
-      const resp = await fetch(`/api/bookings/${encodeURIComponent(clean)}`);
+      const resp = await fetch(`/api/bookings/${encodeURIComponent(queryId)}`);
       if (resp.ok) {
         const data = await resp.json();
         saveBookingRecord(data);
@@ -280,24 +310,18 @@ export function MyBookingsView() {
         return;
       }
     } catch (err) {
-      // Ignore and fallback
+      console.warn('Backend fetch failed, checking local backup', err);
     }
 
-    setTimeout(() => {
-      const result = getBookingById(clean);
-      if (result) {
-        // Auto-save to local list if not already present
-        saveBookingRecord(result);
-        refreshBookings();
-        handleOpenDetails(result);
-        setTrackInputId('');
-      } else {
-        setTrackError(
-          `No active booking found for ID "${clean}". Please verify your reference code or contact workshop support.`
-        );
-      }
-      setIsSearching(false);
-    }, 350);
+    // Fallback check in local storage / demo records
+    const localMatch = getBookingById(clean);
+    if (localMatch) {
+      handleOpenDetails(localMatch);
+      setTrackInputId('');
+    } else {
+      setTrackError(`No active booking found for ID "${clean}". Please verify your code.`);
+    }
+    setIsSearching(false);
   };
 
   if (!isMounted) {

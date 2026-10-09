@@ -38,6 +38,7 @@ export const BookServiceForm = ({ onSubmit }: BookServiceFormProps = {}) => {
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [serverError, setServerError] = useState<string | null>(null);
   const [submittedData, setSubmittedData] = useState<BookingFormData | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
@@ -68,8 +69,8 @@ export const BookServiceForm = ({ onSubmit }: BookServiceFormProps = {}) => {
 
     if (!formState.phoneNumber.trim()) {
       newErrors.phoneNumber = 'Phone Number is required';
-    } else if (!/^\+?[\d\s-]{8,15}$/.test(formState.phoneNumber.trim())) {
-      newErrors.phoneNumber = 'Enter a valid phone number';
+    } else if (!/^\+?[\d\s-]{8,18}$/.test(formState.phoneNumber.trim())) {
+      newErrors.phoneNumber = 'Enter a valid phone number (8-18 digits)';
     }
 
     if (formState.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formState.email.trim())) {
@@ -124,64 +125,93 @@ export const BookServiceForm = ({ onSubmit }: BookServiceFormProps = {}) => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isSubmitting) return;
+    setServerError(null);
 
     if (validate()) {
       setIsSubmitting(true);
 
-      // Simulate submission delay
-      setTimeout(() => {
-        const refNum = `GM-${Math.floor(100000 + Math.random() * 900000)}`;
-        const finalData: BookingFormData = {
-          ...formState,
-          submittedAt: new Date().toISOString(),
-          bookingRef: refNum,
-        };
-
-        const newRecord: BookingRecord = {
-          id: refNum,
-          bookingId: refNum,
+      try {
+        const payload = {
           fullName: formState.fullName.trim(),
-          customerName: formState.fullName.trim(),
           phoneNumber: formState.phoneNumber.trim(),
-          phone: formState.phoneNumber.trim(),
           email: formState.email.trim(),
-          vehicle: `${formState.vehicleMake.trim()} ${formState.vehicleModel.trim()}`.trim(),
           vehicleMake: formState.vehicleMake.trim(),
           vehicleModel: formState.vehicleModel.trim(),
           registrationNumber: formState.registrationNumber.trim().toUpperCase(),
           serviceCategory: formState.serviceCategory,
           specificService: formState.specificService,
           preferredDate: formState.preferredDate,
-          requestedDate: formState.preferredDate,
           preferredTime: formState.preferredTime,
-          requestedTime: formState.preferredTime,
-          status: 'Pending',
           additionalMessage: formState.additionalMessage.trim(),
+        };
+
+        const resp = await fetch('/api/bookings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await resp.json().catch(() => ({}));
+
+        if (!resp.ok) {
+          setServerError(
+            data.error || 'Unable to schedule booking on the server. Please check your information and try again.'
+          );
+          setIsSubmitting(false);
+          return;
+        }
+
+        const serverId = data.id || data.booking?.id;
+        const confirmedRecord: BookingRecord = data.booking || {
+          id: serverId,
+          bookingId: serverId,
+          fullName: payload.fullName,
+          customerName: payload.fullName,
+          phoneNumber: payload.phoneNumber,
+          phone: payload.phoneNumber,
+          email: payload.email,
+          vehicle: `${payload.vehicleMake} ${payload.vehicleModel}`.trim(),
+          vehicleMake: payload.vehicleMake,
+          vehicleModel: payload.vehicleModel,
+          registrationNumber: payload.registrationNumber,
+          serviceCategory: payload.serviceCategory,
+          specificService: payload.specificService,
+          preferredDate: payload.preferredDate,
+          requestedDate: payload.preferredDate,
+          preferredTime: payload.preferredTime,
+          requestedTime: payload.preferredTime,
+          status: 'Pending',
+          additionalMessage: payload.additionalMessage,
           createdAt: new Date().toISOString(),
         };
 
-        // Try to save to backend API first, if it fails gracefully fallback to just localStorage
-        fetch('/api/bookings', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(newRecord)
-        }).catch(err => console.error('Failed to save booking to backend:', err));
+        const finalData: BookingFormData = {
+          ...formState,
+          submittedAt: confirmedRecord.createdAt,
+          bookingRef: serverId,
+        };
 
-        saveBookingRecord(newRecord);
+        // Save to customer local convenience storage ONLY upon verified server confirmation
+        saveBookingRecord(confirmedRecord);
         setSubmittedData(finalData);
         setIsSubmitting(false);
 
         if (onSubmit) {
           onSubmit(finalData);
         }
-      }, 600);
+      } catch (err) {
+        console.error('Network or server error submitting booking:', err);
+        setServerError('A network connection error occurred. Please check your connection and try again.');
+        setIsSubmitting(false);
+      }
     }
   };
 
   const clearError = (field: string) => {
+    if (serverError) setServerError(null);
     if (errors[field]) {
       setErrors((prev) => {
         const updated = { ...prev };
@@ -354,6 +384,22 @@ export const BookServiceForm = ({ onSubmit }: BookServiceFormProps = {}) => {
       noValidate
       className="bg-[#111315] border border-white/8 rounded-2xl p-6 sm:p-10 md:p-12 space-y-10"
     >
+      {/* Server Error Notification Banner */}
+      {serverError && (
+        <div className="p-4 rounded-xl bg-red-950/40 border border-red-500/40 text-red-200 flex items-start gap-3.5 shadow-lg animate-fade-in">
+          <div className="w-5 h-5 rounded-full bg-red-500/20 text-red-400 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
+            ✕
+          </div>
+          <div className="space-y-1 text-xs sm:text-sm">
+            <p className="font-semibold text-red-100">Booking Submission Unsuccessful</p>
+            <p className="text-red-200/90 leading-relaxed">{serverError}</p>
+            <p className="text-[11px] text-red-300/70 pt-1">
+              Your details are preserved below. Please correct any issues and click <strong>Request Service</strong> to retry.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* 1. Customer Details */}
       <div>
         <div className="flex items-center gap-2.5 mb-6">
