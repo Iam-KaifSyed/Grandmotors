@@ -286,7 +286,7 @@ export function AdminDashboard() {
         )}
       </div>
 
-      {/* Table / states */}
+      {/* Table / Cards / states */}
       <div className="rounded-xl border border-white/8 bg-[#111315] overflow-hidden">
         {isLoading ? (
           <div className="py-16 flex items-center justify-center">
@@ -310,48 +310,280 @@ export function AdminDashboard() {
             </p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead>
-                <tr className="border-b border-white/8 text-[10px] uppercase tracking-[0.14em] text-[#A7AAAD]/70">
-                  <th className="px-4 py-3 font-semibold">Booking ID</th>
-                  <th className="px-4 py-3 font-semibold">Customer</th>
-                  <th className="px-4 py-3 font-semibold hidden md:table-cell">Phone</th>
-                  <th className="px-4 py-3 font-semibold hidden lg:table-cell">Vehicle</th>
-                  <th className="px-4 py-3 font-semibold hidden lg:table-cell">Service</th>
-                  <th className="px-4 py-3 font-semibold hidden xl:table-cell">Requested</th>
-                  <th className="px-4 py-3 font-semibold">Status</th>
-                  <th className="px-4 py-3 font-semibold hidden xl:table-cell">Created</th>
-                  <th className="px-4 py-3 font-semibold text-right">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((b) => (
-                  <tr key={b.id} className="border-b border-white/5 last:border-0 hover:bg-white/[0.02] transition-colors">
-                    <td className="px-4 py-3 font-mono font-semibold text-[#F2F0EA] whitespace-nowrap">{b.id}</td>
-                    <td className="px-4 py-3 text-[#F2F0EA] whitespace-nowrap">{b.customerName}</td>
-                    <td className="px-4 py-3 text-[#A7AAAD] font-mono whitespace-nowrap hidden md:table-cell">{b.phoneNumber}</td>
-                    <td className="px-4 py-3 text-[#A7AAAD] whitespace-nowrap hidden lg:table-cell">{b.vehicle}</td>
-                    <td className="px-4 py-3 text-[#A7AAAD] whitespace-nowrap hidden lg:table-cell">{serviceTitle(b.serviceCategory)}</td>
-                    <td className="px-4 py-3 text-[#A7AAAD] whitespace-nowrap hidden xl:table-cell">
-                      {b.preferredDate}{b.preferredTime ? ` · ${b.preferredTime}` : ''}
-                    </td>
-                    <td className="px-4 py-3"><StatusBadge status={b.status} /></td>
-                    <td className="px-4 py-3 text-[#A7AAAD]/70 whitespace-nowrap hidden xl:table-cell">{formatDateTime(b.createdAt)}</td>
-                    <td className="px-4 py-3 text-right">
+          <>
+            {/* Desktop Table: fits 100% width without horizontal scrolling */}
+            <div className="hidden lg:block w-full overflow-hidden">
+              <table className="w-full table-fixed text-left text-sm divide-y divide-white/8">
+                <thead className="bg-[#0A0C0D]/60">
+                  <tr className="text-[10px] uppercase tracking-[0.14em] text-[#A7AAAD]/70">
+                    <th className="w-[14%] px-4 py-3.5 font-semibold">Booking ID</th>
+                    <th className="w-[14%] px-4 py-3.5 font-semibold">Customer</th>
+                    <th className="w-[12%] px-4 py-3.5 font-semibold">Phone</th>
+                    <th className="w-[15%] px-4 py-3.5 font-semibold">Vehicle</th>
+                    <th className="w-[15%] px-4 py-3.5 font-semibold">Service</th>
+                    <th className="w-[12%] px-4 py-3.5 font-semibold">Requested</th>
+                    <th className="w-[10%] px-4 py-3.5 font-semibold">Status</th>
+                    <th className="w-[8%] px-4 py-3.5 font-semibold text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/5">
+                  {filtered.map((b) => {
+                    const vehicleName = b.vehicle || `${b.vehicleMake || ''} ${b.vehicleModel || ''}`.trim() || '—';
+                    const categoryName = serviceTitle(b.serviceCategory);
+                    const reqDate = b.preferredDate;
+                    const reqTime = b.preferredTime;
+                    const phoneNum = b.phoneNumber || b.phone || '—';
+                    const custName = b.customerName || b.fullName || '—';
+
+                    return (
+                      <tr
+                        key={b.id}
+                        className="hover:bg-white/[0.03] transition-colors"
+                      >
+                        {/* Booking ID - prevent clipping with font-mono, whitespace-nowrap, tooltip */}
+                        <td className="px-4 py-3.5 align-middle">
+                          <span
+                            className="font-mono font-semibold text-xs text-[#F2F0EA] whitespace-nowrap tracking-wide select-all"
+                            title={`Booking ID: ${b.id}`}
+                          >
+                            {b.id}
+                          </span>
+                        </td>
+
+                        {/* Customer */}
+                        <td className="px-4 py-3.5 align-middle">
+                          <div
+                            className="truncate font-medium text-xs text-[#F2F0EA]"
+                            title={custName}
+                          >
+                            {custName}
+                          </div>
+                          {b.email && (
+                            <div
+                              className="truncate text-[11px] text-[#A7AAAD]/60"
+                              title={b.email}
+                            >
+                              {b.email}
+                            </div>
+                          )}
+                        </td>
+
+                        {/* Phone */}
+                        <td className="px-4 py-3.5 align-middle">
+                          <a
+                            href={telHref(phoneNum)}
+                            className="truncate block font-mono text-xs text-[#A7AAAD] hover:text-[#B88952] transition-colors"
+                            title={`Call ${phoneNum}`}
+                          >
+                            {phoneNum}
+                          </a>
+                        </td>
+
+                        {/* Vehicle */}
+                        <td className="px-4 py-3.5 align-middle">
+                          <div
+                            className="truncate text-xs text-[#F2F0EA]"
+                            title={vehicleName}
+                          >
+                            {vehicleName}
+                          </div>
+                          {b.registrationNumber && (
+                            <div
+                              className="truncate text-[11px] font-mono text-[#A7AAAD]/70 tracking-wider"
+                              title={`Reg: ${b.registrationNumber}`}
+                            >
+                              {b.registrationNumber}
+                            </div>
+                          )}
+                        </td>
+
+                        {/* Service */}
+                        <td className="px-4 py-3.5 align-middle">
+                          <div
+                            className="truncate text-xs text-[#F2F0EA]"
+                            title={categoryName}
+                          >
+                            {categoryName}
+                          </div>
+                          {b.specificService && (
+                            <div
+                              className="truncate text-[11px] text-[#A7AAAD]/70"
+                              title={`Specific service: ${b.specificService}`}
+                            >
+                              {b.specificService}
+                            </div>
+                          )}
+                        </td>
+
+                        {/* Requested */}
+                        <td className="px-4 py-3.5 align-middle">
+                          <div
+                            className="truncate text-xs text-[#F2F0EA]"
+                            title={`Preferred: ${reqDate}${reqTime ? ` · ${reqTime}` : ''}`}
+                          >
+                            {reqDate || '—'}
+                          </div>
+                          {reqTime && (
+                            <div
+                              className="truncate text-[11px] text-[#A7AAAD]/70"
+                              title={`Time: ${reqTime}`}
+                            >
+                              {reqTime}
+                            </div>
+                          )}
+                        </td>
+
+                        {/* Status */}
+                        <td className="px-4 py-3.5 align-middle whitespace-nowrap">
+                          <StatusBadge status={b.status} />
+                        </td>
+
+                        {/* Action */}
+                        <td className="px-4 py-3.5 align-middle text-right whitespace-nowrap">
+                          <button
+                            type="button"
+                            onClick={() => openDetails(b)}
+                            className="inline-flex items-center px-3 py-1.5 text-[11px] font-semibold tracking-[0.1em] uppercase text-[#F2F0EA] bg-white/5 hover:bg-[#B88952] hover:text-[#0A0C0D] border border-white/10 hover:border-[#B88952] rounded-lg transition-all cursor-pointer whitespace-nowrap"
+                          >
+                            View
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile / Tablet Responsive Card Layout */}
+            <div className="lg:hidden divide-y divide-white/5">
+              {filtered.map((b) => {
+                const vehicleName = b.vehicle || `${b.vehicleMake || ''} ${b.vehicleModel || ''}`.trim() || '—';
+                const categoryName = serviceTitle(b.serviceCategory);
+                const phoneNum = b.phoneNumber || b.phone;
+                const custName = b.customerName || b.fullName || '—';
+
+                return (
+                  <div
+                    key={b.id}
+                    className="p-4 sm:p-5 space-y-4 hover:bg-white/[0.02] transition-colors"
+                  >
+                    {/* Card Top: ID & Status */}
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="min-w-0">
+                        <span
+                          className="font-mono font-bold text-xs sm:text-sm text-[#F2F0EA] tracking-wide select-all"
+                          title={`Booking ID: ${b.id}`}
+                        >
+                          {b.id}
+                        </span>
+                      </div>
+                      <div className="shrink-0">
+                        <StatusBadge status={b.status} />
+                      </div>
+                    </div>
+
+                    {/* Customer & Quick Contact */}
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <h3
+                          className="text-sm sm:text-base font-semibold text-[#F2F0EA] truncate"
+                          title={custName}
+                        >
+                          {custName}
+                        </h3>
+                        {b.email && (
+                          <p className="text-xs text-[#A7AAAD]/60 truncate" title={b.email}>
+                            {b.email}
+                          </p>
+                        )}
+                        {phoneNum && (
+                          <p className="font-mono text-xs text-[#A7AAAD] mt-0.5" title={phoneNum}>
+                            {phoneNum}
+                          </p>
+                        )}
+                      </div>
+                      {phoneNum && (
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          <a
+                            href={telHref(phoneNum)}
+                            className="px-2.5 py-1 text-[10px] font-semibold tracking-[0.1em] uppercase text-[#F2F0EA] bg-white/5 hover:bg-white/10 border border-white/10 rounded-md transition-colors"
+                            title={`Call ${phoneNum}`}
+                          >
+                            Call
+                          </a>
+                          <a
+                            href={waHref(phoneNum)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-2.5 py-1 text-[10px] font-semibold tracking-[0.1em] uppercase text-[#25D366] bg-[#25D366]/10 hover:bg-[#25D366]/20 border border-[#25D366]/30 rounded-md transition-colors"
+                            title={`WhatsApp ${phoneNum}`}
+                          >
+                            WA
+                          </a>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Details Grid */}
+                    <div className="grid grid-cols-2 gap-2.5 p-3 rounded-lg bg-[#0A0C0D]/60 border border-white/5 text-xs">
+                      <div className="min-w-0">
+                        <span className="block text-[9px] font-bold tracking-[0.16em] uppercase text-[#A7AAAD]/60 mb-0.5">Vehicle</span>
+                        <p className="text-[#F2F0EA] font-medium truncate" title={vehicleName}>
+                          {vehicleName}
+                        </p>
+                        {b.registrationNumber && (
+                          <p className="font-mono text-[10px] text-[#A7AAAD]/80 truncate" title={`Reg: ${b.registrationNumber}`}>
+                            {b.registrationNumber}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="min-w-0">
+                        <span className="block text-[9px] font-bold tracking-[0.16em] uppercase text-[#A7AAAD]/60 mb-0.5">Service</span>
+                        <p className="text-[#F2F0EA] font-medium truncate" title={categoryName}>
+                          {categoryName}
+                        </p>
+                        {b.specificService && (
+                          <p className="text-[10px] text-[#A7AAAD]/80 truncate" title={b.specificService}>
+                            {b.specificService}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="min-w-0">
+                        <span className="block text-[9px] font-bold tracking-[0.16em] uppercase text-[#A7AAAD]/60 mb-0.5">Requested</span>
+                        <p className="text-[#F2F0EA] truncate" title={`${b.preferredDate}${b.preferredTime ? ` · ${b.preferredTime}` : ''}`}>
+                          {b.preferredDate || '—'}
+                        </p>
+                        {b.preferredTime && (
+                          <p className="text-[10px] text-[#A7AAAD]/80 truncate">{b.preferredTime}</p>
+                        )}
+                      </div>
+
+                      <div className="min-w-0">
+                        <span className="block text-[9px] font-bold tracking-[0.16em] uppercase text-[#A7AAAD]/60 mb-0.5">Created</span>
+                        <p className="text-[#A7AAAD]/80 text-[11px] truncate" title={formatDateTime(b.createdAt)}>
+                          {formatDateTime(b.createdAt)}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Card Footer: View Action */}
+                    <div className="flex justify-end pt-1">
                       <button
                         type="button"
                         onClick={() => openDetails(b)}
-                        className="inline-flex items-center px-3 py-1.5 text-[11px] font-semibold tracking-[0.1em] uppercase text-[#F2F0EA] bg-white/5 hover:bg-[#B88952] hover:text-[#0A0C0D] border border-white/10 hover:border-[#B88952] rounded-lg transition-all cursor-pointer whitespace-nowrap"
+                        className="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 text-[11px] font-semibold tracking-[0.12em] uppercase text-[#F2F0EA] bg-white/5 hover:bg-[#B88952] hover:text-[#0A0C0D] border border-white/10 hover:border-[#B88952] rounded-lg transition-all cursor-pointer"
                       >
-                        View
+                        View Full Details
                       </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </>
         )}
       </div>
 
@@ -370,7 +602,7 @@ export function AdminDashboard() {
             <div className="flex items-start justify-between gap-4 px-6 sm:px-8 pt-6 pb-5 border-b border-white/8">
               <div>
                 <span className="text-[10px] font-semibold tracking-[0.22em] text-[#B88952] uppercase block mb-1">Booking Details</span>
-                <h2 className="text-2xl font-mono font-bold text-[#F2F0EA]">{selected.id}</h2>
+                <h2 className="text-2xl font-mono font-bold text-[#F2F0EA] break-all">{selected.id}</h2>
               </div>
               <div className="flex items-center gap-3">
                 <StatusBadge status={selected.status} />
@@ -401,7 +633,7 @@ export function AdminDashboard() {
               {selected.additionalMessage && (
                 <div>
                   <span className="block text-[10px] font-bold tracking-[0.18em] text-[#A7AAAD]/60 uppercase mb-1.5">Customer Notes</span>
-                  <p className="text-sm text-[#F2F0EA]/90 bg-[#0A0C0D] border border-white/5 rounded-lg p-4 leading-relaxed">
+                  <p className="text-sm text-[#F2F0EA]/90 bg-[#0A0C0D] border border-white/5 rounded-lg p-4 leading-relaxed break-words">
                     {selected.additionalMessage}
                   </p>
                 </div>
@@ -463,9 +695,9 @@ export function AdminDashboard() {
 
 function Field({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
   return (
-    <div>
+    <div className="min-w-0">
       <span className="block text-[10px] font-bold tracking-[0.18em] text-[#A7AAAD]/60 uppercase mb-1.5">{label}</span>
-      <span className={`block text-[#F2F0EA] ${mono ? 'font-mono' : ''}`}>{value}</span>
+      <span className={`block text-[#F2F0EA] break-words ${mono ? 'font-mono' : ''}`}>{value}</span>
     </div>
   );
 }
