@@ -28,15 +28,44 @@ const { title, chrome = true } = Astro.props;
     {chrome && (
       <header class="sticky top-0 z-30 border-b border-white/8 bg-[#0A0C0D]/90 backdrop-blur-md">
         <div class="max-w-7xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between">
-          <a href="/admin" class="flex items-center gap-2.5 cursor-pointer group">
-            <span class="text-sm font-semibold tracking-[0.25em] text-[#F2F0EA] uppercase group-hover:text-[#B88952] transition-colors">
-              Grand Motors
-            </span>
-            <span class="w-1.5 h-1.5 rounded-full bg-[#B88952]"></span>
-            <span class="ml-2 text-[10px] font-semibold tracking-[0.22em] uppercase text-[#A7AAAD]/70 border border-white/10 rounded-full px-2.5 py-0.5">
-              Admin
-            </span>
-          </a>
+          <div class="flex items-center gap-8">
+            <a href="/admin" class="flex items-center gap-2.5 cursor-pointer group">
+              <span class="text-sm font-semibold tracking-[0.25em] text-[#F2F0EA] uppercase group-hover:text-[#B88952] transition-colors">
+                Grand Motors
+              </span>
+              <span class="w-1.5 h-1.5 rounded-full bg-[#B88952]"></span>
+              <span class="ml-2 text-[10px] font-semibold tracking-[0.22em] uppercase text-[#A7AAAD]/70 border border-white/10 rounded-full px-2.5 py-0.5">
+                Admin
+              </span>
+            </a>
+
+            <nav class="hidden md:flex items-center gap-1.5">
+              <a
+                href="/admin"
+                class="px-3 py-1.5 text-[11px] font-semibold tracking-[0.14em] uppercase text-[#A7AAAD] hover:text-[#F2F0EA] hover:bg-white/5 rounded-lg transition-colors"
+              >
+                Bookings
+              </a>
+              <a
+                href="/admin/media"
+                class="px-3 py-1.5 text-[11px] font-semibold tracking-[0.14em] uppercase text-[#A7AAAD] hover:text-[#F2F0EA] hover:bg-white/5 rounded-lg transition-colors"
+              >
+                Media
+              </a>
+              <a
+                href="/admin/services"
+                class="px-3 py-1.5 text-[11px] font-semibold tracking-[0.14em] uppercase text-[#A7AAAD] hover:text-[#F2F0EA] hover:bg-white/5 rounded-lg transition-colors"
+              >
+                Services
+              </a>
+              <a
+                href="/admin/booking-form"
+                class="px-3 py-1.5 text-[11px] font-semibold tracking-[0.14em] uppercase text-[#A7AAAD] hover:text-[#F2F0EA] hover:bg-white/5 rounded-lg transition-colors"
+              >
+                Booking Form
+              </a>
+            </nav>
+          </div>
           <button
             type="button"
             id="admin-logout"

@@ -1,8 +1,11 @@
 /// <reference path="../.astro/types.d.ts" />
 /// <reference types="astro/client" />
 type D1Database = any;
+type R2Bucket = any;
+
 type Env = {
   DB: D1Database;
+  MEDIA?: R2Bucket;
   ADMIN_API_KEY?: string;
   ADMIN_SECRET?: string;
 };

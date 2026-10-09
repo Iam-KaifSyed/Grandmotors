@@ -1,4 +1,3 @@
-
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "grand-motor",
@@ -8,7 +7,14 @@
     {
       "binding": "DB",
       "database_name": "grandmotors",
-      "database_id": "local-db"
+      "database_id": "local-db",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "MEDIA",
+      "bucket_name": "grandmotors-media"
     }
   ]
 }

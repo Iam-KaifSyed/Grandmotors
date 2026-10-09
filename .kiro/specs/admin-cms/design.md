@@ -18,8 +18,9 @@ The design layers onto what is already built and reuses it verbatim:
   `ADMIN_SESSION_MAX_AGE_MS`) is reused unchanged for defense-in-depth in each handler.
 - **Storage stays within existing infrastructure.** D1 (`DB`) holds all *data* (service config,
   booking-form config, media metadata, media references, audit log). A new **R2** binding
-  (`MEDIA`) holds image *binaries* in production; a **LocalDriver** backs local dev under
-  Wrangler/Miniflare without a Cloudflare account. No binaries are ever stored in D1.
+  (`MEDIA`, declared in `wrangler.json`, config only) holds image *binaries*; in local development
+  Wrangler/Miniflare emulates that same binding offline, so no Cloudflare account and no separate
+  local storage implementation are needed. No binaries are ever stored in D1.
 - **The public site keeps its design.** The eight services, the services-page hero/CTA, the
   footer image, and the booking-form wording start as *exact copies* of today's hardcoded values
   (seeded into D1) so the first render after enabling the CMS is pixel-identical. Only the
@@ -76,13 +77,13 @@ flowchart TB
     MS["mediaStore.ts"]
     SS["serviceStore.ts"]
     BS["bookingFormConfigStore.ts"]
-    SD["StorageDriver (R2Driver | LocalDriver)"]
+    SD["StorageDriver (R2Driver)"]
     AUD["auditLog.ts"]
   end
 
   subgraph Data["Data & binaries"]
     D1[("D1 'DB'\nbookings + CMS tables")]
-    R2[("R2 'MEDIA' (prod)\nLocalDriver dir (dev)")]
+    R2[("R2 'MEDIA'\n(prod: Cloudflare R2; dev: Wrangler/Miniflare emulation)")]
   end
 
   AP --> CAPI
@@ -161,11 +162,12 @@ sequenceDiagram
 
 | Module | Responsibility |
 | --- | --- |
-| `storage/StorageDriver.ts` | Driver interface + `resolveStorageDriver(env)` factory (R2 if `env.MEDIA` present, else Local). |
-| `storage/R2Driver.ts` | R2-backed `put/get/delete/getUrl` against `env.MEDIA`. |
-| `storage/LocalDriver.ts` | Filesystem/in-namespace dev driver (see Storage section). |
+| `storage/StorageDriver.ts` | Driver interface + `resolveStorageDriver(env)` factory (R2Driver if `env.MEDIA` present, else media endpoints fail closed with 503). |
+| `storage/R2Driver.ts` | R2-backed `put/get/delete/getUrl` against `env.MEDIA` (real R2 in production, Wrangler/Miniflare emulation locally). |
+| `sqliteD1.ts` | D1-like adapter over `node:sqlite` (`prepare/bind/all/first/run/exec/batch`). Used by the real-SQL test database and the opt-in local fallback. |
+| `env.ts` (existing) | `getAppEnv(locals)` / `getDatabase(locals, env)` — the only way handlers read bindings (see Runtime env access). |
 | `mediaStore.ts` | Media asset + reference CRUD over D1; orchestrates driver + metadata atomically; image validation (`validateImageUpload`). |
-| `serviceStore.ts` | Authoritative read/write of service categories + services; seeding; public read shape. |
+| `serviceStore.ts` | Authoritative read/write of service categories + services; public read shape (seed data comes from the SQL migration, not runtime code). |
 | `bookingFormConfigStore.ts` | Read/write Booking Form Config; essential-field protection; typed config shape + defaults. |
 | `usageLocations.ts` | The fixed, system-defined Usage Location registry (enum + metadata). |
 | `auditLog.ts` | Append audit rows; capture actor/action/time/diff. |
@@ -203,7 +205,7 @@ D1 stores data only; the public render joins the D1 service row with `iconForSer
 ### Storage separation (Req 16, 1.4)
 
 - **D1 (`DB`)**: service config, booking-form config, media **metadata**, media references, audit log.
-- **Storage Driver (R2 `MEDIA` / Local)**: image **binaries** only, addressed by Object Key.
+- **Storage Driver (R2 `MEDIA`, emulated locally by Wrangler/Miniflare)**: uploaded image **binaries** only, addressed by Object Key.
 - **Never** store binaries in D1.
 
 ### Migrations strategy (Req 23)
@@ -215,18 +217,25 @@ but migrations become the source of truth.
 
 ```
 /migrations
-  0001_baseline_bookings.sql     -- CREATE TABLE IF NOT EXISTS bookings (...)  (preserves existing data)
-  0002_media.sql                 -- media_assets, media_references (+ indexes)
-  0003_services.sql              -- service_categories, services (+ indexes)
-  0004_booking_form_config.sql   -- booking_form_config
-  0005_audit_log.sql             -- audit_log
+  0001_baseline_bookings.sql   -- CREATE TABLE IF NOT EXISTS bookings (...)  (same columns as schema.sql)
+  0002_cms_schema.sql          -- media_assets, media_references, service_categories, services,
+                               --   booking_form_config, audit_log (+ indexes)
+  0003_seed_content.sql        -- idempotent INSERT OR IGNORE seeds (services, builtin/external media,
+                               --   media_references, default booking_form_config row)
 ```
 
-- `0001` reproduces the **current** `bookings` table verbatim using `CREATE TABLE IF NOT EXISTS`,
-  so applying it against an existing DB is a no-op and **no booking data is lost** (Req 23.3).
-- Later migrations only *add* tables/indexes; they never drop or rewrite `bookings`.
+- `0001` reproduces the **current** `bookings` table with the same columns as `schema.sql` using
+  `CREATE TABLE IF NOT EXISTS`, so applying it against an existing DB is a no-op and **no booking
+  data is lost** (Req 23.3).
+- `0002` and `0003` only *add* tables/indexes/rows; they never drop or rewrite `bookings`.
 - Before any schema change, the implementer inspects the live schema
-  (`PRAGMA table_info` / `sqlite_master`) per Req 23.1.
+  (`PRAGMA table_info` / `sqlite_master`, on a **copy** of the database file) per Req 23.1, and
+  confirms `wrangler d1 migrations list grandmotors --local` discovers `/migrations` (default
+  `migrations_dir` is `migrations`) and targets the same Miniflare D1 file the dev server uses.
+- Migrations are applied locally with `npm run db:migrate:local`
+  (`wrangler d1 migrations apply grandmotors --local`). They are **never** applied with `--remote`.
+- Timestamped file-level backup copies of every `.wrangler` SQLite file are taken before the first
+  apply. No SQLite file is ever deleted, reset, truncated, or auto-merged.
 
 ### Entity-relationship model
 
@@ -238,11 +247,13 @@ erDiagram
   media_assets {
     TEXT id PK
     TEXT filename
-    TEXT objectKey UK
+    TEXT source "upload|builtin|external"
+    TEXT publicUrl "nullable, builtin/external only"
+    TEXT objectKey UK "nullable, upload only"
     TEXT mimeType
-    INTEGER width
-    INTEGER height
-    INTEGER byteSize
+    INTEGER width "nullable"
+    INTEGER height "nullable"
+    INTEGER byteSize "nullable"
     TEXT previousObjectKey "nullable, for recovery"
     TEXT createdAt
     TEXT createdBy
@@ -303,9 +314,16 @@ erDiagram
 
 ### Table definitions and access patterns
 
-**`media_assets`** — `id TEXT PK`, `objectKey TEXT NOT NULL UNIQUE`, `filename`, `mimeType`,
-`width INTEGER`, `height INTEGER`, `byteSize INTEGER`, `previousObjectKey TEXT` (nullable; retained
-on replace for recovery, Req 3.3/20.2), `createdAt`, `createdBy`. Index on `filename` for search.
+**`media_assets`** — `id TEXT PK`, `filename`, `mimeType`,
+`source TEXT NOT NULL DEFAULT 'upload' CHECK (source IN ('upload','builtin','external'))`,
+`publicUrl TEXT` (for `builtin` such as `/images/service-brakes.jpg` and `external` such as
+Unsplash URLs), and nullable `objectKey TEXT UNIQUE`, `width`, `height`, `byteSize` (builtin and
+external assets have no R2 object; SQLite `UNIQUE` permits multiple NULL `objectKey`s),
+`previousObjectKey TEXT` (nullable; retained on replace for recovery, Req 3.3/20.2), `createdAt`,
+`createdBy`. Index on `filename` for search. Rules: builtin/external assets are never sent to R2
+and cannot be deleted from storage (deleting one only removes metadata, and only when
+unreferenced); replacing one creates a new `upload` asset and flips references. Deterministic ids
+(for example `builtin-service-brakes`) are seeded with `INSERT OR IGNORE`.
 
 **`media_references`** — `id TEXT PK`, `usageLocation TEXT NOT NULL UNIQUE`,
 `mediaAssetId TEXT NOT NULL REFERENCES media_assets(id)`, `updatedAt`, `updatedBy`. The
@@ -365,9 +383,37 @@ export interface BookingFormConfigView {
 
 ### Env additions
 
-`src/env.d.ts` gains `MEDIA?: R2Bucket` on `Env`; `wrangler.json`/`wrangler.toml` gains an R2
-binding named `MEDIA` for production. Local dev needs no binding — the factory falls back to the
-LocalDriver when `env.MEDIA` is absent (Req 17).
+`src/env.d.ts` gains `MEDIA?: R2Bucket` on `Env`; `wrangler.json` gains
+`"r2_buckets": [{ "binding": "MEDIA", "bucket_name": "grandmotors-media" }]` (config only, no
+provisioning, no account). Wrangler/Miniflare emulates the bucket locally by default (Req 17).
+If `env.MEDIA` is absent, media endpoints fail closed with `503`; there is no silent alternate
+storage.
+
+### Runtime env access
+
+In `@astrojs/cloudflare` 14, `Astro.locals.runtime.env` is a getter that **throws**. Every CMS
+handler, page frontmatter, and store entry point MUST obtain bindings only through
+`src/lib/env.ts` — `getAppEnv(locals)` and `getDatabase(locals, env)` (which use
+`import('cloudflare:workers')`) — and MUST NEVER read `locals.runtime.env` directly. Existing
+booking and admin handlers already follow this. Mock-based tests never exercised the real getter,
+so a regression test asserts `getAppEnv` does not throw when `locals.runtime.env` is a throwing
+getter.
+
+### Local fallback database
+
+`src/lib/localDb.ts` (a `node:sqlite` D1-like fallback at `.wrangler/local-d1.sqlite`) previously
+auto-activated when no `DB` binding was found and used its own inline DDL, which produced a
+split-brain with Miniflare's D1 (`.wrangler/state/v3/d1/...`). The design changes it to:
+
+- be built on the shared `src/lib/sqliteD1.ts` adapter (`prepare/bind/all/first/run/exec/batch`,
+  `batch` = one transaction);
+- be **opt-in only** (explicit `LOCAL_SQLITE_FALLBACK=1`), never auto-selected, log a console
+  warning when enabled, and never activate in a workerd/production runtime;
+- apply the ordered `/migrations/*.sql` files, tracked in a `_local_migrations` table, instead of
+  inline DDL, so it shares the migration source of truth;
+- never delete, reset, truncate, or auto-merge either SQLite file. A read-only report lists
+  booking ids/counts in both stores so the owner can decide whether to merge manually.
+
 ---
 
 ## Storage Driver
@@ -387,43 +433,50 @@ export interface StorageDriver {
   getUrl(objectKey: string): string;
 }
 
-export function resolveStorageDriver(env: Env): StorageDriver {
-  return env.MEDIA ? new R2Driver(env.MEDIA) : new LocalDriver();
+/** Returns the R2Driver when env.MEDIA exists, otherwise null (callers answer 503). */
+export function resolveStorageDriver(env: Env): StorageDriver | null {
+  return env.MEDIA ? new R2Driver(env.MEDIA) : null;
 }
 ```
 
-`getUrl` returns the **same shape regardless of driver** — `/media/<objectKey>` — so the public
-site never cares which driver is active (Req 17.3). The `/media/[key]` SSR route calls
-`driver.get(key)` and streams the bytes with the stored `mimeType`.
+`getUrl` always returns `/media/<objectKey>`, so the public site never cares where bytes live
+(Req 17.3). The `/media/[key]` SSR route calls `driver.get(key)` and streams the bytes with the
+stored `mimeType`. When no driver resolves, media endpoints **fail closed with `503`**; there is
+no silent alternate storage.
 
-### R2Driver (production)
+### R2Driver (production and local emulation)
 
 Wraps `env.MEDIA` (an `R2Bucket`): `put` → `MEDIA.put(key, bytes, { httpMetadata })`, `get` →
 `MEDIA.get(key)`, `delete` → `MEDIA.delete(key)`. No remote provisioning is performed by code;
-the binding is declared in config and bound by the platform (Req 21.2).
+the binding is declared in `wrangler.json` as `r2_buckets: [{ "binding": "MEDIA", "bucket_name":
+"grandmotors-media" }]` (Req 21.2).
 
-### LocalDriver (development, no CF account)
+**Local development (Req 17.1/17.2).** Wrangler's `getPlatformProxy` with a declared `r2_buckets`
+binding was evaluated: `put/get/delete` round-trip fully offline, preserve `contentType`, and work
+for keys with and without slashes. Local R2 emulation is therefore the default and the earlier
+filesystem `LocalDriver` is dropped. Behaviour inside `astro dev` itself is **not yet verified**
+(dev-server runs were unavailable) and is covered by a manual owner smoke item.
 
-Backs storage without R2 so the CMS runs under `wrangler dev`/Miniflare offline (Req 17.1/17.2):
+**Unit tests** use a small in-memory `StorageDriver` test double. One integration test uses
+`getPlatformProxy` with a temp config and persist dir under `os.tmpdir()` to prove the real
+`R2Driver` against Wrangler's emulation (skipped gracefully if it cannot start).
 
-- Persists binaries under a gitignored dev directory (e.g. `.cms-media/<objectKey>`) via Node's
-  `fs` (available in the dev/Miniflare Node compat context) — or, as an alternative that keeps
-  parity with Miniflare's simulated bindings, a Miniflare-simulated R2/KV namespace. Either way,
-  `get`/`put`/`delete` operate purely on the **Object Key**, so switching drivers requires no data
-  reshaping (Req 17.3).
-- `getUrl` returns `/media/<objectKey>` identically to R2Driver, so the served URL is stable
-  across environments.
-
-### Object Key generation
+### Object Key generation and safe media keys
 
 ```ts
-// collision-resistant; sanitized original name is cosmetic only
-objectKey = `${yyyymmdd}/${crypto.randomUUID()}-${sanitize(originalName)}`;
+// flat key; extension comes from the validated MIME type, never from the user filename
+objectKey = `${crypto.randomUUID()}.${extFor(validatedMime)}`;   // jpg | png | webp
 ```
 
 A fresh UUID per store (including per replacement) guarantees uniqueness, so a replace never
-overwrites the previous binary — enabling recovery via `previousObjectKey` (Req 3.3). `sanitize`
-strips path separators and unsafe characters; uniqueness never depends on the original name.
+overwrites the previous binary and keys are never reused, enabling recovery via
+`previousObjectKey` (Req 3.3). The original filename is stored in D1 only.
+
+`src/pages/media/[key].ts` validates the key against
+`^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.(jpg|png|webp)$`, returns `404`
+otherwise, sets the correct `Content-Type` and `X-Content-Type-Options: nosniff`, and uses a
+long `Cache-Control` (`public, max-age=31536000, immutable`, safe because keys are never reused).
+No catch-all route is needed.
 
 ---
 
@@ -451,17 +504,21 @@ Status codes: `200` ok, `201` created, `400` malformed request, `401` unauthenti
 | `POST /api/admin/cms/media/assign` | Assign to location | `{usageLocation, mediaAssetId}` | `200 {reference}` | Reject unknown location → `400` (Req 5.4); upsert so the location references exactly one asset (Req 5.2/5.3). |
 | `GET /api/admin/cms/usage-locations` | List fixed locations | — | `200 {locations:[...]}` | Fixed registry; hero assets excluded (Req 5.1/5.5). |
 
-### Services
+### Services and Service Categories
 
 | Method & path | Purpose | Success | Notes |
 | --- | --- | --- | --- |
-| `GET /api/admin/cms/services` | List all (admin view, incl. inactive) | `200 {categories, services}` | — |
-| `POST /api/admin/cms/services` | Create service/category | `201 {record}` | Non-empty name required else `422 {field:'name'}` (Req 7.1/7.5); displayOrder = after existing in grouping. |
-| `PATCH /api/admin/cms/services/:id` | Edit name/summary/items/image | `200 {record}` | Retains id/order/flags on content edits (Req 7.2); image set by `mediaAssetId` (Req 7.4). |
-| `POST /api/admin/cms/services/:id/deactivate` | Deactivate | `200 {record}` | Marks `active=0`, retains all fields (Req 7.3). |
+| `GET /api/admin/cms/services` | List all (admin view, incl. inactive) | `200 {services}` | — |
+| `POST /api/admin/cms/services` | Create service | `201 {record}` | Non-empty name required else `422 {field:'name'}` (Req 7.1/7.5); displayOrder = after existing in grouping. |
+| `PATCH /api/admin/cms/services/:id` | Edit any of name, summary, items, mediaAssetId, categoryId, active, visibleInCatalogue, selectableInBooking | `200 {record}` | One endpoint with field-level validation and one audit row per changed field. Content edits retain id/order/flags (Req 7.2); `active=false` is deactivation and retains all fields (Req 7.3); flags per Req 8.2/8.3; image by `mediaAssetId` (Req 7.4). |
 | `POST /api/admin/cms/services/reorder` | Reorder | `200 {order}` | Persist contiguous unique ascending `displayOrder` (Req 8.1). |
-| `POST /api/admin/cms/services/:id/visibility` | Toggle catalogue visibility | `200 {record}` | Req 8.2. |
-| `POST /api/admin/cms/services/:id/selectability` | Toggle booking selectability | `200 {record}` | Req 8.3. |
+| `GET /api/admin/cms/service-categories` | List categories | `200 {categories}` | Same pattern as services. |
+| `POST /api/admin/cms/service-categories` | Create category | `201 {record}` | Non-empty name required (Req 7.1/7.5). |
+| `PATCH /api/admin/cms/service-categories/:id` | Edit name / active | `200 {record}` | Deactivation retains the record (Req 7.3). |
+| `POST /api/admin/cms/service-categories/reorder` | Reorder categories | `200 {order}` | Req 8.1. |
+
+There are no separate deactivate, visibility, or selectability routes. The reorder UI is simple
+up/down buttons (no drag and drop).
 
 ### Booking Form Config
 
@@ -491,7 +548,6 @@ CMS admin surface.
 ```ts
 export async function getPublicCatalogue(db: D1Database): Promise<ServiceView[]>; // active && visibleInCatalogue
 export async function getBookingOptions(db: D1Database): Promise<ServiceView[]>;  // active && selectableInBooking
-export async function seedServicesIfEmpty(db: D1Database): Promise<void>;          // idempotent
 ```
 
 - **Consumers switch to the store**: `services.astro` (catalogue), `book-service.astro` + its
@@ -505,32 +561,29 @@ export async function seedServicesIfEmpty(db: D1Database): Promise<void>;       
   need arises for client-side refresh, a read-only `GET /api/services` public endpoint could be
   added, but the baseline passes props from SSR.)
 
-### Idempotent seeding (Req 6)
+### Seeding via SQL migration (Req 6)
 
-```mermaid
-flowchart LR
-  A[seedServicesIfEmpty] --> B{COUNT services == 0?}
-  B -- no --> C[skip entirely; no overwrite]
-  B -- yes --> D[read 8 from servicesData.ts]
-  D --> E[INSERT all 8 in one transaction/batch]
-  E -- any failure --> F[rollback: pre-seed state, error]
-  E -- success --> G[8 active services, order preserved]
-```
+Seeding is **not** runtime code. `/migrations/0003_seed_content.sql` holds idempotent
+`INSERT OR IGNORE` statements, so applying it twice yields identical rows with no duplicates and
+no overwrites. `seedServicesIfEmpty` and any runtime seeding path do not exist.
 
 - Seeds exactly the eight ids (`engine-diagnostics`, `brakes`, `tyres-alignment`, `ac-electrical`,
   `suspension-steering`, `general-service`, `body-paint`, `detailing-interior`) with identical
-  title, summary, item list + ordering, image assignment (`imagePath` = the current Unsplash/`/images`
-  path), and ascending `displayOrder` matching source order (Req 6.1/6.2).
-- Per-id skip: if any id already exists, that id is not re-seeded and never overwritten
-  (Req 6.3). Baseline uses the "count == 0" guard; the per-id check is additive insurance so
-  partial pre-existing state still can't be clobbered.
+  id, title, summary, `itemsJson` (item contents and ordering), `imagePath` (the current Unsplash
+  or `/images/...` value) and ascending `displayOrder` matching source order (Req 6.1/6.2).
+- `INSERT OR IGNORE` on the primary key means an already-present id is skipped and never
+  overwritten (Req 6.3).
 - All eight land `active=1, visibleInCatalogue=1, selectableInBooking=1` (Req 6.4).
-- Seeding is atomic via a D1 batch/transaction: all-or-nothing, so a mid-seed failure leaves the
-  pre-seed state and returns an error (Req 6.5).
-- Media References are seeded so each Usage Location renders its current image (Req 5.6) — the
-  seed inserts a `media_references` row per location pointing at a seeded `media_assets` row that
-  records the current `/images/...` path (or marks it a built-in path asset), so the first render
-  is identical.
+- Each migration file is applied as one atomic unit (the real-SQL test runner wraps each file in a
+  transaction), so a mid-seed failure leaves the pre-seed state (Req 6.5).
+- `builtin` and `external` `media_assets` rows (deterministic ids such as `builtin-service-brakes`,
+  `builtin-services-hero`, plus external Unsplash rows) and one `media_references` row per Usage
+  Location are seeded with the image it renders today, so the first render is identical (Req 5.6).
+  The services hero and six service images are `/images/...` files; the engine and body-paint
+  service images and the services CTA image are external Unsplash URLs.
+- The default `booking_form_config` row reproduces today's form wording and slots.
+- `servicesData.ts` is retained only as a fallback/default dataset and as the reference for a test
+  asserting the seeded rows equal it.
 
 ---
 
@@ -574,6 +627,7 @@ flowchart TB
   read-only, so no admin-only CMS function is reachable by visitors (Req 14.3).
 - **Hero untouched**: the home page and 3D experience modules are never read or modified; no Usage
   Location maps to a hero-bundled asset (Req 15).
+
 ---
 
 ## Correctness Properties
@@ -836,11 +890,12 @@ exactly one audit record capturing the acting admin, the action, and the time.
   dimension. Nothing is persisted (Req 1.2, 7.5, 5.4, 18.3).
 - **Atomicity / compensation**: upload and delete wrap the two-step binary+metadata operation so a
   partial failure triggers a compensating action (delete the orphan binary, or abort the metadata
-  insert), leaving a both-or-neither state (Req 1.7, 4.3, 4.4). Seeding uses a D1 batch so it is
-  all-or-nothing (Req 6.5).
+  insert), leaving a both-or-neither state (Req 1.7, 4.3, 4.4). Seeding is a SQL migration applied
+  as one atomic unit, so it is all-or-nothing (Req 6.5).
 - **Conflict**: deleting an in-use asset returns `409` with the referencing locations (Req 4.2).
 - **Binding unavailable**: missing `DB` returns `503` (mirrors existing booking endpoints); missing
-  `MEDIA` is *not* an error — the factory falls back to the LocalDriver (Req 17.1).
+  `MEDIA` makes the media endpoints fail closed with `503` (there is no alternate storage), while
+  public pages keep rendering through the Safe Fallback (Req 14.1, 17.1).
 - **Public fallback**: public pages never surface raw errors; store reads are wrapped in
   `getXOrDefault` that catches failures and returns defaults, and media URLs fall back to a bundled
   placeholder (Req 14.1, 14.2).
@@ -863,7 +918,8 @@ exactly one audit record capturing the acting admin, the action, and the time.
 - **Audit metadata** records who/what/when for content mutations (Req 20.1).
 - **No deploy / no remote provisioning**: implementation touches only local config and code; it never
   runs a deploy or creates remote Cloudflare resources, and relies only on `DB`, the auto-provisioned
-  `SESSION` KV, the new (declared, not provisioned) `MEDIA` binding, and the Local driver (Req 21).
+  `SESSION` KV, and the new (declared, not provisioned) `MEDIA` binding, which Wrangler/Miniflare
+  emulates locally (Req 21).
 - **Hero untouched**: no CMS module imports or writes `src/experience/**`, `ExperienceRoot.tsx`,
   `HUD.tsx`, or `public/{models,textures,hdri,sequences,decoders}`; no Usage Location maps to a hero
   asset (Req 15, 22.3).

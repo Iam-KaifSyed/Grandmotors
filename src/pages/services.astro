@@ -1,6 +1,11 @@
 ---
+export const prerender = false;
+
 import Base from '../layouts/Base.astro';
-import { SERVICES } from '../components/site/servicesData';
+import { getAppEnv, getDatabase } from '../lib/env';
+import { getPublicCatalogueOrDefault } from '../lib/serviceStore';
+import { getMediaUrlForUsageLocation } from '../lib/mediaStore';
+import { iconForService } from '../components/site/serviceIcons';
 import {
   ArrowRightIcon,
   ShieldCheckIcon,
@@ -18,10 +23,16 @@ import {
 import Reveal from '../components/site/Reveal.astro';
 import SectionHeading from '../components/site/SectionHeading.astro';
 
-const HERO_IMAGE = '/images/services-hero.jpg';
+const env = getAppEnv(Astro.locals);
+const db = getDatabase(Astro.locals, env);
 
-const CTA_IMAGE =
-  'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=2000&q=80';
+const services = await getPublicCatalogueOrDefault(db);
+const HERO_IMAGE = await getMediaUrlForUsageLocation(db, 'services-hero', '/images/services-hero.jpg');
+const CTA_IMAGE = await getMediaUrlForUsageLocation(
+  db,
+  'services-cta',
+  'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=2000&q=80'
+);
 
 const STATS = [
   { value: '15+', label: 'Years in the workshop' },
@@ -182,14 +193,14 @@ const PROMISES = [
       <div class="max-w-7xl mx-auto">
         <SectionHeading
           eyebrow="The Catalogue"
-          intro="Eight specialist areas, each handled by technicians who do that work every day. Tap any service to book it directly."
+          intro="Specialist areas handled by technicians who do that work every day. Tap any service to book it directly."
         >
           <Fragment slot="title">Everything Your Car Needs</Fragment>
         </SectionHeading>
 
         <div class="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {SERVICES.map((service, i) => {
-            const Icon = service.icon;
+          {services.map((service, i) => {
+            const Icon = iconForService(service.id);
             return (
               <Reveal
                 delay={(i % 3) * 70}
@@ -199,7 +210,7 @@ const PROMISES = [
                 {/* Image */}
                 <div class="relative aspect-[16/10] overflow-hidden">
                   <img
-                    src={service.image}
+                    src={service.imageUrl}
                     alt={service.imageAlt}
                     loading="lazy"
                     decoding="async"

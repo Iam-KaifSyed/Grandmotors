@@ -1,0 +1,22 @@
+---
+export const prerender = false;
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { BookingFormEditor } from '../../components/admin/BookingFormEditor';
+import { isValidAdminSession } from '../../lib/serverAuth';
+
+let authed = false;
+try {
+  const admin = await Astro.session?.get('admin');
+  const adminSince = await Astro.session?.get('adminSince');
+  authed = isValidAdminSession({ admin, adminSince });
+} catch {
+  authed = false;
+}
+if (!authed) {
+  return Astro.redirect('/admin/login', 302);
+}
+---
+
+<AdminLayout title="Booking Form Settings | Grand Motors Admin">
+  <BookingFormEditor client:load />
+</AdminLayout>

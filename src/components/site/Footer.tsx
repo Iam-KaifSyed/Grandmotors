@@ -11,7 +11,13 @@ const MAPS_LINK = `https://www.google.com/maps/search/?api=1&query=${encodeURICo
   'Grand Motors, Metro Pillar No. 842, 5-7-73/NR, beside JSP Honda Showroom, Habeeb Nagar, Moosapet, Hyderabad, Telangana 500072'
 )}`;
 
-export function Footer() {
+interface FooterProps {
+  services?: Array<{ id: string; title: string }>;
+}
+
+export function Footer({ services }: FooterProps = {}) {
+  const serviceList = services && services.length > 0 ? services.slice(0, 6) : SERVICES.slice(0, 6);
+
   return (
     <footer className="relative z-10 px-6 md:px-12 lg:px-16 pt-16 pb-10 bg-[#0A0C0D] border-t border-white/8">
       <div className="max-w-7xl mx-auto">
@@ -63,7 +69,7 @@ export function Footer() {
               Services
             </h3>
             <ul className="mt-4 flex flex-col gap-2.5">
-              {SERVICES.slice(0, 6).map((service) => (
+              {serviceList.map((service) => (
                 <li key={service.id}>
                   <a
                     href="/services"
@@ -100,13 +106,21 @@ export function Footer() {
                 </a>
               </li>
               <li>
-                <a href={`tel:${PHONE_TEL}`} className="flex items-center gap-2.5 hover:text-[#B88952] transition-colors duration-200 cursor-pointer">
+                <a
+                  href={`tel:${PHONE_TEL}`}
+                  className="flex items-center gap-2.5 hover:text-[#B88952] transition-colors duration-200 cursor-pointer"
+                >
                   <PhoneIcon className="w-4 h-4 shrink-0 text-[#B88952]" />
                   {PHONE_DISPLAY}
                 </a>
               </li>
               <li>
-                <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2.5 hover:text-[#B88952] transition-colors duration-200 cursor-pointer">
+                <a
+                  href={WHATSAPP_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2.5 hover:text-[#B88952] transition-colors duration-200 cursor-pointer"
+                >
                   <WhatsAppIcon className="w-4 h-4 shrink-0 text-[#25D366]" />
                   WhatsApp
                 </a>
