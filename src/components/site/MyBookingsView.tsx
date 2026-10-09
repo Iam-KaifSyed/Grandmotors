@@ -163,9 +163,35 @@ export function MyBookingsView() {
 
   const searchInputId = useId();
 
-  const refreshBookings = () => {
+  const refreshBookings = async () => {
     const loaded = getCustomerBookings();
     setBookings(loaded);
+
+    if (loaded.length > 0) {
+      // Sync local bookings silently with backend
+      let modified = false;
+      const synced = await Promise.all(loaded.map(async (bk) => {
+        try {
+          const resp = await fetch(`/api/bookings/${encodeURIComponent(bk.id)}`);
+          if (resp.ok) {
+            const data = await resp.json();
+            if (data.status !== bk.status) {
+              modified = true;
+              return { ...bk, ...data };
+            }
+          }
+        } catch (e) {
+          // ignore
+        }
+        return bk;
+      }));
+
+      if (modified) {
+        // save the synced back to local storage
+        synced.forEach(s => saveBookingRecord(s));
+        setBookings(getCustomerBookings());
+      }
+    }
   };
 
   useEffect(() => {
@@ -231,7 +257,7 @@ export function MyBookingsView() {
     }
   };
 
-  const handleTrackSubmit = (e: React.FormEvent) => {
+  const handleTrackSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const clean = trackInputId.trim();
     if (!clean) {
@@ -241,6 +267,21 @@ export function MyBookingsView() {
 
     setIsSearching(true);
     setTrackError(null);
+
+    try {
+      const resp = await fetch(`/api/bookings/${encodeURIComponent(clean)}`);
+      if (resp.ok) {
+        const data = await resp.json();
+        saveBookingRecord(data);
+        refreshBookings();
+        handleOpenDetails(data);
+        setTrackInputId('');
+        setIsSearching(false);
+        return;
+      }
+    } catch (err) {
+      // Ignore and fallback
+    }
 
     setTimeout(() => {
       const result = getBookingById(clean);
@@ -391,7 +432,7 @@ export function MyBookingsView() {
           <div className="grid gap-5 md:grid-cols-2">
             {bookings.map((booking) => {
               const serviceTitle = getServiceTitle(booking.serviceCategory);
-              const isSelected = selectedBooking?.id === booking.id;
+              const isSelected = (selectedBooking as BookingRecord | null)?.id === booking.id;
 
               return (
                 <div

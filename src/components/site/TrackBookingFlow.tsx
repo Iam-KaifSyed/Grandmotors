@@ -57,7 +57,7 @@ export const TrackBookingFlow = () => {
     }
   }, []);
 
-  const performSearch = (idToSearch: string) => {
+  const performSearch = async (idToSearch: string) => {
     const trimmed = idToSearch.trim();
     if (!trimmed) {
       setErrorMessage('Please enter a Booking ID.');
@@ -67,6 +67,19 @@ export const TrackBookingFlow = () => {
     setIsLoading(true);
     setErrorMessage(null);
 
+    try {
+      const resp = await fetch(`/api/bookings/${encodeURIComponent(trimmed)}`);
+      if (resp.ok) {
+        const data = await resp.json();
+        setActiveBooking(data);
+        setIsLoading(false);
+        return;
+      }
+    } catch (err) {
+      console.warn('Backend fetch failed, falling back to local DB', err);
+    }
+
+    // Fallback block if backend isn't ready or ID is from purely local/demo mockup
     setTimeout(() => {
       const match = getBookingById(trimmed);
       if (match) {

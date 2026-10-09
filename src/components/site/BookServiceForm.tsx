@@ -163,6 +163,13 @@ export const BookServiceForm = ({ onSubmit }: BookServiceFormProps = {}) => {
           createdAt: new Date().toISOString(),
         };
 
+        // Try to save to backend API first, if it fails gracefully fallback to just localStorage
+        fetch('/api/bookings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newRecord)
+        }).catch(err => console.error('Failed to save booking to backend:', err));
+
         saveBookingRecord(newRecord);
         setSubmittedData(finalData);
         setIsSubmitting(false);
