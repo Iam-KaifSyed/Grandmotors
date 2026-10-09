@@ -189,13 +189,13 @@ export const TrackBookingFlow = () => {
                   }}
                   placeholder="e.g. GM-229397"
                   required
-                  className="flex-1 bg-[#0A0C0D] border border-white/10 rounded-lg px-4 py-3.5 text-base font-mono uppercase text-[#F2F0EA] placeholder-[#A7AAAD]/40 focus:border-[#B88952] focus:outline-none transition-colors"
+                  className="flex-1 bg-[#0A0C0D] border border-white/10 rounded-lg px-4 py-3.5 text-base sm:text-sm font-mono uppercase text-[#F2F0EA] placeholder-[#A7AAAD]/40 focus:border-[#B88952] focus:outline-none transition-colors"
                 />
 
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="inline-flex items-center justify-center px-8 py-3.5 text-xs font-semibold tracking-[0.2em] uppercase text-[#0A0C0D] bg-[#B88952] hover:bg-[#caa066] active:bg-[#a67943] disabled:opacity-50 rounded-lg transition-all shadow-lg shadow-[#B88952]/10 cursor-pointer shrink-0"
+                  className="inline-flex items-center justify-center px-8 py-3.5 text-xs font-semibold tracking-[0.2em] uppercase text-[#0A0C0D] bg-[#B88952] hover:bg-[#caa066] active:bg-[#a67943] disabled:opacity-50 rounded-lg transition-all shadow-lg shadow-[#B88952]/10 cursor-pointer shrink-0 font-bold"
                 >
                   {isLoading ? 'Searching...' : 'Track Status'}
                 </button>

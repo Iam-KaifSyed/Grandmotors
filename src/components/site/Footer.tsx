@@ -19,18 +19,18 @@ export function Footer({ services }: FooterProps = {}) {
   const serviceList = services && services.length > 0 ? services.slice(0, 6) : SERVICES.slice(0, 6);
 
   return (
-    <footer className="relative z-10 px-6 md:px-12 lg:px-16 pt-16 pb-10 bg-[#0A0C0D] border-t border-white/8">
+    <footer className="relative z-10 px-4 sm:px-8 md:px-12 lg:px-16 pt-12 sm:pt-16 pb-8 sm:pb-10 bg-[#0A0C0D] border-t border-white/8">
       <div className="max-w-7xl mx-auto">
-        <div className="grid gap-10 md:grid-cols-4">
+        <div className="grid gap-8 sm:gap-10 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
-          <div className="md:col-span-1">
+          <div className="sm:col-span-2 lg:col-span-1">
             <div className="flex items-center gap-2.5">
               <span className="text-sm font-semibold tracking-[0.25em] text-[#F2F0EA] uppercase">
                 Grand Motors
               </span>
-              <span className="w-1.5 h-1.5 rounded-full bg-[#B88952]" />
+              <span className="w-1.5 h-1.5 rounded-full bg-[#B88952] shadow-[0_0_6px_rgba(184,137,82,0.8)]" />
             </div>
-            <p className="mt-4 text-[13px] leading-relaxed text-[#A7AAAD] max-w-xs">
+            <p className="mt-4 text-xs sm:text-[13px] leading-relaxed text-[#A7AAAD] max-w-sm">
               Premium automotive workshop in Moosapet, Hyderabad. Precision service, honest advice
               and genuine-quality parts.
             </p>

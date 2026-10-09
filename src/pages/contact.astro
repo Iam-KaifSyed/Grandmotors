@@ -20,8 +20,8 @@ const ADDRESS_LINE_3 = 'Moosapet, Hyderabad, Telangana 500072';
   title="Contact | Grand Motors" 
   description="Get in touch with Grand Motors. Find our location in Moosapet, Hyderabad."
 >
-  <main class="pt-32 pb-20">
-    <section class="max-w-7xl mx-auto px-6 md:px-12 lg:px-16 grid gap-10 lg:grid-cols-2 lg:items-stretch">
+  <main class="pt-32 sm:pt-36 md:pt-40 pb-16 md:pb-24">
+    <section class="max-w-7xl mx-auto px-4 sm:px-8 md:px-12 lg:px-16 grid gap-10 lg:grid-cols-2 lg:items-stretch">
       <div class="flex flex-col">
         <SectionHeading
           eyebrow="Visit Us"
@@ -30,7 +30,7 @@ const ADDRESS_LINE_3 = 'Moosapet, Hyderabad, Telangana 500072';
           <Fragment slot="title">Location & Contact</Fragment>
         </SectionHeading>
 
-        <Reveal delay={160} class="mt-10 flex flex-col gap-5">
+        <Reveal delay={160} class="mt-8 sm:mt-10 flex flex-col gap-4 sm:gap-5">
           {[
             {
               icon: PinIcon,
@@ -43,25 +43,25 @@ const ADDRESS_LINE_3 = 'Moosapet, Hyderabad, Telangana 500072';
             {
               icon: ClockIcon,
               label: 'Hours',
-              lines: ['Open 24 hours'],
+              lines: ['Open Mon–Sat, 9:00 AM – 8:00 PM (Emergency 24/7)'],
             },
           ].map((row) => {
             const Icon = row.icon;
             const content = (
               <>
-                <span class="shrink-0 grid place-items-center w-11 h-11 rounded-lg border border-white/10 text-[#B88952] transition-colors duration-200 group-hover:border-[#B88952]/40 group-hover:bg-[#B88952]/10">
+                <span class="shrink-0 grid place-items-center w-10 h-10 sm:w-11 sm:h-11 rounded-lg border border-white/10 text-[#B88952] transition-colors duration-200 group-hover:border-[#B88952]/40 group-hover:bg-[#B88952]/10">
                   <Icon className="w-5 h-5" />
                 </span>
-                <span>
-                  <span class="block text-[11px] font-semibold tracking-[0.22em] uppercase text-[#A7AAAD]/80">
+                <div>
+                  <span class="block text-[10px] sm:text-[11px] font-semibold tracking-[0.2em] sm:tracking-[0.22em] uppercase text-[#A7AAAD]/80">
                     {row.label}
                   </span>
                   {row.lines.map((line) => (
-                    <span class="block text-[14px] md:text-[15px] text-[#F2F0EA] leading-snug mt-0.5">
+                    <span class="block text-[13px] sm:text-[14px] md:text-[15px] text-[#F2F0EA] leading-snug mt-0.5">
                       {line}
                     </span>
                   ))}
-                </span>
+                </div>
               </>
             );
             return row.href ? (
@@ -69,12 +69,12 @@ const ADDRESS_LINE_3 = 'Moosapet, Hyderabad, Telangana 500072';
                 href={row.href}
                 target={row.external ? '_blank' : undefined}
                 rel={row.external ? 'noopener noreferrer' : undefined}
-                class="group flex items-start gap-4 cursor-pointer"
+                class="group flex items-start gap-3.5 sm:gap-4 p-3.5 sm:p-4 rounded-xl bg-white/[0.02] border border-white/5 hover:border-[#B88952]/30 hover:bg-[#111315] transition-all cursor-pointer"
               >
                 {content}
               </a>
             ) : (
-              <div class="group flex items-start gap-4">
+              <div class="group flex items-start gap-3.5 sm:gap-4 p-3.5 sm:p-4 rounded-xl bg-white/[0.02] border border-white/5">
                 {content}
               </div>
             );
@@ -82,8 +82,8 @@ const ADDRESS_LINE_3 = 'Moosapet, Hyderabad, Telangana 500072';
         </Reveal>
       </div>
 
-      <Reveal delay={120} class="min-h-[340px] lg:min-h-full mt-10 lg:mt-0">
-        <div class="relative h-full min-h-[340px] rounded-2xl overflow-hidden border border-white/10">
+      <Reveal delay={120} class="min-h-[300px] sm:min-h-[360px] lg:min-h-full mt-4 lg:mt-0">
+        <div class="relative h-full min-h-[300px] sm:min-h-[360px] rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
           <iframe
             title="Grand Motors location on Google Maps — Moosapet, Hyderabad"
             src={MAPS_EMBED}

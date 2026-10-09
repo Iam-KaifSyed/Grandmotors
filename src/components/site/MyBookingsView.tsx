@@ -88,7 +88,7 @@ function StatusIndicator({ status }: { status: BookingStatus }) {
 function TrackingStageTimeline({ status }: { status: BookingStatus }) {
   if (status === 'Cancelled') {
     return (
-      <div className="p-5 rounded-2xl bg-red-950/20 border border-red-500/20 backdrop-blur-md text-sm text-red-200 shadow-inner relative z-10 w-full">
+      <div className="p-4 sm:p-5 rounded-2xl bg-red-950/20 border border-red-500/20 backdrop-blur-md text-xs sm:text-sm text-red-200 shadow-inner relative z-10 w-full">
         This service request was cancelled. Please call Grand Motors or book a new appointment.
       </div>
     );
@@ -98,22 +98,22 @@ function TrackingStageTimeline({ status }: { status: BookingStatus }) {
   const currentIndex = stepOrder.indexOf(status);
 
   return (
-    <div className="space-y-6 relative z-10 w-full pt-2 pb-4">
-      <div className="text-[10px] font-semibold tracking-[0.2em] uppercase text-[#A7AAAD]/80 px-2">
+    <div className="space-y-4 sm:space-y-6 relative z-10 w-full pt-1 pb-2 sm:pb-4">
+      <div className="text-[10px] font-semibold tracking-[0.2em] uppercase text-[#A7AAAD]/80 px-1">
         Live Service Stage
       </div>
 
       <div className="relative w-full max-w-full overflow-hidden sm:overflow-visible">
         {/* Continuous Line Background */}
-        <div className="absolute top-5 left-[12.5%] right-[12.5%] h-[1px] bg-white/10" />
+        <div className="absolute top-4 sm:top-5 left-[12.5%] right-[12.5%] h-[1px] bg-white/10" />
 
         {/* Active Line */}
         <div
-          className="absolute top-5 left-[12.5%] origin-left h-[1px] bg-gradient-to-r from-[#B88952] to-[#F2F0EA] shadow-[0_0_8px_rgba(184,137,82,0.6)] transition-all duration-700 ease-out"
+          className="absolute top-4 sm:top-5 left-[12.5%] origin-left h-[1px] bg-gradient-to-r from-[#B88952] to-[#F2F0EA] shadow-[0_0_8px_rgba(184,137,82,0.6)] transition-all duration-700 ease-out"
           style={{ width: `${(Math.max(0, currentIndex) / (stepOrder.length - 1)) * 75}%` }}
         />
 
-        <div className="grid grid-cols-4 gap-2 text-center relative z-10">
+        <div className="grid grid-cols-4 gap-1 sm:gap-2 text-center relative z-10">
           {TRACKING_STEPS.map((step, idx) => {
             const stepIndex = stepOrder.indexOf(step.key);
             const isCompleted = stepIndex < currentIndex;
@@ -121,8 +121,8 @@ function TrackingStageTimeline({ status }: { status: BookingStatus }) {
 
             return (
               <div key={step.key} className="flex flex-col items-center group">
-                <div className="relative flex items-center justify-center w-10 h-10 mb-3 rounded-full bg-[#0a0c0e] backdrop-blur-xl border transition-all duration-500">
-                   <div className={`w-full h-full rounded-full flex items-center justify-center text-[11px] font-bold transition-all duration-500 ${
+                <div className="relative flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 mb-2 sm:mb-3 rounded-full bg-[#0a0c0e] backdrop-blur-xl border transition-all duration-500">
+                   <div className={`w-full h-full rounded-full flex items-center justify-center text-[10px] sm:text-[11px] font-bold transition-all duration-500 ${
                      isCurrent ? 'bg-gradient-to-br from-[#B88952] to-[#8a6534] border border-[#d6a563] text-black shadow-[0_0_15px_rgba(184,137,82,0.4)]' :
                      isCompleted ? 'bg-white/10 border border-white/20 text-[#F2F0EA]' :
                      'bg-transparent border border-white/10 text-[#A7AAAD]/40'
@@ -135,7 +135,7 @@ function TrackingStageTimeline({ status }: { status: BookingStatus }) {
                    </div>
                 </div>
 
-                <span className={`text-[9px] sm:text-[10px] font-semibold tracking-widest uppercase transition-colors duration-300 px-1 ${
+                <span className={`text-[8px] xs:text-[9px] sm:text-[10px] font-semibold tracking-wider sm:tracking-widest uppercase transition-colors duration-300 px-0.5 leading-tight ${
                   isCurrent ? 'text-[#eaddc1]' :
                   isCompleted ? 'text-[#A7AAAD]' :
                   'text-[#A7AAAD]/40'

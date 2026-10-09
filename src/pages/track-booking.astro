@@ -9,8 +9,8 @@ import { TrackBookingFlow } from '../components/site/TrackBookingFlow';
   title="Track Booking | Grand Motors" 
   description="Check real-time status and schedule updates for your Grand Motors service booking."
 >
-  <main class="pt-32 pb-20">
-    <section class="max-w-4xl mx-auto px-6 md:px-12 lg:px-16">
+  <main class="pt-32 sm:pt-36 md:pt-40 pb-16 md:pb-24">
+    <section class="max-w-4xl mx-auto px-4 sm:px-8 md:px-12 lg:px-16">
       <SectionHeading
         eyebrow="Service Status"
         intro="Enter your Booking ID to view the live progress and schedule details of your vehicle service."
@@ -19,7 +19,7 @@ import { TrackBookingFlow } from '../components/site/TrackBookingFlow';
         <Fragment slot="title">Track Your Booking</Fragment>
       </SectionHeading>
 
-      <Reveal delay={120} class="mt-14">
+      <Reveal delay={120} class="mt-10 sm:mt-14">
         <TrackBookingFlow client:load />
       </Reveal>
     </section>

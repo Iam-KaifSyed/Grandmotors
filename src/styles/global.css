@@ -31,6 +31,13 @@ body {
   font-family: "Inter", "Manrope", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+  overflow-x: hidden;
+}
+
+/* Touch responsiveness */
+button, a, input, select, textarea {
+  touch-action: manipulation;
 }
 
 /* Lenis */

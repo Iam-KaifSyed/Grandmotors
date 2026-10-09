@@ -395,41 +395,41 @@ export const BookServiceForm = ({
 
   if (submittedData) {
     return (
-      <div className="bg-[#111315] border border-white/10 rounded-2xl p-6 sm:p-10 md:p-12 text-left relative overflow-hidden">
+      <div className="bg-[#111315] border border-white/10 rounded-2xl p-5 sm:p-8 md:p-12 text-left relative overflow-hidden">
         <div className="absolute top-0 right-0 -mt-12 -mr-12 w-80 h-80 bg-[#B88952]/10 rounded-full blur-3xl pointer-events-none"></div>
 
-        <div className="flex items-center gap-3 text-[#B88952] mb-6">
-          <span className="w-8 h-8 rounded-full border border-[#B88952]/40 bg-[#B88952]/10 flex items-center justify-center font-bold text-sm">
+        <div className="flex items-center gap-3 text-[#B88952] mb-5 sm:mb-6">
+          <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-[#B88952]/40 bg-[#B88952]/10 flex items-center justify-center font-bold text-xs sm:text-sm shrink-0">
             ✓
           </span>
-          <span className="text-xs font-semibold tracking-[0.25em] uppercase">Request Confirmed</span>
+          <span className="text-[10px] sm:text-xs font-semibold tracking-[0.25em] uppercase">Request Confirmed</span>
         </div>
 
-        <h2 className="text-3xl sm:text-4xl font-extrabold tracking-[-0.02em] text-[#F2F0EA] uppercase mb-3">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-[-0.02em] text-[#F2F0EA] uppercase mb-3">
           Service Request Received
         </h2>
-        <p className="text-sm sm:text-base text-[#A7AAAD] leading-relaxed max-w-2xl mb-8">
+        <p className="text-xs sm:text-sm md:text-base text-[#A7AAAD] leading-relaxed max-w-2xl mb-6 sm:mb-8">
           {config?.confirmationMessage ||
             `Thank you, ${submittedData.fullName}. Your service request has been received and saved to your device. Our workshop team will review the requirements and contact you to confirm your appointment.`}
         </p>
 
         {/* Booking ID Hero Card */}
-        <div className="bg-[#0A0C0D] border border-[#B88952]/30 rounded-xl p-6 sm:p-8 mb-8 relative">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="bg-[#0A0C0D] border border-[#B88952]/30 rounded-xl p-5 sm:p-8 mb-6 sm:mb-8 relative">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 sm:gap-6">
             <div className="space-y-1">
-              <span className="text-[11px] font-semibold tracking-[0.25em] text-[#B88952] uppercase block">
+              <span className="text-[10px] sm:text-[11px] font-semibold tracking-[0.25em] text-[#B88952] uppercase block">
                 YOUR BOOKING ID
               </span>
-              <div className="text-3xl sm:text-4xl lg:text-5xl font-mono font-black tracking-wider text-[#F2F0EA]">
+              <div className="text-2xl sm:text-4xl lg:text-5xl font-mono font-black tracking-wider text-[#F2F0EA] break-all">
                 {submittedData.bookingRef}
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
               <button
                 type="button"
                 onClick={handleCopyBookingId}
-                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 text-xs font-semibold tracking-[0.18em] uppercase text-[#0A0C0D] bg-[#B88952] hover:bg-[#caa066] active:bg-[#a67943] rounded-lg transition-all shadow-lg shadow-[#B88952]/15 cursor-pointer shrink-0"
+                className="inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 text-xs font-semibold tracking-[0.16em] uppercase text-[#0A0C0D] bg-[#B88952] hover:bg-[#caa066] active:bg-[#a67943] rounded-lg transition-all shadow-lg shadow-[#B88952]/15 cursor-pointer shrink-0"
               >
                 {isCopied ? (
                   <>
@@ -446,16 +446,16 @@ export const BookServiceForm = ({
                         d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
                       />
                     </svg>
-                    <span>COPY BOOKING ID</span>
+                    <span>COPY ID</span>
                   </>
                 )}
               </button>
 
               <a
                 href={`/my-bookings?id=${encodeURIComponent(submittedData.bookingRef || '')}`}
-                className="inline-flex items-center justify-center gap-2 px-5 py-3.5 text-xs font-semibold tracking-[0.18em] uppercase text-[#F2F0EA] bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-colors cursor-pointer"
+                className="inline-flex items-center justify-center gap-2 px-4 sm:px-5 py-3 sm:py-3.5 text-xs font-semibold tracking-[0.16em] uppercase text-[#F2F0EA] bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-colors cursor-pointer"
               >
-                View My Bookings &rarr;
+                View Details &rarr;
               </a>
             </div>
           </div>
@@ -610,7 +610,7 @@ export const BookServiceForm = ({
     <form
       onSubmit={handleSubmit}
       noValidate
-      className="bg-[#111315] border border-white/8 rounded-2xl p-6 sm:p-10 md:p-12 space-y-10"
+      className="bg-[#111315] border border-white/8 rounded-2xl p-5 sm:p-8 md:p-12 space-y-8 sm:space-y-10"
     >
       {/* Server Error Notification Banner */}
       {serverError && (
@@ -631,14 +631,14 @@ export const BookServiceForm = ({
 
       {/* 1. Customer Details */}
       <div>
-        <div className="flex items-center gap-2.5 mb-6">
+        <div className="flex items-center gap-2.5 mb-5 sm:mb-6">
           <span className="w-5 h-px bg-[#B88952]"></span>
           <h3 className="text-xs font-semibold tracking-[0.25em] text-[#B88952] uppercase">
             01. Customer Information
           </h3>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-5 sm:gap-6 md:grid-cols-2">
           {/* Full Name */}
           <div>
             <label
@@ -658,7 +658,7 @@ export const BookServiceForm = ({
               placeholder="e.g. Rahul Sharma"
               className={`w-full bg-[#0A0C0D] border ${
                 errors.fullName ? 'border-red-500/80' : 'border-white/10 focus:border-[#B88952]'
-              } rounded-lg px-4 py-3 text-sm text-[#F2F0EA] placeholder-[#A7AAAD]/40 focus:outline-none transition-colors`}
+              } rounded-lg px-4 py-3 text-base sm:text-sm text-[#F2F0EA] placeholder-[#A7AAAD]/40 focus:outline-none transition-colors`}
             />
             {errors.fullName && <p className="mt-1.5 text-xs text-red-400">{errors.fullName}</p>}
           </div>
@@ -682,7 +682,7 @@ export const BookServiceForm = ({
               placeholder="+91 98765 43210"
               className={`w-full bg-[#0A0C0D] border ${
                 errors.phoneNumber ? 'border-red-500/80' : 'border-white/10 focus:border-[#B88952]'
-              } rounded-lg px-4 py-3 text-sm text-[#F2F0EA] placeholder-[#A7AAAD]/40 focus:outline-none transition-colors`}
+              } rounded-lg px-4 py-3 text-base sm:text-sm text-[#F2F0EA] placeholder-[#A7AAAD]/40 focus:outline-none transition-colors`}
             />
             {errors.phoneNumber && <p className="mt-1.5 text-xs text-red-400">{errors.phoneNumber}</p>}
           </div>
@@ -708,7 +708,7 @@ export const BookServiceForm = ({
                 placeholder="rahul@example.com"
                 className={`w-full bg-[#0A0C0D] border ${
                   errors.email ? 'border-red-500/80' : 'border-white/10 focus:border-[#B88952]'
-                } rounded-lg px-4 py-3 text-sm text-[#F2F0EA] placeholder-[#A7AAAD]/40 focus:outline-none transition-colors`}
+                } rounded-lg px-4 py-3 text-base sm:text-sm text-[#F2F0EA] placeholder-[#A7AAAD]/40 focus:outline-none transition-colors`}
               />
               {errors.email && <p className="mt-1.5 text-xs text-red-400">{errors.email}</p>}
             </div>
@@ -718,14 +718,14 @@ export const BookServiceForm = ({
 
       {/* 2. Vehicle Details */}
       <div className="pt-6 border-t border-white/5">
-        <div className="flex items-center gap-2.5 mb-6">
+        <div className="flex items-center gap-2.5 mb-5 sm:mb-6">
           <span className="w-5 h-px bg-[#B88952]"></span>
           <h3 className="text-xs font-semibold tracking-[0.25em] text-[#B88952] uppercase">
             02. Vehicle Details
           </h3>
         </div>
 
-        <div className="grid gap-6 sm:grid-cols-3">
+        <div className="grid gap-5 sm:gap-6 sm:grid-cols-3">
           {/* Vehicle Make */}
           <div>
             <label
@@ -745,7 +745,7 @@ export const BookServiceForm = ({
               placeholder="e.g. Mercedes-Benz"
               className={`w-full bg-[#0A0C0D] border ${
                 errors.vehicleMake ? 'border-red-500/80' : 'border-white/10 focus:border-[#B88952]'
-              } rounded-lg px-4 py-3 text-sm text-[#F2F0EA] placeholder-[#A7AAAD]/40 focus:outline-none transition-colors`}
+              } rounded-lg px-4 py-3 text-base sm:text-sm text-[#F2F0EA] placeholder-[#A7AAAD]/40 focus:outline-none transition-colors`}
             />
             {errors.vehicleMake && <p className="mt-1.5 text-xs text-red-400">{errors.vehicleMake}</p>}
           </div>
@@ -769,7 +769,7 @@ export const BookServiceForm = ({
               placeholder="e.g. C-Class / AMG"
               className={`w-full bg-[#0A0C0D] border ${
                 errors.vehicleModel ? 'border-red-500/80' : 'border-white/10 focus:border-[#B88952]'
-              } rounded-lg px-4 py-3 text-sm text-[#F2F0EA] placeholder-[#A7AAAD]/40 focus:outline-none transition-colors`}
+              } rounded-lg px-4 py-3 text-base sm:text-sm text-[#F2F0EA] placeholder-[#A7AAAD]/40 focus:outline-none transition-colors`}
             />
             {errors.vehicleModel && (
               <p className="mt-1.5 text-xs text-red-400">{errors.vehicleModel}</p>
@@ -798,7 +798,7 @@ export const BookServiceForm = ({
                 errors.registrationNumber
                   ? 'border-red-500/80'
                   : 'border-white/10 focus:border-[#B88952]'
-              } rounded-lg px-4 py-3 text-sm text-[#F2F0EA] placeholder-[#A7AAAD]/40 focus:outline-none transition-colors`}
+              } rounded-lg px-4 py-3 text-base sm:text-sm font-mono uppercase text-[#F2F0EA] placeholder-[#A7AAAD]/40 focus:outline-none transition-colors`}
             />
             {errors.registrationNumber && (
               <p className="mt-1.5 text-xs text-red-400">{errors.registrationNumber}</p>
@@ -809,14 +809,14 @@ export const BookServiceForm = ({
 
       {/* 3. Service Category & Specific Service */}
       <div className="pt-6 border-t border-white/5">
-        <div className="flex items-center gap-2.5 mb-6">
+        <div className="flex items-center gap-2.5 mb-5 sm:mb-6">
           <span className="w-5 h-px bg-[#B88952]"></span>
           <h3 className="text-xs font-semibold tracking-[0.25em] text-[#B88952] uppercase">
             03. Service Selection
           </h3>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-5 sm:gap-6 md:grid-cols-2">
           {/* Category */}
           <div>
             <label
@@ -843,7 +843,7 @@ export const BookServiceForm = ({
                 errors.serviceCategory
                   ? 'border-red-500/80'
                   : 'border-white/10 focus:border-[#B88952]'
-              } rounded-lg px-4 py-3 text-sm text-[#F2F0EA] focus:outline-none transition-colors cursor-pointer`}
+              } rounded-lg px-4 py-3 text-base sm:text-sm text-[#F2F0EA] focus:outline-none transition-colors cursor-pointer`}
             >
               <option value="" disabled>
                 Select a service
@@ -874,7 +874,7 @@ export const BookServiceForm = ({
                 value={formState.specificService}
                 onChange={(e) => setFormState({ ...formState, specificService: e.target.value })}
                 disabled={!formState.serviceCategory}
-                className="w-full bg-[#0A0C0D] border border-white/10 focus:border-[#B88952] disabled:opacity-50 rounded-lg px-4 py-3 text-sm text-[#F2F0EA] focus:outline-none transition-colors cursor-pointer"
+                className="w-full bg-[#0A0C0D] border border-white/10 focus:border-[#B88952] disabled:opacity-50 rounded-lg px-4 py-3 text-base sm:text-sm text-[#F2F0EA] focus:outline-none transition-colors cursor-pointer"
               >
                 {!formState.serviceCategory ? (
                   <option value="">Select a service first</option>
@@ -1089,7 +1089,7 @@ export const BookServiceForm = ({
             )}
 
             {/* Address Input Grid */}
-            <div className="grid gap-6 sm:grid-cols-2">
+            <div className="grid gap-5 sm:gap-6 sm:grid-cols-2">
               {/* House / Flat / Building No. */}
               <div>
                 <label
@@ -1109,7 +1109,7 @@ export const BookServiceForm = ({
                   placeholder="e.g. Villa 14, Lotus Palms / Flat 402"
                   className={`w-full bg-[#111315] border ${
                     errors.doorstepHouseFlat ? 'border-red-500/80' : 'border-white/10 focus:border-[#B88952]'
-                  } rounded-lg px-4 py-3 text-sm text-[#F2F0EA] placeholder-[#A7AAAD]/40 focus:outline-none transition-colors`}
+                  } rounded-lg px-4 py-3 text-base sm:text-sm text-[#F2F0EA] placeholder-[#A7AAAD]/40 focus:outline-none transition-colors`}
                 />
                 {errors.doorstepHouseFlat && (
                   <p className="mt-1.5 text-xs text-red-400">{errors.doorstepHouseFlat}</p>
@@ -1135,7 +1135,7 @@ export const BookServiceForm = ({
                   placeholder="e.g. Road No. 36, Jubilee Hills"
                   className={`w-full bg-[#111315] border ${
                     errors.doorstepStreetLocality ? 'border-red-500/80' : 'border-white/10 focus:border-[#B88952]'
-                  } rounded-lg px-4 py-3 text-sm text-[#F2F0EA] placeholder-[#A7AAAD]/40 focus:outline-none transition-colors`}
+                  } rounded-lg px-4 py-3 text-base sm:text-sm text-[#F2F0EA] placeholder-[#A7AAAD]/40 focus:outline-none transition-colors`}
                 />
                 {errors.doorstepStreetLocality && (
                   <p className="mt-1.5 text-xs text-red-400">{errors.doorstepStreetLocality}</p>
@@ -1161,7 +1161,7 @@ export const BookServiceForm = ({
                   placeholder="e.g. Hyderabad"
                   className={`w-full bg-[#111315] border ${
                     errors.doorstepCity ? 'border-red-500/80' : 'border-white/10 focus:border-[#B88952]'
-                  } rounded-lg px-4 py-3 text-sm text-[#F2F0EA] placeholder-[#A7AAAD]/40 focus:outline-none transition-colors`}
+                  } rounded-lg px-4 py-3 text-base sm:text-sm text-[#F2F0EA] placeholder-[#A7AAAD]/40 focus:outline-none transition-colors`}
                 />
                 {errors.doorstepCity && (
                   <p className="mt-1.5 text-xs text-red-400">{errors.doorstepCity}</p>
@@ -1189,7 +1189,7 @@ export const BookServiceForm = ({
                   placeholder="e.g. 500033"
                   className={`w-full bg-[#111315] border font-mono ${
                     errors.doorstepPincode ? 'border-red-500/80' : 'border-white/10 focus:border-[#B88952]'
-                  } rounded-lg px-4 py-3 text-sm text-[#F2F0EA] placeholder-[#A7AAAD]/40 focus:outline-none transition-colors`}
+                  } rounded-lg px-4 py-3 text-base sm:text-sm text-[#F2F0EA] placeholder-[#A7AAAD]/40 focus:outline-none transition-colors`}
                 />
                 {errors.doorstepPincode && (
                   <p className="mt-1.5 text-xs text-red-400">{errors.doorstepPincode}</p>
@@ -1202,14 +1202,14 @@ export const BookServiceForm = ({
 
       {/* 5. Preferred Schedule */}
       <div className="pt-6 border-t border-white/5">
-        <div className="flex items-center gap-2.5 mb-6">
+        <div className="flex items-center gap-2.5 mb-5 sm:mb-6">
           <span className="w-5 h-px bg-[#B88952]"></span>
           <h3 className="text-xs font-semibold tracking-[0.25em] text-[#B88952] uppercase">
             05. Preferred Date & Time
           </h3>
         </div>
 
-        <div className="grid gap-6 sm:grid-cols-2">
+        <div className="grid gap-5 sm:gap-6 sm:grid-cols-2">
           {/* Preferred Date */}
           <div>
             <label
@@ -1229,7 +1229,7 @@ export const BookServiceForm = ({
               }}
               className={`w-full bg-[#0A0C0D] border ${
                 errors.preferredDate ? 'border-red-500/80' : 'border-white/10 focus:border-[#B88952]'
-              } rounded-lg px-4 py-3 text-sm text-[#F2F0EA] focus:outline-none transition-colors [color-scheme:dark]`}
+              } rounded-lg px-4 py-3 text-base sm:text-sm text-[#F2F0EA] focus:outline-none transition-colors [color-scheme:dark]`}
             />
             {errors.preferredDate && (
               <p className="mt-1.5 text-xs text-red-400">{errors.preferredDate}</p>
@@ -1254,7 +1254,7 @@ export const BookServiceForm = ({
               }}
               className={`w-full bg-[#0A0C0D] border ${
                 errors.preferredTime ? 'border-red-500/80' : 'border-white/10 focus:border-[#B88952]'
-              } rounded-lg px-4 py-3 text-sm text-[#F2F0EA] focus:outline-none transition-colors cursor-pointer`}
+              } rounded-lg px-4 py-3 text-base sm:text-sm text-[#F2F0EA] focus:outline-none transition-colors cursor-pointer`}
             >
               <option value="" disabled>
                 Select a time window
@@ -1301,7 +1301,7 @@ export const BookServiceForm = ({
                     })
                   }
                   placeholder="Your answer..."
-                  className="w-full bg-[#0A0C0D] border border-white/10 focus:border-[#B88952] rounded-lg px-4 py-3 text-sm text-[#F2F0EA] placeholder-[#A7AAAD]/40 focus:outline-none transition-colors"
+                  className="w-full bg-[#0A0C0D] border border-white/10 focus:border-[#B88952] rounded-lg px-4 py-3 text-base sm:text-sm text-[#F2F0EA] placeholder-[#A7AAAD]/40 focus:outline-none transition-colors"
                 />
               </div>
             ))}
@@ -1309,7 +1309,7 @@ export const BookServiceForm = ({
         </div>
       )}
 
-      {/* 6. Additional Message (Optional) */}
+      {/* 7. Additional Message (Optional) */}
       {optionalVis.additionalMessage !== false && (
         <div className="pt-6 border-t border-white/5">
           <label
@@ -1325,7 +1325,7 @@ export const BookServiceForm = ({
             value={formState.additionalMessage}
             onChange={(e) => setFormState({ ...formState, additionalMessage: e.target.value })}
             placeholder="Mention any specific issues, noise symptoms, or custom requirements..."
-            className="w-full bg-[#0A0C0D] border border-white/10 focus:border-[#B88952] rounded-lg px-4 py-3 text-sm text-[#F2F0EA] placeholder-[#A7AAAD]/40 focus:outline-none transition-colors resize-none"
+            className="w-full bg-[#0A0C0D] border border-white/10 focus:border-[#B88952] rounded-lg px-4 py-3 text-base sm:text-sm text-[#F2F0EA] placeholder-[#A7AAAD]/40 focus:outline-none transition-colors resize-none"
           />
         </div>
       )}
@@ -1336,7 +1336,7 @@ export const BookServiceForm = ({
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 text-xs font-semibold tracking-[0.2em] uppercase text-[#0A0C0D] bg-[#B88952] hover:bg-[#caa066] active:bg-[#a67943] disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition-all shadow-lg shadow-[#B88952]/10 cursor-pointer"
+            className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3.5 sm:py-4 text-xs font-semibold tracking-[0.2em] uppercase text-[#0A0C0D] bg-[#B88952] hover:bg-[#caa066] active:bg-[#a67943] disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition-all shadow-lg shadow-[#B88952]/10 cursor-pointer"
           >
             {isSubmitting ? 'Processing Request...' : 'Request Service'}
           </button>

@@ -20,8 +20,8 @@ const bookingConfig = await getBookingFormConfigOrDefault(db);
   title="Book Service | Grand Motors" 
   description="Book your next service appointment with Grand Motors."
 >
-  <main class="pt-32 pb-20">
-    <section class="max-w-4xl mx-auto px-6 md:px-12 lg:px-16">
+  <main class="pt-32 sm:pt-36 md:pt-40 pb-16 md:pb-24">
+    <section class="max-w-4xl mx-auto px-4 sm:px-8 md:px-12 lg:px-16">
       <SectionHeading
         eyebrow="Appointments"
         intro={bookingConfig.supportingText}
@@ -30,7 +30,7 @@ const bookingConfig = await getBookingFormConfigOrDefault(db);
         <Fragment slot="title">{bookingConfig.heading}</Fragment>
       </SectionHeading>
 
-      <Reveal delay={120} class="mt-14">
+      <Reveal delay={120} class="mt-10 sm:mt-14">
         <BookServiceForm client:load services={bookingOptions} config={bookingConfig} />
       </Reveal>
     </section>

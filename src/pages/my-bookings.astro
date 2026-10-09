@@ -9,17 +9,17 @@ import { MyBookingsView } from '../components/site/MyBookingsView';
   title="My Bookings | Grand Motors" 
   description="View and manage your recent service requests and appointments with Grand Motors."
 >
-  <main class="pt-32 pb-20">
-    <section class="max-w-4xl mx-auto px-6 md:px-12 lg:px-16">
+  <main class="pt-32 sm:pt-36 md:pt-40 pb-16 md:pb-24">
+    <section class="max-w-4xl mx-auto px-4 sm:px-8 md:px-12 lg:px-16">
       <SectionHeading
         eyebrow="Customer Portal"
-        intro="Your recent service requests"
+        intro="Your recent service requests saved securely on this device."
         align="center"
       >
         <Fragment slot="title">My Bookings</Fragment>
       </SectionHeading>
 
-      <Reveal delay={120} class="mt-14">
+      <Reveal delay={120} class="mt-10 sm:mt-14">
         <MyBookingsView client:load />
       </Reveal>
     </section>
