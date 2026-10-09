@@ -1,4 +1,5 @@
 export type BookingStatus = 'Pending' | 'Confirmed' | 'In Progress' | 'Completed' | 'Cancelled';
+export type ServiceLocation = 'Workshop Visit' | 'Doorstep Service';
 
 export interface BookingRecord {
   id: string; // Booking ID e.g. GM-229397
@@ -20,6 +21,14 @@ export interface BookingRecord {
   preferredTime: string;
   status: BookingStatus;
   additionalMessage?: string;
+  serviceLocation: ServiceLocation | string;
+  doorstepHouseFlat?: string;
+  doorstepStreetLocality?: string;
+  doorstepCity?: string;
+  doorstepPincode?: string;
+  doorstepLatitude?: number | null;
+  doorstepLongitude?: number | null;
+  doorstepMapUrl?: string;
   createdAt: string;
 }
 
@@ -43,6 +52,47 @@ export function normalizeBooking(
   const preferredDate = raw.preferredDate || raw.requestedDate || existing?.preferredDate || '';
   const preferredTime = raw.preferredTime || raw.requestedTime || existing?.preferredTime || '';
 
+  // Service Location normalization
+  const rawLoc = raw.serviceLocation || existing?.serviceLocation || 'Workshop Visit';
+  const serviceLocation: ServiceLocation | string =
+    rawLoc.toLowerCase().includes('doorstep') ? 'Doorstep Service' : 'Workshop Visit';
+
+  const doorstepHouseFlat = (
+    raw.doorstepHouseFlat !== undefined ? raw.doorstepHouseFlat : existing?.doorstepHouseFlat || ''
+  ).trim();
+  const doorstepStreetLocality = (
+    raw.doorstepStreetLocality !== undefined
+      ? raw.doorstepStreetLocality
+      : existing?.doorstepStreetLocality || ''
+  ).trim();
+  const doorstepCity = (
+    raw.doorstepCity !== undefined ? raw.doorstepCity : existing?.doorstepCity || ''
+  ).trim();
+  const doorstepPincode = (
+    raw.doorstepPincode !== undefined ? raw.doorstepPincode : existing?.doorstepPincode || ''
+  ).trim();
+
+  const doorstepLatitude =
+    raw.doorstepLatitude !== undefined
+      ? raw.doorstepLatitude
+      : existing?.doorstepLatitude !== undefined
+      ? existing.doorstepLatitude
+      : null;
+  const doorstepLongitude =
+    raw.doorstepLongitude !== undefined
+      ? raw.doorstepLongitude
+      : existing?.doorstepLongitude !== undefined
+      ? existing.doorstepLongitude
+      : null;
+
+  let doorstepMapUrl = (
+    raw.doorstepMapUrl !== undefined ? raw.doorstepMapUrl : existing?.doorstepMapUrl || ''
+  ).trim();
+
+  if (!doorstepMapUrl && doorstepLatitude !== null && doorstepLongitude !== null) {
+    doorstepMapUrl = `https://www.google.com/maps?q=${doorstepLatitude},${doorstepLongitude}`;
+  }
+
   return {
     id,
     bookingId: id,
@@ -63,6 +113,14 @@ export function normalizeBooking(
     requestedTime: preferredTime,
     status: raw.status || existing?.status || 'Pending',
     additionalMessage: (raw.additionalMessage !== undefined ? raw.additionalMessage : existing?.additionalMessage || '').trim(),
+    serviceLocation,
+    doorstepHouseFlat,
+    doorstepStreetLocality,
+    doorstepCity,
+    doorstepPincode,
+    doorstepLatitude,
+    doorstepLongitude,
+    doorstepMapUrl,
     createdAt: raw.createdAt || existing?.createdAt || new Date().toISOString(),
   };
 }
@@ -175,6 +233,7 @@ export const DEMO_BOOKINGS: BookingRecord[] = [
     preferredTime: 'Morning (9:00 AM - 12:00 PM)',
     requestedTime: 'Morning (9:00 AM - 12:00 PM)',
     additionalMessage: 'Inspect front ceramic brake sensors.',
+    serviceLocation: 'Workshop Visit',
     createdAt: '2026-10-07T09:30:00Z',
   },
   {
@@ -197,6 +256,14 @@ export const DEMO_BOOKINGS: BookingRecord[] = [
     preferredTime: 'Morning (9:00 AM - 12:00 PM)',
     requestedTime: 'Morning (9:00 AM - 12:00 PM)',
     additionalMessage: 'Check the slight knocking sound on cold starts.',
+    serviceLocation: 'Doorstep Service',
+    doorstepHouseFlat: 'Villa 42, Palm Meadows',
+    doorstepStreetLocality: 'Jubilee Hills, Road No. 36',
+    doorstepCity: 'Hyderabad',
+    doorstepPincode: '500033',
+    doorstepLatitude: 17.4319,
+    doorstepLongitude: 78.4073,
+    doorstepMapUrl: 'https://www.google.com/maps?q=17.4319,78.4073',
     createdAt: '2026-10-06T11:00:00Z',
   },
   {
@@ -219,6 +286,7 @@ export const DEMO_BOOKINGS: BookingRecord[] = [
     preferredTime: 'Afternoon (12:00 PM - 3:00 PM)',
     requestedTime: 'Afternoon (12:00 PM - 3:00 PM)',
     additionalMessage: '',
+    serviceLocation: 'Workshop Visit',
     createdAt: '2026-09-28T14:15:00Z',
   },
 ];

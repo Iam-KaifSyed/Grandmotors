@@ -43,6 +43,20 @@ export const GET: APIRoute = async ({ params, request, locals }) => {
     const row = results[0];
     const isAdmin = isAuthorizedAdmin(request, env);
 
+    const doorstepLatitude =
+      row.doorstepLatitude !== null && row.doorstepLatitude !== undefined && row.doorstepLatitude !== ''
+        ? Number(row.doorstepLatitude)
+        : null;
+    const doorstepLongitude =
+      row.doorstepLongitude !== null && row.doorstepLongitude !== undefined && row.doorstepLongitude !== ''
+        ? Number(row.doorstepLongitude)
+        : null;
+
+    let doorstepMapUrl = row.doorstepMapUrl || '';
+    if (!doorstepMapUrl && doorstepLatitude !== null && doorstepLongitude !== null) {
+      doorstepMapUrl = `https://www.google.com/maps?q=${doorstepLatitude},${doorstepLongitude}`;
+    }
+
     // Public tracking response: omit sensitive PII (phone number, email, internal messages)
     const mapped = {
       id: row.id,
@@ -64,6 +78,14 @@ export const GET: APIRoute = async ({ params, request, locals }) => {
       preferredTime: row.preferredTime,
       requestedTime: row.preferredTime,
       status: row.status,
+      serviceLocation: row.serviceLocation || 'Workshop Visit',
+      doorstepHouseFlat: row.doorstepHouseFlat || '',
+      doorstepStreetLocality: row.doorstepStreetLocality || '',
+      doorstepCity: row.doorstepCity || '',
+      doorstepPincode: row.doorstepPincode || '',
+      doorstepLatitude,
+      doorstepLongitude,
+      doorstepMapUrl,
       additionalMessage: isAdmin ? (row.additionalMessage || '') : undefined,
       createdAt: row.createdAt
     };

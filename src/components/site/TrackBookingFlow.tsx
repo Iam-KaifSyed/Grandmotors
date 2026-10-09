@@ -470,6 +470,48 @@ export const TrackBookingFlow = () => {
 
               <div>
                 <span className="block text-[11px] font-semibold tracking-[0.1em] text-[#A7AAAD] uppercase mb-1">
+                  Service Location
+                </span>
+                <div className="flex items-center gap-2">
+                  <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-bold tracking-wider uppercase rounded-md border ${
+                    activeBooking.serviceLocation === 'Doorstep Service'
+                      ? 'text-[#B88952] border-[#B88952]/40 bg-[#B88952]/10'
+                      : 'text-[#F2F0EA] border-white/20 bg-white/5'
+                  }`}>
+                    {activeBooking.serviceLocation === 'Doorstep Service' ? '🏠 Doorstep Service' : '🏢 Workshop Visit'}
+                  </span>
+                </div>
+                {activeBooking.serviceLocation === 'Doorstep Service' ? (
+                  <div className="mt-2 text-xs text-[#F2F0EA] space-y-1 bg-[#0A0C0D] p-3 rounded-lg border border-white/5">
+                    {(activeBooking.doorstepHouseFlat || activeBooking.doorstepStreetLocality) && (
+                      <p className="font-medium">
+                        {[activeBooking.doorstepHouseFlat, activeBooking.doorstepStreetLocality].filter(Boolean).join(', ')}
+                      </p>
+                    )}
+                    <p className="text-[#A7AAAD]">
+                      {[activeBooking.doorstepCity, activeBooking.doorstepPincode].filter(Boolean).join(' - ')}
+                    </p>
+                    {activeBooking.doorstepMapUrl && (
+                      <a
+                        href={activeBooking.doorstepMapUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#B88952] hover:text-[#caa066] pt-1 transition-colors"
+                      >
+                        <span>View Map Location</span>
+                        <span>↗</span>
+                      </a>
+                    )}
+                  </div>
+                ) : (
+                  <span className="block text-xs text-[#A7AAAD] mt-1">
+                    Moosapet Workshop Bay • Hyderabad
+                  </span>
+                )}
+              </div>
+
+              <div>
+                <span className="block text-[11px] font-semibold tracking-[0.1em] text-[#A7AAAD] uppercase mb-1">
                   Date Requested
                 </span>
                 <span className="text-base text-[#F2F0EA] font-medium block">

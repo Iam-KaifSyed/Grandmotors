@@ -12,5 +12,13 @@ CREATE TABLE IF NOT EXISTS bookings (
   preferredTime TEXT NOT NULL,
   status TEXT DEFAULT 'Pending',
   additionalMessage TEXT,
+  serviceLocation TEXT DEFAULT 'Workshop Visit',
+  doorstepHouseFlat TEXT,
+  doorstepStreetLocality TEXT,
+  doorstepCity TEXT,
+  doorstepPincode TEXT,
+  doorstepLatitude REAL,
+  doorstepLongitude REAL,
+  doorstepMapUrl TEXT,
   createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
 );

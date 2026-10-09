@@ -51,6 +51,7 @@ describe('Customer Booking Store (localStorage)', () => {
       specificService: 'Brake pad & disc replacement',
       preferredDate: '2026-10-20',
       preferredTime: 'Morning (9:00 AM - 12:00 PM)',
+      serviceLocation: 'Workshop Visit',
       status: 'Pending',
       createdAt: '2026-10-09T00:00:00Z',
     };
@@ -136,6 +137,42 @@ describe('Customer Booking Store (localStorage)', () => {
     expect(stored.length).toBe(1);
     expect(stored[0].customerName).toBe('Updated Name');
     expect(stored[0].status).toBe('Confirmed');
+  });
+
+  it('stores multiple bookings for the same vehicle, customer and date as separate records when they have distinct booking IDs', () => {
+    saveBookingRecord({
+      id: 'GM-703831',
+      fullName: 'Vikram Mehta',
+      phoneNumber: '+91 98765 00000',
+      vehicleMake: 'BMW',
+      vehicleModel: 'M3',
+      registrationNumber: 'TS 09 AB 9999',
+      serviceCategory: 'brakes',
+      preferredDate: '2026-10-20',
+      preferredTime: 'Morning',
+      status: 'Pending',
+      createdAt: '2026-10-09T10:00:00Z',
+    });
+
+    saveBookingRecord({
+      id: 'GM-703832',
+      fullName: 'Vikram Mehta',
+      phoneNumber: '+91 98765 00000',
+      vehicleMake: 'BMW',
+      vehicleModel: 'M3',
+      registrationNumber: 'TS 09 AB 9999',
+      serviceCategory: 'tyres-alignment',
+      preferredDate: '2026-10-20',
+      preferredTime: 'Evening',
+      status: 'Pending',
+      createdAt: '2026-10-09T11:00:00Z',
+    });
+
+    const stored = getCustomerBookings();
+    expect(stored.length).toBe(2);
+    expect(stored.map((b) => b.id)).toEqual(['GM-703832', 'GM-703831']);
+    expect(stored[0].serviceCategory).toBe('tyres-alignment');
+    expect(stored[1].serviceCategory).toBe('brakes');
   });
 
   it('retrieves booking by ID (case-insensitive and prefix tolerant)', () => {
@@ -229,5 +266,38 @@ describe('Customer Booking Store (localStorage)', () => {
     expect(stored?.phoneNumber).toBe('+91 99999 88888');
     expect(stored?.email).toBe('private@example.com');
     expect(stored?.vehicleMake).toBe('Ferrari');
+  });
+
+  it('normalizes and preserves doorstep servicing location and address fields', () => {
+    saveBookingRecord({
+      id: 'GM-123789',
+      fullName: 'Sunil Gavaskar',
+      phoneNumber: '+91 98888 77777',
+      vehicleMake: 'Mercedes-Benz',
+      vehicleModel: 'S-Class',
+      registrationNumber: 'TS 09 SB 1111',
+      serviceCategory: 'general-service',
+      preferredDate: '2026-10-28',
+      preferredTime: 'Morning',
+      serviceLocation: 'Doorstep Service',
+      doorstepHouseFlat: 'Villa 55, Green Valley',
+      doorstepStreetLocality: 'Banjara Hills, Road 10',
+      doorstepCity: 'Hyderabad',
+      doorstepPincode: '500034',
+      doorstepLatitude: 17.4123,
+      doorstepLongitude: 78.4321,
+      createdAt: '2026-10-09',
+    });
+
+    const stored = getBookingById('GM-123789');
+    expect(stored).not.toBeNull();
+    expect(stored?.serviceLocation).toBe('Doorstep Service');
+    expect(stored?.doorstepHouseFlat).toBe('Villa 55, Green Valley');
+    expect(stored?.doorstepStreetLocality).toBe('Banjara Hills, Road 10');
+    expect(stored?.doorstepCity).toBe('Hyderabad');
+    expect(stored?.doorstepPincode).toBe('500034');
+    expect(stored?.doorstepLatitude).toBe(17.4123);
+    expect(stored?.doorstepLongitude).toBe(78.4321);
+    expect(stored?.doorstepMapUrl).toBe('https://www.google.com/maps?q=17.4123,78.4321');
   });
 });

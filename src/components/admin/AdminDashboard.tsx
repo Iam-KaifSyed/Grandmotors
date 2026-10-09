@@ -21,6 +21,14 @@ interface AdminBooking {
   preferredTime: string;
   status: Status;
   additionalMessage: string;
+  serviceLocation?: string;
+  doorstepHouseFlat?: string;
+  doorstepStreetLocality?: string;
+  doorstepCity?: string;
+  doorstepPincode?: string;
+  doorstepLatitude?: number | null;
+  doorstepLongitude?: number | null;
+  doorstepMapUrl?: string;
   createdAt: string;
 }
 
@@ -132,7 +140,7 @@ export function AdminDashboard() {
     const q = query.trim().toLowerCase();
     if (q) {
       list = list.filter((b) =>
-        [b.id, b.customerName, b.phoneNumber, b.vehicle, b.registrationNumber]
+        [b.id, b.customerName, b.phoneNumber, b.vehicle, b.registrationNumber, b.serviceLocation, b.doorstepCity, b.doorstepPincode]
           .filter(Boolean)
           .some((v) => String(v).toLowerCase().includes(q))
       );
@@ -413,6 +421,20 @@ export function AdminDashboard() {
                               {b.specificService}
                             </div>
                           )}
+                          <div className="flex items-center gap-1.5 mt-1">
+                            <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 text-[9px] font-semibold tracking-wider uppercase rounded ${
+                              b.serviceLocation === 'Doorstep Service'
+                                ? 'bg-[#B88952]/15 text-[#B88952] border border-[#B88952]/30'
+                                : 'bg-white/5 text-[#A7AAAD]/70 border border-white/10'
+                            }`}>
+                              {b.serviceLocation === 'Doorstep Service' ? '🏠 Doorstep' : '🏢 Workshop'}
+                            </span>
+                            {b.serviceLocation === 'Doorstep Service' && b.doorstepCity && (
+                              <span className="text-[10px] text-[#A7AAAD]/60 truncate">
+                                ({b.doorstepCity})
+                              </span>
+                            )}
+                          </div>
                         </td>
 
                         {/* Requested */}
@@ -478,7 +500,14 @@ export function AdminDashboard() {
                           {b.id}
                         </span>
                       </div>
-                      <div className="shrink-0">
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 text-[9px] font-semibold tracking-wider uppercase rounded ${
+                          b.serviceLocation === 'Doorstep Service'
+                            ? 'bg-[#B88952]/15 text-[#B88952] border border-[#B88952]/30'
+                            : 'bg-white/5 text-[#A7AAAD]/70 border border-white/10'
+                        }`}>
+                          {b.serviceLocation === 'Doorstep Service' ? '🏠 Doorstep' : '🏢 Workshop'}
+                        </span>
                         <StatusBadge status={b.status} />
                       </div>
                     </div>
@@ -562,9 +591,9 @@ export function AdminDashboard() {
                       </div>
 
                       <div className="min-w-0">
-                        <span className="block text-[9px] font-bold tracking-[0.16em] uppercase text-[#A7AAAD]/60 mb-0.5">Created</span>
-                        <p className="text-[#A7AAAD]/80 text-[11px] truncate" title={formatDateTime(b.createdAt)}>
-                          {formatDateTime(b.createdAt)}
+                        <span className="block text-[9px] font-bold tracking-[0.16em] uppercase text-[#A7AAAD]/60 mb-0.5">Location</span>
+                        <p className="text-[#F2F0EA] truncate" title={b.serviceLocation || 'Workshop Visit'}>
+                          {b.serviceLocation === 'Doorstep Service' ? `🏠 Doorstep (${b.doorstepCity || 'City'})` : '🏢 Workshop Bay'}
                         </p>
                       </div>
                     </div>
@@ -626,9 +655,45 @@ export function AdminDashboard() {
                 <Field label="Vehicle" value={`${selected.vehicleMake} ${selected.vehicleModel}`.trim()} />
                 <Field label="Service Category" value={serviceTitle(selected.serviceCategory)} />
                 <Field label="Specific Service" value={selected.specificService || '—'} />
+                <Field label="Service Location" value={selected.serviceLocation || 'Workshop Visit'} />
                 <Field label="Requested" value={`${selected.preferredDate}${selected.preferredTime ? ` · ${selected.preferredTime}` : ''}`} />
                 <Field label="Created" value={formatDateTime(selected.createdAt)} />
               </div>
+
+              {/* Doorstep Address in Admin Detail Drawer */}
+              {selected.serviceLocation === 'Doorstep Service' && (
+                <div className="p-5 rounded-xl bg-[#0A0C0D] border border-[#B88952]/30 space-y-2.5">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="block text-[10px] font-bold tracking-[0.18em] text-[#B88952] uppercase">
+                      Doorstep Service Address
+                    </span>
+                    {selected.doorstepLatitude && selected.doorstepLongitude && (
+                      <span className="text-[10px] font-mono text-[#A7AAAD]/80">
+                        GPS: {selected.doorstepLatitude}, {selected.doorstepLongitude}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-sm font-semibold text-[#F2F0EA]">
+                    {selected.doorstepHouseFlat}, {selected.doorstepStreetLocality}
+                  </p>
+                  <p className="text-xs text-[#A7AAAD]">
+                    {selected.doorstepCity} - {selected.doorstepPincode}
+                  </p>
+                  {selected.doorstepMapUrl && (
+                    <div className="pt-2">
+                      <a
+                        href={selected.doorstepMapUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold tracking-wider uppercase text-[#0A0C0D] bg-[#B88952] hover:bg-[#caa066] rounded-lg transition-colors cursor-pointer"
+                      >
+                        <span>Open Location in Google Maps</span>
+                        <span>↗</span>
+                      </a>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {selected.additionalMessage && (
                 <div>

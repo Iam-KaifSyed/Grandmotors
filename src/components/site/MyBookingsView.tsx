@@ -190,7 +190,15 @@ export function MyBookingsView() {
               'serviceCategory',
               'vehicleMake',
               'vehicleModel',
-              'registrationNumber'
+              'registrationNumber',
+              'serviceLocation',
+              'doorstepHouseFlat',
+              'doorstepStreetLocality',
+              'doorstepCity',
+              'doorstepPincode',
+              'doorstepLatitude',
+              'doorstepLongitude',
+              'doorstepMapUrl',
             ];
 
             for (const key of syncableFields) {
@@ -513,11 +521,20 @@ export function MyBookingsView() {
                         )}
                       </div>
 
-                      {/* Requested Date / Time */}
-                      <div className="pt-2 flex items-center gap-2 text-xs text-[#A7AAAD]">
-                        <ClockIcon className="w-4 h-4 text-[#B88952] shrink-0" />
-                        <span>
-                          {booking.requestedDate || booking.preferredDate} • {booking.requestedTime || booking.preferredTime}
+                      {/* Requested Date / Time & Service Location */}
+                      <div className="pt-2 flex flex-wrap items-center justify-between gap-2 text-xs text-[#A7AAAD]">
+                        <div className="flex items-center gap-2">
+                          <ClockIcon className="w-4 h-4 text-[#B88952] shrink-0" />
+                          <span>
+                            {booking.requestedDate || booking.preferredDate} • {booking.requestedTime || booking.preferredTime}
+                          </span>
+                        </div>
+                        <span className={`inline-flex items-center gap-1 text-[10px] font-semibold tracking-wider uppercase px-2 py-0.5 rounded border ${
+                          booking.serviceLocation === 'Doorstep Service'
+                            ? 'text-[#B88952] border-[#B88952]/30 bg-[#B88952]/10'
+                            : 'text-[#A7AAAD] border-white/10 bg-white/5'
+                        }`}>
+                          {booking.serviceLocation === 'Doorstep Service' ? '🏠 Doorstep' : '🏢 Workshop'}
                         </span>
                       </div>
                     </div>
@@ -710,6 +727,52 @@ export function MyBookingsView() {
                   <span className="text-lg text-[#F2F0EA] group-hover:text-white transition-colors block">
                     {selectedBooking.requestedTime || selectedBooking.preferredTime}
                   </span>
+                </div>
+
+                {/* Service Location */}
+                <div className="sm:col-span-2 group">
+                  <span className="block text-[10px] font-bold tracking-[0.2em] text-[#A7AAAD]/60 uppercase mb-2">
+                    Service Location & Address
+                  </span>
+                  <div className="p-5 rounded-2xl bg-black/30 border border-white/5 space-y-3">
+                    <div className="flex items-center gap-2">
+                      <span className={`inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold tracking-wider uppercase rounded-full border ${
+                        selectedBooking.serviceLocation === 'Doorstep Service'
+                          ? 'text-[#B88952] border-[#B88952]/40 bg-[#B88952]/10'
+                          : 'text-[#F2F0EA] border-white/20 bg-white/5'
+                      }`}>
+                        {selectedBooking.serviceLocation === 'Doorstep Service' ? '🏠 Doorstep Service' : '🏢 Workshop Visit'}
+                      </span>
+                    </div>
+
+                    {selectedBooking.serviceLocation === 'Doorstep Service' ? (
+                      <div className="space-y-2 pt-1 text-sm text-[#F2F0EA]">
+                        <p className="font-semibold text-base">
+                          {selectedBooking.doorstepHouseFlat}, {selectedBooking.doorstepStreetLocality}
+                        </p>
+                        <p className="text-[#A7AAAD]">
+                          {selectedBooking.doorstepCity} - {selectedBooking.doorstepPincode}
+                        </p>
+                        {selectedBooking.doorstepMapUrl && (
+                          <div className="pt-2">
+                            <a
+                              href={selectedBooking.doorstepMapUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-2 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-wider text-[#0A0C0D] bg-[#B88952] hover:bg-[#caa066] rounded-lg transition-colors"
+                            >
+                              <span>View on Google Maps</span>
+                              <span>↗</span>
+                            </a>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-[#A7AAAD]">
+                        Grand Motors Workshop • Metro Pillar 842, Moosapet, Hyderabad, Telangana 500018
+                      </p>
+                    )}
+                  </div>
                 </div>
 
                 {/* Additional Message / Notes */}

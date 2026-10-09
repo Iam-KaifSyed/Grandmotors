@@ -8,6 +8,8 @@ const PHONE_REGEX = /^\+?[\d\s-]{8,18}$/;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 
+const PINCODE_REGEX = /^[1-9][0-9]{5}$/;
+
 export const GET: APIRoute = async ({ request, locals }) => {
   try {
     const env = getAppEnv(locals);
@@ -32,6 +34,20 @@ export const GET: APIRoute = async ({ request, locals }) => {
     
     // Parse the results for admin
     const mapped = (results || []).map((row: any) => {
+      const doorstepLatitude =
+        row.doorstepLatitude !== null && row.doorstepLatitude !== undefined && row.doorstepLatitude !== ''
+          ? Number(row.doorstepLatitude)
+          : null;
+      const doorstepLongitude =
+        row.doorstepLongitude !== null && row.doorstepLongitude !== undefined && row.doorstepLongitude !== ''
+          ? Number(row.doorstepLongitude)
+          : null;
+
+      let doorstepMapUrl = row.doorstepMapUrl || '';
+      if (!doorstepMapUrl && doorstepLatitude !== null && doorstepLongitude !== null) {
+        doorstepMapUrl = `https://www.google.com/maps?q=${doorstepLatitude},${doorstepLongitude}`;
+      }
+
       return {
         id: row.id,
         bookingId: row.id,
@@ -52,6 +68,14 @@ export const GET: APIRoute = async ({ request, locals }) => {
         requestedTime: row.preferredTime,
         status: row.status,
         additionalMessage: row.additionalMessage || '',
+        serviceLocation: row.serviceLocation || 'Workshop Visit',
+        doorstepHouseFlat: row.doorstepHouseFlat || '',
+        doorstepStreetLocality: row.doorstepStreetLocality || '',
+        doorstepCity: row.doorstepCity || '',
+        doorstepPincode: row.doorstepPincode || '',
+        doorstepLatitude,
+        doorstepLongitude,
+        doorstepMapUrl,
         createdAt: row.createdAt
       };
     });
@@ -108,6 +132,46 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const preferredDate = String(body.preferredDate || body.requestedDate || '').trim();
     const preferredTime = String(body.preferredTime || body.requestedTime || '').trim();
     const additionalMessage = String(body.additionalMessage || '').trim();
+
+    // Service Location Handling
+    const rawLoc = String(body.serviceLocation || 'Workshop Visit').trim();
+    const isDoorstep = rawLoc.toLowerCase().includes('doorstep');
+    const serviceLocation = isDoorstep ? 'Doorstep Service' : 'Workshop Visit';
+
+    let doorstepHouseFlat = '';
+    let doorstepStreetLocality = '';
+    let doorstepCity = '';
+    let doorstepPincode = '';
+    let doorstepLatitude: number | null = null;
+    let doorstepLongitude: number | null = null;
+    let doorstepMapUrl = '';
+
+    if (isDoorstep) {
+      doorstepHouseFlat = String(body.doorstepHouseFlat || '').trim();
+      doorstepStreetLocality = String(body.doorstepStreetLocality || '').trim();
+      doorstepCity = String(body.doorstepCity || '').trim();
+      doorstepPincode = String(body.doorstepPincode || '').trim();
+
+      if (body.doorstepLatitude !== undefined && body.doorstepLatitude !== null && body.doorstepLatitude !== '') {
+        const parsedLat = Number(body.doorstepLatitude);
+        if (!isNaN(parsedLat) && parsedLat >= -90 && parsedLat <= 90) {
+          doorstepLatitude = parsedLat;
+        }
+      }
+
+      if (body.doorstepLongitude !== undefined && body.doorstepLongitude !== null && body.doorstepLongitude !== '') {
+        const parsedLng = Number(body.doorstepLongitude);
+        if (!isNaN(parsedLng) && parsedLng >= -180 && parsedLng <= 180) {
+          doorstepLongitude = parsedLng;
+        }
+      }
+
+      if (doorstepLatitude !== null && doorstepLongitude !== null) {
+        doorstepMapUrl = `https://www.google.com/maps?q=${doorstepLatitude},${doorstepLongitude}`;
+      } else if (body.doorstepMapUrl) {
+        doorstepMapUrl = String(body.doorstepMapUrl).trim();
+      }
+    }
 
     // Field-level validations
     if (fullName.length < 2 || fullName.length > 100) {
@@ -180,27 +244,40 @@ export const POST: APIRoute = async ({ request, locals }) => {
       });
     }
 
-    // Duplicate submission check: check if identical active request exists in DB
-    const duplicateCheck = await db.prepare(`
-      SELECT id, createdAt FROM bookings 
-      WHERE phoneNumber = ? AND registrationNumber = ? AND preferredDate = ? AND serviceCategory = ? AND status != 'Cancelled'
-      LIMIT 1
-    `).bind(phoneNumber, registrationNumber, preferredDate, serviceCategory).all();
+    // Doorstep specific field validations
+    if (isDoorstep) {
+      if (!doorstepHouseFlat || doorstepHouseFlat.length < 1 || doorstepHouseFlat.length > 150) {
+        return new Response(JSON.stringify({ error: 'House / Flat / Building number is required for doorstep servicing.' }), {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
 
-    if (duplicateCheck.results && duplicateCheck.results.length > 0) {
-      const existing = duplicateCheck.results[0];
-      return new Response(JSON.stringify({
-        error: `A booking for this vehicle and date already exists (${existing.id}). Please check your tracking status.`,
-        id: existing.id
-      }), {
-        status: 409,
-        headers: { 'Content-Type': 'application/json' }
-      });
+      if (!doorstepStreetLocality || doorstepStreetLocality.length < 2 || doorstepStreetLocality.length > 200) {
+        return new Response(JSON.stringify({ error: 'Street / Locality is required for doorstep servicing (2-200 characters).' }), {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
+
+      if (!doorstepCity || doorstepCity.length < 2 || doorstepCity.length > 100) {
+        return new Response(JSON.stringify({ error: 'City is required for doorstep servicing (2-100 characters).' }), {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
+
+      if (!doorstepPincode || !PINCODE_REGEX.test(doorstepPincode)) {
+        return new Response(JSON.stringify({ error: 'Please enter a valid 6-digit Indian PIN code (e.g. 500018).' }), {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
     }
 
-    // Generate unique ID
+    // Generate unique Booking ID (e.g. GM-102938)
     let uniqueId = `GM-${Math.floor(100000 + Math.random() * 900000)}`;
-    for (let attempt = 0; attempt < 3; attempt++) {
+    for (let attempt = 0; attempt < 10; attempt++) {
       const existingId = await db.prepare('SELECT id FROM bookings WHERE id = ?').bind(uniqueId).all();
       if (!existingId.results || existingId.results.length === 0) {
         break;
@@ -222,25 +299,78 @@ export const POST: APIRoute = async ({ request, locals }) => {
       preferredDate,
       preferredTime,
       additionalMessage,
+      serviceLocation,
+      doorstepHouseFlat,
+      doorstepStreetLocality,
+      doorstepCity,
+      doorstepPincode,
+      doorstepLatitude,
+      doorstepLongitude,
+      doorstepMapUrl,
       status: 'Pending',
       createdAt: new Date().toISOString()
     });
 
-    await db.prepare(`
-      INSERT INTO bookings (
-        id, customerName, phoneNumber, email, vehicleMake, vehicleModel, 
-        registrationNumber, serviceCategory, specificService, preferredDate, 
-        preferredTime, status, additionalMessage, createdAt
-      ) VALUES (
-        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
-      )
-    `).bind(
-      normalized.id, normalized.customerName, normalized.phoneNumber, normalized.email,
-      normalized.vehicleMake, normalized.vehicleModel, normalized.registrationNumber,
-      normalized.serviceCategory, normalized.specificService, normalized.preferredDate,
-      normalized.preferredTime, normalized.status, normalized.additionalMessage,
-      normalized.createdAt
-    ).run();
+    const insertBooking = async () => {
+      return await db.prepare(`
+        INSERT INTO bookings (
+          id, customerName, phoneNumber, email, vehicleMake, vehicleModel, 
+          registrationNumber, serviceCategory, specificService, preferredDate, 
+          preferredTime, status, additionalMessage, serviceLocation,
+          doorstepHouseFlat, doorstepStreetLocality, doorstepCity,
+          doorstepPincode, doorstepLatitude, doorstepLongitude, doorstepMapUrl,
+          createdAt
+        ) VALUES (
+          ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+        )
+      `).bind(
+        normalized.id, normalized.customerName, normalized.phoneNumber, normalized.email,
+        normalized.vehicleMake, normalized.vehicleModel, normalized.registrationNumber,
+        normalized.serviceCategory, normalized.specificService, normalized.preferredDate,
+        normalized.preferredTime, normalized.status, normalized.additionalMessage,
+        normalized.serviceLocation,
+        normalized.doorstepHouseFlat || null,
+        normalized.doorstepStreetLocality || null,
+        normalized.doorstepCity || null,
+        normalized.doorstepPincode || null,
+        normalized.doorstepLatitude ?? null,
+        normalized.doorstepLongitude ?? null,
+        normalized.doorstepMapUrl || null,
+        normalized.createdAt
+      ).run();
+    };
+
+    try {
+      await insertBooking();
+    } catch (insertErr: any) {
+      const msg = String(insertErr?.message || '');
+      // If table lacks doorstep columns in an unmigrated local or preview environment, self-heal and retry
+      if (msg.includes('no column named') || msg.includes('serviceLocation') || msg.includes('doorstep')) {
+        const alterStatements = [
+          `ALTER TABLE bookings ADD COLUMN serviceLocation TEXT DEFAULT 'Workshop Visit'`,
+          `ALTER TABLE bookings ADD COLUMN doorstepHouseFlat TEXT`,
+          `ALTER TABLE bookings ADD COLUMN doorstepStreetLocality TEXT`,
+          `ALTER TABLE bookings ADD COLUMN doorstepCity TEXT`,
+          `ALTER TABLE bookings ADD COLUMN doorstepPincode TEXT`,
+          `ALTER TABLE bookings ADD COLUMN doorstepLatitude REAL`,
+          `ALTER TABLE bookings ADD COLUMN doorstepLongitude REAL`,
+          `ALTER TABLE bookings ADD COLUMN doorstepMapUrl TEXT`,
+        ];
+
+        for (const sql of alterStatements) {
+          try {
+            await db.prepare(sql).run();
+          } catch {
+            // Ignore if column already exists
+          }
+        }
+
+        // Retry insert after schema self-healing
+        await insertBooking();
+      } else {
+        throw insertErr;
+      }
+    }
 
     return new Response(JSON.stringify({ success: true, id: normalized.id, booking: normalized }), {
       status: 201,

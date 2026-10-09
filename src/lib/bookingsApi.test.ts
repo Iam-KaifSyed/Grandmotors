@@ -53,13 +53,25 @@ class MockD1Database {
           const [
             id, customerName, phoneNumber, email, vehicleMake, vehicleModel,
             registrationNumber, serviceCategory, specificService, preferredDate,
-            preferredTime, status, additionalMessage, createdAt
+            preferredTime, status, additionalMessage, serviceLocation,
+            doorstepHouseFlat, doorstepStreetLocality, doorstepCity,
+            doorstepPincode, doorstepLatitude, doorstepLongitude, doorstepMapUrl,
+            createdAt
           ] = boundParams;
 
           const record = {
             id, customerName, phoneNumber, email, vehicleMake, vehicleModel,
             registrationNumber, serviceCategory, specificService, preferredDate,
-            preferredTime, status, additionalMessage, createdAt
+            preferredTime, status, additionalMessage,
+            serviceLocation: serviceLocation || 'Workshop Visit',
+            doorstepHouseFlat: doorstepHouseFlat || '',
+            doorstepStreetLocality: doorstepStreetLocality || '',
+            doorstepCity: doorstepCity || '',
+            doorstepPincode: doorstepPincode || '',
+            doorstepLatitude: doorstepLatitude ?? null,
+            doorstepLongitude: doorstepLongitude ?? null,
+            doorstepMapUrl: doorstepMapUrl || '',
+            createdAt
           };
           self.records.set(id, record);
           return { success: true };
@@ -250,18 +262,129 @@ describe('Bookings API Endpoints (/api/bookings)', () => {
       expect(data.error).toContain('YYYY-MM-DD');
     });
 
-    it('rejects duplicate booking submissions', async () => {
+    it('allows multiple service booking submissions for the same customer, vehicle and date', async () => {
       // First submission
       const req1 = createRequest('POST', validBooking);
       const resp1 = await (createBooking as any)({ request: req1, locals: createLocals() });
       expect(resp1.status).toBe(201);
+      const data1 = await resp1.json();
+      expect(data1.success).toBe(true);
+      expect(data1.id).toMatch(/^GM-\d{6}$/);
 
-      // Duplicate submission
+      // Second submission for the same customer, vehicle, date, and service
       const req2 = createRequest('POST', validBooking);
       const resp2 = await (createBooking as any)({ request: req2, locals: createLocals() });
-      expect(resp2.status).toBe(409);
-      const data = await resp2.json();
-      expect(data.error).toContain('already exists');
+      expect(resp2.status).toBe(201);
+      const data2 = await resp2.json();
+      expect(data2.success).toBe(true);
+      expect(data2.id).toMatch(/^GM-\d{6}$/);
+
+      // Verify each creates a separate, unique booking without overwriting
+      expect(data1.id).not.toBe(data2.id);
+      expect(mockDb.records.has(data1.id)).toBe(true);
+      expect(mockDb.records.has(data2.id)).toBe(true);
+      expect(mockDb.records.size).toBe(2);
+    });
+
+    describe('Doorstep Service Validation', () => {
+      const validDoorstepBooking = {
+        ...validBooking,
+        fullName: 'Sameer Khan',
+        registrationNumber: 'TS 09 XY 8888',
+        serviceLocation: 'Doorstep Service',
+        doorstepHouseFlat: 'Villa 42, Palm Meadows',
+        doorstepStreetLocality: 'Jubilee Hills Road No. 36',
+        doorstepCity: 'Hyderabad',
+        doorstepPincode: '500033',
+        doorstepLatitude: 17.4319,
+        doorstepLongitude: 78.4073,
+      };
+
+      it('accepts valid Doorstep Service booking with address and coordinates', async () => {
+        const req = createRequest('POST', validDoorstepBooking);
+        const resp = await (createBooking as any)({ request: req, locals: createLocals() });
+
+        expect(resp.status).toBe(201);
+        const data = await resp.json();
+        expect(data.success).toBe(true);
+
+        const saved = mockDb.records.get(data.id);
+        expect(saved).toBeDefined();
+        expect(saved.serviceLocation).toBe('Doorstep Service');
+        expect(saved.doorstepHouseFlat).toBe('Villa 42, Palm Meadows');
+        expect(saved.doorstepStreetLocality).toBe('Jubilee Hills Road No. 36');
+        expect(saved.doorstepCity).toBe('Hyderabad');
+        expect(saved.doorstepPincode).toBe('500033');
+        expect(saved.doorstepLatitude).toBe(17.4319);
+        expect(saved.doorstepLongitude).toBe(78.4073);
+        expect(saved.doorstepMapUrl).toContain('google.com/maps');
+      });
+
+      it('rejects Doorstep Service when house/flat is missing', async () => {
+        const invalid = { ...validDoorstepBooking, doorstepHouseFlat: '' };
+        const req = createRequest('POST', invalid);
+        const resp = await (createBooking as any)({ request: req, locals: createLocals() });
+
+        expect(resp.status).toBe(400);
+        const data = await resp.json();
+        expect(data.error).toContain('House / Flat');
+      });
+
+      it('rejects Doorstep Service when street/locality is missing', async () => {
+        const invalid = { ...validDoorstepBooking, doorstepStreetLocality: '   ' };
+        const req = createRequest('POST', invalid);
+        const resp = await (createBooking as any)({ request: req, locals: createLocals() });
+
+        expect(resp.status).toBe(400);
+        const data = await resp.json();
+        expect(data.error).toContain('Street / Locality');
+      });
+
+      it('rejects Doorstep Service when city is missing', async () => {
+        const invalid = { ...validDoorstepBooking, doorstepCity: '' };
+        const req = createRequest('POST', invalid);
+        const resp = await (createBooking as any)({ request: req, locals: createLocals() });
+
+        expect(resp.status).toBe(400);
+        const data = await resp.json();
+        expect(data.error).toContain('City');
+      });
+
+      it('rejects Doorstep Service when PIN code is invalid', async () => {
+        const invalidPincodes = ['50003', '050033', '500033A', 'ABCDEF', ''];
+
+        for (const pin of invalidPincodes) {
+          const invalid = { ...validDoorstepBooking, doorstepPincode: pin };
+          const req = createRequest('POST', invalid);
+          const resp = await (createBooking as any)({ request: req, locals: createLocals() });
+
+          expect(resp.status).toBe(400);
+          const data = await resp.json();
+          expect(data.error).toContain('PIN code');
+        }
+      });
+
+      it('accepts Workshop Visit without doorstep address fields', async () => {
+        const workshopBooking = {
+          ...validBooking,
+          fullName: 'Workshop Customer',
+          registrationNumber: 'TS 09 ZZ 1111',
+          serviceLocation: 'Workshop Visit',
+          doorstepHouseFlat: '',
+          doorstepStreetLocality: '',
+          doorstepCity: '',
+          doorstepPincode: '',
+        };
+        const req = createRequest('POST', workshopBooking);
+        const resp = await (createBooking as any)({ request: req, locals: createLocals() });
+
+        expect(resp.status).toBe(201);
+        const data = await resp.json();
+        expect(data.success).toBe(true);
+
+        const saved = mockDb.records.get(data.id);
+        expect(saved.serviceLocation).toBe('Workshop Visit');
+      });
     });
   });
 

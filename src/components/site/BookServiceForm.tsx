@@ -18,6 +18,14 @@ export interface BookingFormData {
   preferredDate: string;
   preferredTime: string;
   additionalMessage: string;
+  serviceLocation: 'Workshop Visit' | 'Doorstep Service';
+  doorstepHouseFlat?: string;
+  doorstepStreetLocality?: string;
+  doorstepCity?: string;
+  doorstepPincode?: string;
+  doorstepLatitude?: number | null;
+  doorstepLongitude?: number | null;
+  doorstepMapUrl?: string;
   customAnswers?: Record<string, string>;
   submittedAt?: string;
   bookingRef?: string;
@@ -52,6 +60,14 @@ export const BookServiceForm = ({
     preferredDate: '',
     preferredTime: '',
     additionalMessage: '',
+    serviceLocation: 'Workshop Visit',
+    doorstepHouseFlat: '',
+    doorstepStreetLocality: '',
+    doorstepCity: '',
+    doorstepPincode: '',
+    doorstepLatitude: null,
+    doorstepLongitude: null,
+    doorstepMapUrl: '',
     customAnswers: {},
   });
 
@@ -60,6 +76,13 @@ export const BookServiceForm = ({
   const [submittedData, setSubmittedData] = useState<BookingFormData | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
+
+  // Geolocation states
+  const [isLocating, setIsLocating] = useState(false);
+  const [locationFeedback, setLocationFeedback] = useState<{
+    type: 'success' | 'error' | 'info';
+    message: string;
+  } | null>(null);
 
   // Generate unique IDs for fields
   const fullNameId = useId();
@@ -73,6 +96,10 @@ export const BookServiceForm = ({
   const preferredDateId = useId();
   const preferredTimeId = useId();
   const additionalMessageId = useId();
+  const doorstepHouseFlatId = useId();
+  const doorstepStreetLocalityId = useId();
+  const doorstepCityId = useId();
+  const doorstepPincodeId = useId();
 
   const labels = { ...DEFAULT_BOOKING_FORM_CONFIG.fieldLabels, ...(config?.fieldLabels || {}) };
   const optionalVis = {
@@ -88,6 +115,71 @@ export const BookServiceForm = ({
   // Selected Category's specific items
   const selectedCategoryObj = services.find((s) => s.id === formState.serviceCategory);
   const specificServiceOptions = selectedCategoryObj ? selectedCategoryObj.items : [];
+
+  const handleShareLocation = () => {
+    if (typeof navigator === 'undefined' || !navigator.geolocation) {
+      setLocationFeedback({
+        type: 'error',
+        message: 'Geolocation is not supported by your browser. Please enter your address manually.',
+      });
+      return;
+    }
+
+    setIsLocating(true);
+    setLocationFeedback(null);
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = Number(position.coords.latitude.toFixed(6));
+        const lng = Number(position.coords.longitude.toFixed(6));
+        const mapUrl = `https://www.google.com/maps?q=${lat},${lng}`;
+
+        setFormState((prev) => ({
+          ...prev,
+          doorstepLatitude: lat,
+          doorstepLongitude: lng,
+          doorstepMapUrl: mapUrl,
+        }));
+
+        setLocationFeedback({
+          type: 'success',
+          message: `Location detected (${lat}, ${lng}). You can also fine-tune your street and flat number below.`,
+        });
+        setIsLocating(false);
+      },
+      (err) => {
+        console.warn('Geolocation error:', err);
+        let msg = 'Could not detect your location. Please enter your address details manually below.';
+        if (err.code === 1) {
+          msg = 'Location permission was denied. Please enter your address manually below.';
+        } else if (err.code === 2) {
+          msg = 'Location coordinates are currently unavailable. Please enter your address manually.';
+        } else if (err.code === 3) {
+          msg = 'Location detection timed out. Please enter your address manually.';
+        }
+        setLocationFeedback({
+          type: 'info',
+          message: msg,
+        });
+        setIsLocating(false);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0,
+      }
+    );
+  };
+
+  const handleClearLocation = () => {
+    setFormState((prev) => ({
+      ...prev,
+      doorstepLatitude: null,
+      doorstepLongitude: null,
+      doorstepMapUrl: '',
+    }));
+    setLocationFeedback(null);
+  };
 
   const validate = (): boolean => {
     const newErrors: Record<string, string> = {};
@@ -120,6 +212,27 @@ export const BookServiceForm = ({
 
     if (!formState.serviceCategory) {
       newErrors.serviceCategory = `Please select a ${labels.serviceCategory || 'Service Category'}`;
+    }
+
+    // Validate Doorstep Address fields if Doorstep Service is selected
+    if (formState.serviceLocation === 'Doorstep Service') {
+      if (!formState.doorstepHouseFlat?.trim()) {
+        newErrors.doorstepHouseFlat = 'House / Flat / Building No. is required';
+      }
+
+      if (!formState.doorstepStreetLocality?.trim()) {
+        newErrors.doorstepStreetLocality = 'Street / Locality is required';
+      }
+
+      if (!formState.doorstepCity?.trim()) {
+        newErrors.doorstepCity = 'City is required';
+      }
+
+      if (!formState.doorstepPincode?.trim()) {
+        newErrors.doorstepPincode = 'PIN code is required';
+      } else if (!/^[1-9][0-9]{5}$/.test(formState.doorstepPincode.trim())) {
+        newErrors.doorstepPincode = 'Enter a valid 6-digit Indian PIN code (e.g. 500018)';
+      }
     }
 
     if (!formState.preferredDate) {
@@ -173,6 +286,8 @@ export const BookServiceForm = ({
             : `Additional Details:\n${customLines}`;
         }
 
+        const isDoorstep = formState.serviceLocation === 'Doorstep Service';
+
         const payload = {
           fullName: formState.fullName.trim(),
           phoneNumber: formState.phoneNumber.trim(),
@@ -185,6 +300,14 @@ export const BookServiceForm = ({
           preferredDate: formState.preferredDate,
           preferredTime: formState.preferredTime,
           additionalMessage: combinedMessage,
+          serviceLocation: formState.serviceLocation,
+          doorstepHouseFlat: isDoorstep ? formState.doorstepHouseFlat?.trim() : '',
+          doorstepStreetLocality: isDoorstep ? formState.doorstepStreetLocality?.trim() : '',
+          doorstepCity: isDoorstep ? formState.doorstepCity?.trim() : '',
+          doorstepPincode: isDoorstep ? formState.doorstepPincode?.trim() : '',
+          doorstepLatitude: isDoorstep ? formState.doorstepLatitude : null,
+          doorstepLongitude: isDoorstep ? formState.doorstepLongitude : null,
+          doorstepMapUrl: isDoorstep ? formState.doorstepMapUrl : '',
         };
 
         const resp = await fetch('/api/bookings', {
@@ -225,6 +348,14 @@ export const BookServiceForm = ({
           requestedTime: payload.preferredTime,
           status: 'Pending',
           additionalMessage: payload.additionalMessage,
+          serviceLocation: payload.serviceLocation,
+          doorstepHouseFlat: payload.doorstepHouseFlat,
+          doorstepStreetLocality: payload.doorstepStreetLocality,
+          doorstepCity: payload.doorstepCity,
+          doorstepPincode: payload.doorstepPincode,
+          doorstepLatitude: payload.doorstepLatitude,
+          doorstepLongitude: payload.doorstepLongitude,
+          doorstepMapUrl: payload.doorstepMapUrl,
           createdAt: new Date().toISOString(),
         };
 
@@ -351,6 +482,46 @@ export const BookServiceForm = ({
           <div className="grid sm:grid-cols-2 gap-5 text-xs sm:text-sm">
             <div>
               <span className="block text-[11px] font-semibold tracking-[0.1em] text-[#A7AAAD] uppercase mb-1">
+                Service Location
+              </span>
+              <div className="flex items-center gap-2">
+                <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider ${
+                  submittedData.serviceLocation === 'Doorstep Service'
+                    ? 'bg-[#B88952]/15 text-[#B88952] border border-[#B88952]/30'
+                    : 'bg-white/10 text-[#F2F0EA] border border-white/15'
+                }`}>
+                  {submittedData.serviceLocation === 'Doorstep Service' ? '🏠 Doorstep Service' : '🏢 Workshop Visit'}
+                </span>
+              </div>
+              {submittedData.serviceLocation === 'Doorstep Service' ? (
+                <div className="mt-2 text-xs text-[#F2F0EA] leading-relaxed bg-[#0A0C0D] p-2.5 rounded-lg border border-white/5">
+                  <p className="font-medium">
+                    {submittedData.doorstepHouseFlat}, {submittedData.doorstepStreetLocality}
+                  </p>
+                  <p className="text-[#A7AAAD]">
+                    {submittedData.doorstepCity} - {submittedData.doorstepPincode}
+                  </p>
+                  {submittedData.doorstepMapUrl && (
+                    <a
+                      href={submittedData.doorstepMapUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#B88952] hover:text-[#caa066] mt-1.5 transition-colors"
+                    >
+                      <span>View Map Location</span>
+                      <span className="text-xs">&rarr;</span>
+                    </a>
+                  )}
+                </div>
+              ) : (
+                <span className="block text-xs text-[#A7AAAD]/80 mt-1">
+                  Grand Motors Workshop • Metro Pillar 842, Moosapet, Hyderabad
+                </span>
+              )}
+            </div>
+
+            <div>
+              <span className="block text-[11px] font-semibold tracking-[0.1em] text-[#A7AAAD] uppercase mb-1">
                 {labels.serviceCategory || 'Service'}
               </span>
               <span className="font-semibold text-[#F2F0EA]">
@@ -383,7 +554,7 @@ export const BookServiceForm = ({
               </span>
             </div>
 
-            <div>
+            <div className="sm:col-span-2">
               <span className="block text-[11px] font-semibold tracking-[0.1em] text-[#A7AAAD] uppercase mb-1">
                 Contact Information
               </span>
@@ -403,6 +574,17 @@ export const BookServiceForm = ({
           >
             Go to My Bookings
           </a>
+
+          <button
+            type="button"
+            onClick={() => {
+              setSubmittedData(null);
+              setServerError(null);
+            }}
+            className="inline-flex items-center justify-center px-6 py-3.5 text-xs font-semibold tracking-[0.15em] uppercase text-[#F2F0EA] bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-colors text-center cursor-pointer"
+          >
+            + Book Another Service
+          </button>
 
           <a
             href="tel:+918623948898"
@@ -712,12 +894,318 @@ export const BookServiceForm = ({
         </div>
       </div>
 
-      {/* 4. Preferred Schedule */}
+      {/* 4. Service Location */}
       <div className="pt-6 border-t border-white/5">
         <div className="flex items-center gap-2.5 mb-6">
           <span className="w-5 h-px bg-[#B88952]"></span>
           <h3 className="text-xs font-semibold tracking-[0.25em] text-[#B88952] uppercase">
-            04. Preferred Date & Time
+            04. Service Location
+          </h3>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2 mb-6">
+          {/* Option: Workshop Visit */}
+          <button
+            type="button"
+            onClick={() => {
+              setFormState({ ...formState, serviceLocation: 'Workshop Visit' });
+              clearError('doorstepHouseFlat');
+              clearError('doorstepStreetLocality');
+              clearError('doorstepCity');
+              clearError('doorstepPincode');
+            }}
+            className={`p-5 rounded-xl border text-left transition-all cursor-pointer relative flex flex-col justify-between ${
+              formState.serviceLocation === 'Workshop Visit'
+                ? 'bg-[#141619] border-[#B88952] ring-1 ring-[#B88952]/40 shadow-lg shadow-[#B88952]/5'
+                : 'bg-[#0A0C0D] border-white/10 hover:border-white/20 hover:bg-[#111315]'
+            }`}
+          >
+            <div>
+              <div className="flex items-center justify-between gap-2 mb-3">
+                <div className="flex items-center gap-2.5">
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                    formState.serviceLocation === 'Workshop Visit' ? 'bg-[#B88952]/20 text-[#B88952]' : 'bg-white/5 text-[#A7AAAD]'
+                  }`}>
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                  </div>
+                  <span className="text-sm font-bold tracking-tight text-[#F2F0EA]">
+                    Workshop Visit
+                  </span>
+                </div>
+                <span className={`w-4 h-4 rounded-full border flex items-center justify-center ${
+                  formState.serviceLocation === 'Workshop Visit'
+                    ? 'border-[#B88952] bg-[#B88952]'
+                    : 'border-white/30 bg-transparent'
+                }`}>
+                  {formState.serviceLocation === 'Workshop Visit' && (
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#0A0C0D]" />
+                  )}
+                </span>
+              </div>
+              <p className="text-xs text-[#A7AAAD] leading-relaxed">
+                Visit our state-of-the-art diagnostic bays, precision lifts, and executive lounge at Moosapet, Hyderabad.
+              </p>
+            </div>
+            <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between text-[11px] text-[#A7AAAD]/80 font-mono">
+              <span>Metro Pillar 842, Moosapet</span>
+              <span className="text-[#B88952] font-sans font-semibold">Center Bay</span>
+            </div>
+          </button>
+
+          {/* Option: Doorstep Service */}
+          <button
+            type="button"
+            onClick={() => setFormState({ ...formState, serviceLocation: 'Doorstep Service' })}
+            className={`p-5 rounded-xl border text-left transition-all cursor-pointer relative flex flex-col justify-between ${
+              formState.serviceLocation === 'Doorstep Service'
+                ? 'bg-[#141619] border-[#B88952] ring-1 ring-[#B88952]/40 shadow-lg shadow-[#B88952]/5'
+                : 'bg-[#0A0C0D] border-white/10 hover:border-white/20 hover:bg-[#111315]'
+            }`}
+          >
+            <div>
+              <div className="flex items-center justify-between gap-2 mb-3">
+                <div className="flex items-center gap-2.5">
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                    formState.serviceLocation === 'Doorstep Service' ? 'bg-[#B88952]/20 text-[#B88952]' : 'bg-white/5 text-[#A7AAAD]'
+                  }`}>
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                  </div>
+                  <span className="text-sm font-bold tracking-tight text-[#F2F0EA]">
+                    Doorstep Service
+                  </span>
+                </div>
+                <span className={`w-4 h-4 rounded-full border flex items-center justify-center ${
+                  formState.serviceLocation === 'Doorstep Service'
+                    ? 'border-[#B88952] bg-[#B88952]'
+                    : 'border-white/30 bg-transparent'
+                }`}>
+                  {formState.serviceLocation === 'Doorstep Service' && (
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#0A0C0D]" />
+                  )}
+                </span>
+              </div>
+              <p className="text-xs text-[#A7AAAD] leading-relaxed">
+                Certified technicians arrive at your home, apartment or workplace with mobile servicing equipment & tools.
+              </p>
+            </div>
+            <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between text-[11px] text-[#A7AAAD]/80 font-mono">
+              <span>At Your Home / Office</span>
+              <span className="text-[#B88952] font-sans font-semibold">Mobile Unit</span>
+            </div>
+          </button>
+        </div>
+
+        {/* Doorstep Service Address Section */}
+        {formState.serviceLocation === 'Doorstep Service' && (
+          <div className="p-6 rounded-xl bg-[#0A0C0D] border border-[#B88952]/30 space-y-6 animate-fade-in">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/5">
+              <div>
+                <h4 className="text-sm font-bold text-[#F2F0EA] uppercase tracking-wide">
+                  Doorstep Service Address
+                </h4>
+                <p className="text-xs text-[#A7AAAD] mt-0.5">
+                  Provide your address or share GPS location for precise navigation.
+                </p>
+              </div>
+
+              {/* Share Location Button */}
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleShareLocation}
+                  disabled={isLocating}
+                  className="inline-flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-semibold tracking-[0.14em] uppercase text-[#0A0C0D] bg-[#B88952] hover:bg-[#caa066] active:bg-[#a67943] disabled:opacity-50 rounded-lg transition-all shadow-md shadow-[#B88952]/10 cursor-pointer shrink-0 font-bold"
+                >
+                  {isLocating ? (
+                    <>
+                      <span className="w-3.5 h-3.5 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                      <span>Detecting...</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      <span>Share Current Location</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Geolocation Feedback / Coordinates Display */}
+            {locationFeedback && (
+              <div className={`p-3.5 rounded-lg text-xs leading-relaxed flex items-start justify-between gap-3 ${
+                locationFeedback.type === 'success'
+                  ? 'bg-emerald-950/40 border border-emerald-500/30 text-emerald-200'
+                  : locationFeedback.type === 'error'
+                  ? 'bg-red-950/40 border border-red-500/30 text-red-200'
+                  : 'bg-amber-950/30 border border-amber-500/30 text-amber-200'
+              }`}>
+                <div className="flex items-start gap-2.5">
+                  <span className="font-bold text-sm shrink-0 mt-[-1px]">
+                    {locationFeedback.type === 'success' ? '✓' : 'ℹ'}
+                  </span>
+                  <span>{locationFeedback.message}</span>
+                </div>
+                {formState.doorstepLatitude && formState.doorstepLongitude && (
+                  <button
+                    type="button"
+                    onClick={handleClearLocation}
+                    className="text-[10px] uppercase font-bold tracking-wider underline hover:text-white shrink-0 cursor-pointer ml-2"
+                  >
+                    Clear GPS
+                  </button>
+                )}
+              </div>
+            )}
+
+            {/* GPS Captured Badge & Map Preview Link */}
+            {formState.doorstepLatitude !== null && formState.doorstepLongitude !== null && (
+              <div className="p-3.5 rounded-lg bg-black/40 border border-[#B88952]/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-[#B88952] animate-pulse" />
+                  <span className="text-[#F2F0EA] font-mono">
+                    GPS Coordinates: {formState.doorstepLatitude}, {formState.doorstepLongitude}
+                  </span>
+                </div>
+                {formState.doorstepMapUrl && (
+                  <a
+                    href={formState.doorstepMapUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#B88952] hover:text-[#caa066] transition-colors"
+                  >
+                    <span>Preview on Google Maps</span>
+                    <span className="text-xs">&rarr;</span>
+                  </a>
+                )}
+              </div>
+            )}
+
+            {/* Address Input Grid */}
+            <div className="grid gap-6 sm:grid-cols-2">
+              {/* House / Flat / Building No. */}
+              <div>
+                <label
+                  htmlFor={doorstepHouseFlatId}
+                  className="block text-xs font-semibold tracking-[0.1em] text-[#F2F0EA] uppercase mb-2"
+                >
+                  House / Flat / Building No. <span className="text-[#B88952]">*</span>
+                </label>
+                <input
+                  id={doorstepHouseFlatId}
+                  type="text"
+                  value={formState.doorstepHouseFlat || ''}
+                  onChange={(e) => {
+                    setFormState({ ...formState, doorstepHouseFlat: e.target.value });
+                    clearError('doorstepHouseFlat');
+                  }}
+                  placeholder="e.g. Villa 14, Lotus Palms / Flat 402"
+                  className={`w-full bg-[#111315] border ${
+                    errors.doorstepHouseFlat ? 'border-red-500/80' : 'border-white/10 focus:border-[#B88952]'
+                  } rounded-lg px-4 py-3 text-sm text-[#F2F0EA] placeholder-[#A7AAAD]/40 focus:outline-none transition-colors`}
+                />
+                {errors.doorstepHouseFlat && (
+                  <p className="mt-1.5 text-xs text-red-400">{errors.doorstepHouseFlat}</p>
+                )}
+              </div>
+
+              {/* Street / Locality / Landmark */}
+              <div>
+                <label
+                  htmlFor={doorstepStreetLocalityId}
+                  className="block text-xs font-semibold tracking-[0.1em] text-[#F2F0EA] uppercase mb-2"
+                >
+                  Street / Area / Landmark <span className="text-[#B88952]">*</span>
+                </label>
+                <input
+                  id={doorstepStreetLocalityId}
+                  type="text"
+                  value={formState.doorstepStreetLocality || ''}
+                  onChange={(e) => {
+                    setFormState({ ...formState, doorstepStreetLocality: e.target.value });
+                    clearError('doorstepStreetLocality');
+                  }}
+                  placeholder="e.g. Road No. 36, Jubilee Hills"
+                  className={`w-full bg-[#111315] border ${
+                    errors.doorstepStreetLocality ? 'border-red-500/80' : 'border-white/10 focus:border-[#B88952]'
+                  } rounded-lg px-4 py-3 text-sm text-[#F2F0EA] placeholder-[#A7AAAD]/40 focus:outline-none transition-colors`}
+                />
+                {errors.doorstepStreetLocality && (
+                  <p className="mt-1.5 text-xs text-red-400">{errors.doorstepStreetLocality}</p>
+                )}
+              </div>
+
+              {/* City */}
+              <div>
+                <label
+                  htmlFor={doorstepCityId}
+                  className="block text-xs font-semibold tracking-[0.1em] text-[#F2F0EA] uppercase mb-2"
+                >
+                  City <span className="text-[#B88952]">*</span>
+                </label>
+                <input
+                  id={doorstepCityId}
+                  type="text"
+                  value={formState.doorstepCity || ''}
+                  onChange={(e) => {
+                    setFormState({ ...formState, doorstepCity: e.target.value });
+                    clearError('doorstepCity');
+                  }}
+                  placeholder="e.g. Hyderabad"
+                  className={`w-full bg-[#111315] border ${
+                    errors.doorstepCity ? 'border-red-500/80' : 'border-white/10 focus:border-[#B88952]'
+                  } rounded-lg px-4 py-3 text-sm text-[#F2F0EA] placeholder-[#A7AAAD]/40 focus:outline-none transition-colors`}
+                />
+                {errors.doorstepCity && (
+                  <p className="mt-1.5 text-xs text-red-400">{errors.doorstepCity}</p>
+                )}
+              </div>
+
+              {/* PIN Code */}
+              <div>
+                <label
+                  htmlFor={doorstepPincodeId}
+                  className="block text-xs font-semibold tracking-[0.1em] text-[#F2F0EA] uppercase mb-2"
+                >
+                  6-Digit PIN Code <span className="text-[#B88952]">*</span>
+                </label>
+                <input
+                  id={doorstepPincodeId}
+                  type="text"
+                  maxLength={6}
+                  value={formState.doorstepPincode || ''}
+                  onChange={(e) => {
+                    const cleaned = e.target.value.replace(/\D/g, '').slice(0, 6);
+                    setFormState({ ...formState, doorstepPincode: cleaned });
+                    clearError('doorstepPincode');
+                  }}
+                  placeholder="e.g. 500033"
+                  className={`w-full bg-[#111315] border font-mono ${
+                    errors.doorstepPincode ? 'border-red-500/80' : 'border-white/10 focus:border-[#B88952]'
+                  } rounded-lg px-4 py-3 text-sm text-[#F2F0EA] placeholder-[#A7AAAD]/40 focus:outline-none transition-colors`}
+                />
+                {errors.doorstepPincode && (
+                  <p className="mt-1.5 text-xs text-red-400">{errors.doorstepPincode}</p>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 5. Preferred Schedule */}
+      <div className="pt-6 border-t border-white/5">
+        <div className="flex items-center gap-2.5 mb-6">
+          <span className="w-5 h-px bg-[#B88952]"></span>
+          <h3 className="text-xs font-semibold tracking-[0.25em] text-[#B88952] uppercase">
+            05. Preferred Date & Time
           </h3>
         </div>
 
@@ -784,13 +1272,13 @@ export const BookServiceForm = ({
         </div>
       </div>
 
-      {/* 5. Custom Questions (if any) */}
+      {/* 6. Custom Questions (if any) */}
       {customQuestions.length > 0 && (
         <div className="pt-6 border-t border-white/5 space-y-4">
           <div className="flex items-center gap-2.5 mb-4">
             <span className="w-5 h-px bg-[#B88952]"></span>
             <h3 className="text-xs font-semibold tracking-[0.25em] text-[#B88952] uppercase">
-              05. Additional Questions
+              06. Additional Questions
             </h3>
           </div>
 
@@ -848,7 +1336,7 @@ export const BookServiceForm = ({
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 text-xs font-semibold tracking-[0.2em] uppercase text-[#0A0C0D] bg-[#B88952] hover:bg-[#caa066] active:bg-[#a67943] disabled:opacity-50 rounded-lg transition-all shadow-lg shadow-[#B88952]/10 cursor-pointer"
+            className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 text-xs font-semibold tracking-[0.2em] uppercase text-[#0A0C0D] bg-[#B88952] hover:bg-[#caa066] active:bg-[#a67943] disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition-all shadow-lg shadow-[#B88952]/10 cursor-pointer"
           >
             {isSubmitting ? 'Processing Request...' : 'Request Service'}
           </button>
