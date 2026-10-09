@@ -641,7 +641,7 @@ export const BookServiceForm = ({
               htmlFor={serviceCategoryId}
               className="block text-xs font-semibold tracking-[0.1em] text-[#F2F0EA] uppercase mb-2"
             >
-              {labels.serviceCategory || 'Service Category'}{' '}
+              {labels.serviceCategory || 'Service'}{' '}
               <span className="text-[#B88952]">*</span>
             </label>
             <select
@@ -664,7 +664,7 @@ export const BookServiceForm = ({
               } rounded-lg px-4 py-3 text-sm text-[#F2F0EA] focus:outline-none transition-colors cursor-pointer`}
             >
               <option value="" disabled>
-                Select a service category
+                Select a service
               </option>
               {services.map((cat) => (
                 <option key={cat.id} value={cat.id} className="bg-[#111315] text-[#F2F0EA]">
@@ -695,10 +695,10 @@ export const BookServiceForm = ({
                 className="w-full bg-[#0A0C0D] border border-white/10 focus:border-[#B88952] disabled:opacity-50 rounded-lg px-4 py-3 text-sm text-[#F2F0EA] focus:outline-none transition-colors cursor-pointer"
               >
                 {!formState.serviceCategory ? (
-                  <option value="">Select a category first</option>
+                  <option value="">Select a service first</option>
                 ) : (
                   <>
-                    <option value="">General Category Inspection / Other</option>
+                    <option value="">General Inspection / Other</option>
                     {specificServiceOptions.map((item, idx) => (
                       <option key={idx} value={item} className="bg-[#111315] text-[#F2F0EA]">
                         {item}

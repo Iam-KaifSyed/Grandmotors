@@ -5,7 +5,7 @@ import { GET as getMedia, POST as postMedia } from '../pages/api/admin/cms/media
 import { DELETE as deleteMedia } from '../pages/api/admin/cms/media/[id]';
 import { POST as assignMedia } from '../pages/api/admin/cms/media/assign';
 import { GET as getServices, POST as postService } from '../pages/api/admin/cms/services/index';
-import { PATCH as patchService } from '../pages/api/admin/cms/services/[id]';
+import { PATCH as patchService, DELETE as deleteServiceApi } from '../pages/api/admin/cms/services/[id]';
 import { POST as reorderServicesApi } from '../pages/api/admin/cms/services/reorder';
 import { GET as getCategories } from '../pages/api/admin/cms/service-categories/index';
 import { GET as getBookingConfig, PUT as putBookingConfig } from '../pages/api/admin/cms/booking-form-config';
@@ -194,6 +194,40 @@ describe('CMS Admin API Handlers', () => {
     });
     const reorderRes = await (reorderServicesApi as any)(reorderCtx);
     expect(reorderRes.status).toBe(200);
+
+    // Delete unreferenced service succeeds (200)
+    const deleteCtx = makeApiCtx({
+      method: 'DELETE',
+      db,
+      params: { id: created.id },
+    });
+    const deleteRes = await (deleteServiceApi as any)(deleteCtx);
+    expect(deleteRes.status).toBe(200);
+
+    // Delete referenced service fails (409 conflict)
+    await db
+      .prepare(
+        `INSERT INTO bookings (
+          id, customerName, phoneNumber, email, vehicleMake, vehicleModel,
+          registrationNumber, serviceCategory, specificService, preferredDate,
+          preferredTime, status
+        ) VALUES (
+          'bk-ref', 'Jane Doe', '0712345678', 'jane@example.com', 'Porsche', '911',
+          'XY66 ZZZ', 'engine-diagnostics', NULL, '2026-10-15', '14:00', 'Confirmed'
+        )`
+      )
+      .run();
+
+    const deleteBlockedCtx = makeApiCtx({
+      method: 'DELETE',
+      db,
+      params: { id: 'engine-diagnostics' },
+    });
+    const deleteBlockedRes = await (deleteServiceApi as any)(deleteBlockedCtx);
+    expect(deleteBlockedRes.status).toBe(409);
+    const blockedData = await deleteBlockedRes.json();
+    expect(blockedData.bookingCount).toBe(1);
+    expect(blockedData.canDeactivate).toBe(true);
   });
 
   it('handles booking form config GET and PUT with essential protection', async () => {

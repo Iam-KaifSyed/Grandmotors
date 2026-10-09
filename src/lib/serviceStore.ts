@@ -294,6 +294,18 @@ export async function createService(
     throw err;
   }
 
+  // Check duplicate title
+  const duplicate = await db
+    .prepare('SELECT id FROM services WHERE lower(trim(title)) = lower(trim(?))')
+    .bind(title)
+    .first();
+  if (duplicate) {
+    const err: any = new Error(`A service named '${title}' already exists.`);
+    err.status = 409;
+    err.field = 'name';
+    throw err;
+  }
+
   const id =
     title
       .toLowerCase()
@@ -402,7 +414,20 @@ export async function updateService(
       err.field = 'name';
       throw err;
     }
-    title = data.title.trim();
+    const candidateTitle = data.title.trim();
+    if (candidateTitle.toLowerCase() !== existing.title.toLowerCase()) {
+      const duplicate = await db
+        .prepare('SELECT id FROM services WHERE lower(trim(title)) = lower(trim(?)) AND id != ?')
+        .bind(candidateTitle, id)
+        .first();
+      if (duplicate) {
+        const err: any = new Error(`A service named '${candidateTitle}' already exists.`);
+        err.status = 409;
+        err.field = 'name';
+        throw err;
+      }
+    }
+    title = candidateTitle;
   }
 
   const summary = data.summary !== undefined ? data.summary : existing.summary;
@@ -662,4 +687,63 @@ export async function reorderServiceCategories(
   });
 
   return orderedIds.map((id, index) => ({ id, displayOrder: index + 1 }));
+}
+
+/**
+ * Delete a service safely.
+ * Rejects with 409 if referenced by existing bookings.
+ */
+export async function deleteService(
+  db: any,
+  id: string,
+  actorAdmin = 'admin'
+): Promise<{ deleted: boolean }> {
+  const existing = await db
+    .prepare('SELECT * FROM services WHERE id = ?')
+    .bind(id)
+    .first();
+
+  if (!existing) {
+    const err: any = new Error('Service not found.');
+    err.status = 404;
+    throw err;
+  }
+
+  // Check if referenced in bookings table
+  const bookingsCheck = await db
+    .prepare(
+      `SELECT id FROM bookings
+       WHERE serviceCategory = ? OR serviceCategory = ? OR specificService = ?`
+    )
+    .bind(id, existing.title, existing.title)
+    .all();
+
+  const matchingBookings = bookingsCheck?.results || [];
+  if (matchingBookings.length > 0) {
+    const err: any = new Error(
+      `Cannot delete service '${existing.title}' because it is referenced by ${matchingBookings.length} existing booking(s). You can deactivate it instead to remove it from customer views while preserving historical bookings.`
+    );
+    err.status = 409;
+    err.bookingCount = matchingBookings.length;
+    err.canDeactivate = true;
+    throw err;
+  }
+
+  // Delete associated media references if any
+  await db
+    .prepare('DELETE FROM media_references WHERE usageLocation = ?')
+    .bind(`service-${id}`)
+    .run();
+
+  await db.prepare('DELETE FROM services WHERE id = ?').bind(id).run();
+
+  await recordAuditEvent(db, {
+    entityType: 'service',
+    entityId: id,
+    action: 'delete',
+    actorAdmin,
+    summary: { title: existing.title },
+  });
+
+  return { deleted: true };
 }

@@ -9,6 +9,7 @@ import {
   reorderServices,
   createServiceCategory,
   updateServiceCategory,
+  deleteService,
 } from './serviceStore';
 
 describe('serviceStore CRUD & Ordering', () => {
@@ -64,6 +65,61 @@ describe('serviceStore CRUD & Ordering', () => {
     await expect(
       createService(db, { title: '   ' }, 'admin')
     ).rejects.toMatchObject({ status: 422, field: 'name' });
+  });
+
+  it('rejects duplicate service title with 409 conflict', async () => {
+    // Attempt to create service with title matching existing 'Engine & Diagnostics'
+    await expect(
+      createService(db, { title: 'Engine & Diagnostics' }, 'admin')
+    ).rejects.toMatchObject({ status: 409, field: 'name' });
+
+    // Attempt to update service title to another existing service's title ('Brakes')
+    await expect(
+      updateService(db, 'engine-diagnostics', { title: 'Brakes' }, 'admin')
+    ).rejects.toMatchObject({ status: 409, field: 'name' });
+  });
+
+  it('prevents deletion of services referenced by bookings (409 conflict)', async () => {
+    // Seed a booking referencing 'engine-diagnostics'
+    await db
+      .prepare(
+        `INSERT INTO bookings (
+          id, customerName, phoneNumber, email, vehicleMake, vehicleModel,
+          registrationNumber, serviceCategory, specificService, preferredDate,
+          preferredTime, status
+        ) VALUES (
+          'bk-1', 'John Doe', '0712345678', 'john@example.com', 'BMW', 'M3',
+          'AB12 CDE', 'engine-diagnostics', NULL, '2026-10-15', '10:00', 'Pending'
+        )`
+      )
+      .run();
+
+    try {
+      await deleteService(db, 'engine-diagnostics', 'admin');
+      expect.unreachable('Should have thrown 409 conflict');
+    } catch (err: any) {
+      expect(err.status).toBe(409);
+      expect(err.bookingCount).toBe(1);
+      expect(err.canDeactivate).toBe(true);
+    }
+  });
+
+  it('deletes unreferenced services cleanly', async () => {
+    // Create an unreferenced service
+    const created = await createService(
+      db,
+      {
+        title: 'Temporary Test Service',
+        summary: 'To be deleted',
+      },
+      'admin'
+    );
+
+    const res = await deleteService(db, created.id, 'admin');
+    expect(res.deleted).toBe(true);
+
+    const all = await listAllServices(db);
+    expect(all.some((s) => s.id === created.id)).toBe(false);
   });
 
   it('reorders services to contiguous ascending sequence', async () => {

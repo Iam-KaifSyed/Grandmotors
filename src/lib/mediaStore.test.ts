@@ -36,6 +36,22 @@ describe('mediaStore & Image Validation', () => {
     expect(pngResult.width).toBe(100);
     expect(pngResult.height).toBe(100);
 
+    // Valid GIF (GIF89a, width 100, height 50)
+    const validGifBytes = new Uint8Array([
+      0x47, 0x49, 0x46, 0x38, 0x39, 0x61, 0x64, 0x00, 0x32, 0x00, 0xf0, 0x00, 0x00,
+    ]);
+    const gifResult = validateImageUpload('animation.gif', 'image/gif', validGifBytes);
+    expect(gifResult.valid).toBe(true);
+    expect(gifResult.width).toBe(100);
+    expect(gifResult.height).toBe(50);
+
+    // SVG explicitly rejected with security explanation
+    const svgBytes = new TextEncoder().encode('<svg xmlns="http://www.w3.org/2000/svg"><rect/></svg>');
+    const svgResult = validateImageUpload('icon.svg', 'image/svg+xml', svgBytes);
+    expect(svgResult.valid).toBe(false);
+    expect(svgResult.failedCheck).toBe('mime');
+    expect(svgResult.error).toContain('Vector SVG formats are not supported');
+
     // Invalid MIME
     const badMime = validateImageUpload('car.pdf', 'application/pdf', validPngBytes);
     expect(badMime.valid).toBe(false);

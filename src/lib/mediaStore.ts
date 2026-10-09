@@ -32,6 +32,7 @@ const ALLOWED_MIMES: Record<string, string[]> = {
   'image/jpeg': ['jpg', 'jpeg'],
   'image/png': ['png'],
   'image/webp': ['webp'],
+  'image/gif': ['gif'],
 };
 
 const MAX_IMAGE_SIZE_BYTES = 10 * 1024 * 1024; // 10MB limit
@@ -44,18 +45,28 @@ export function validateImageUpload(
   mimeType: string,
   bytes: Uint8Array
 ): ValidationResult {
-  // 1. MIME check
   const normalizedMime = mimeType?.toLowerCase().trim();
+  const ext = filename.split('.').pop()?.toLowerCase() || '';
+
+  // Explicit SVG check with clear message
+  if (normalizedMime === 'image/svg+xml' || ext === 'svg') {
+    return {
+      valid: false,
+      failedCheck: 'mime',
+      error: 'Vector SVG formats are not supported for safety and raster optimization. Please use JPEG, PNG, WebP, or GIF.',
+    };
+  }
+
+  // 1. MIME check
   if (!normalizedMime || !ALLOWED_MIMES[normalizedMime]) {
     return {
       valid: false,
       failedCheck: 'mime',
-      error: 'Invalid MIME type. Supported formats: JPEG, PNG, WebP.',
+      error: 'Invalid MIME type. Supported formats: JPEG, PNG, WebP, GIF.',
     };
   }
 
   // 2. Extension check
-  const ext = filename.split('.').pop()?.toLowerCase() || '';
   const allowedExts = ALLOWED_MIMES[normalizedMime];
   if (!allowedExts || !allowedExts.includes(ext)) {
     return {
@@ -96,11 +107,11 @@ function verifyMagicBytes(
   mime: string,
   bytes: Uint8Array
 ): { valid: boolean; width?: number; height?: number } {
-  if (bytes.length < 12) return { valid: false };
+  if (bytes.length < 6) return { valid: false };
 
   if (mime === 'image/jpeg') {
     // JPEG starts with FF D8 FF
-    if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) {
+    if (bytes.length >= 12 && bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) {
       return { valid: true, ...parseJpegDimensions(bytes) };
     }
     return { valid: false };
@@ -109,6 +120,7 @@ function verifyMagicBytes(
   if (mime === 'image/png') {
     // PNG starts with 89 50 4E 47 0D 0A 1A 0A
     if (
+      bytes.length >= 8 &&
       bytes[0] === 0x89 &&
       bytes[1] === 0x50 &&
       bytes[2] === 0x4e &&
@@ -125,6 +137,7 @@ function verifyMagicBytes(
 
   if (mime === 'image/webp') {
     // WebP: RIFF at 0..3, WEBP at 8..11
+    if (bytes.length < 12) return { valid: false };
     const isRiff =
       bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46;
     const isWebp =
@@ -135,7 +148,31 @@ function verifyMagicBytes(
     return { valid: false };
   }
 
+  if (mime === 'image/gif') {
+    // GIF87a or GIF89a
+    if (
+      bytes[0] === 0x47 &&
+      bytes[1] === 0x49 &&
+      bytes[2] === 0x46 &&
+      bytes[3] === 0x38 &&
+      (bytes[4] === 0x37 || bytes[4] === 0x39) &&
+      bytes[5] === 0x61
+    ) {
+      return { valid: true, ...parseGifDimensions(bytes) };
+    }
+    return { valid: false };
+  }
+
   return { valid: false };
+}
+
+function parseGifDimensions(bytes: Uint8Array): { width?: number; height?: number } {
+  if (bytes.length >= 10) {
+    const width = bytes[6] | (bytes[7] << 8);
+    const height = bytes[8] | (bytes[9] << 8);
+    return { width, height };
+  }
+  return {};
 }
 
 function parsePngDimensions(bytes: Uint8Array): { width?: number; height?: number } {

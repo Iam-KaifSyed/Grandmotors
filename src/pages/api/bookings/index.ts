@@ -153,7 +153,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     }
 
     if (serviceCategory.length < 1 || serviceCategory.length > 50) {
-      return new Response(JSON.stringify({ error: 'Please select a valid service category.' }), {
+      return new Response(JSON.stringify({ error: 'Please select a valid service.' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' }
       });

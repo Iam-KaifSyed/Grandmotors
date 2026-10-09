@@ -47,7 +47,7 @@ export const DEFAULT_BOOKING_FORM_CONFIG: BookingFormConfig = {
     vehicleMake: 'Make',
     vehicleModel: 'Model',
     registrationNumber: 'Registration No.',
-    serviceCategory: 'Service Category',
+    serviceCategory: 'Service',
     specificService: 'Specific Service / Work',
     preferredDate: 'Preferred Date',
     preferredTime: 'Preferred Time Slot',

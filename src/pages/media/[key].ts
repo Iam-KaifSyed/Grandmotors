@@ -5,7 +5,7 @@ import { getAppEnv } from '../../lib/env';
 import { resolveStorageDriver } from '../../lib/storage/StorageDriver';
 
 const KEY_REGEX =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.(jpg|jpeg|png|webp)$/i;
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.(jpg|jpeg|png|webp|gif)$/i;
 
 export const GET: APIRoute = async (context) => {
   const { key } = context.params;
