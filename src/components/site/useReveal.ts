@@ -3,8 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 /**
  * Lightweight scroll-reveal hook. Adds a `revealed` flag when the element
  * first enters the viewport. Respects prefers-reduced-motion by revealing
- * immediately. Independent of the 3D timeline / Lenis so the locked hero is
- * never touched.
+ * immediately. Includes a safety timeout fallback so content is never stuck invisible.
  */
 export function useReveal<T extends HTMLElement = HTMLDivElement>(
   options?: { threshold?: number; rootMargin?: string; once?: boolean }
@@ -25,6 +24,11 @@ export function useReveal<T extends HTMLElement = HTMLDivElement>(
       return;
     }
 
+    // Safety fallback: reveal after a short timeout so content is never stuck invisible
+    const fallbackTimer = setTimeout(() => {
+      setRevealed(true);
+    }, 1200);
+
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
@@ -37,13 +41,16 @@ export function useReveal<T extends HTMLElement = HTMLDivElement>(
         }
       },
       {
-        threshold: options?.threshold ?? 0.15,
-        rootMargin: options?.rootMargin ?? '0px 0px -8% 0px',
+        threshold: options?.threshold ?? 0.02,
+        rootMargin: options?.rootMargin ?? '0px 0px 150px 0px',
       }
     );
 
     observer.observe(el);
-    return () => observer.disconnect();
+    return () => {
+      clearTimeout(fallbackTimer);
+      observer.disconnect();
+    };
   }, [options?.threshold, options?.rootMargin, options?.once]);
 
   return { ref, revealed };

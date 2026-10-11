@@ -19,7 +19,7 @@ export function Footer({ services }: FooterProps = {}) {
   const serviceList = services && services.length > 0 ? services.slice(0, 6) : SERVICES.slice(0, 6);
 
   return (
-    <footer className="relative z-10 px-4 sm:px-8 md:px-12 lg:px-16 pt-12 sm:pt-16 pb-8 sm:pb-10 bg-[#0A0C0D] border-t border-white/8">
+    <footer className="relative z-40 px-4 sm:px-8 md:px-12 lg:px-16 pt-8 sm:pt-10 pb-6 sm:pb-8 bg-[#0A0C0D] border-t border-white/8">
       <div className="max-w-7xl mx-auto">
         <div className="grid gap-8 sm:gap-10 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
@@ -129,7 +129,7 @@ export function Footer({ services }: FooterProps = {}) {
           </div>
         </div>
 
-        <div className="mt-14 pt-6 border-t border-white/8 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="mt-8 pt-5 border-t border-white/8 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-[12px] tracking-[0.08em] text-[#A7AAAD]/70">
             © {new Date().getFullYear()} Grand Motors, Hyderabad. All rights reserved.
           </p>

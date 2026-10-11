@@ -67,7 +67,13 @@ export function CinematicIntro({ onComplete }: CinematicIntroProps) {
       2.2 // Starts at 2.2s
     );
 
+    const timeoutBackup = setTimeout(() => {
+      setIsFinished(true);
+      onCompleteRef.current();
+    }, 3200);
+
     return () => {
+      clearTimeout(timeoutBackup);
       introTl.kill();
     };
   }, []);

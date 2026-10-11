@@ -79,12 +79,11 @@ html.lenis body {
 /* Site content (below the locked 3D hero) — scroll reveal      */
 /* ============================================================ */
 .gm-reveal {
-  opacity: 0;
-  transform: translateY(26px);
+  opacity: 1;
+  transform: translateY(0);
   transition:
     opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
     transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
-  will-change: opacity, transform;
 }
 .gm-reveal.is-visible {
   opacity: 1;
@@ -104,7 +103,7 @@ html.lenis body {
    and carries its own opaque background so the hero never bleeds through. */
 #site-content {
   position: relative;
-  z-index: 10;
+  z-index: 40;
 }
 
 /* ============================================================ */

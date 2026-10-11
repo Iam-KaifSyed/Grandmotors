@@ -14,22 +14,21 @@ import { Environment } from './3d/Environment';
 import { HeroVehicle } from './3d/HeroVehicle';
 import { DebugPanel } from './3d/DebugPanel';
 import { HUD } from './HUD';
+import { Navbar } from './Navbar';
 import { CinematicIntro } from './CinematicIntro';
 import { MaterialDiagnostics } from './3d/MaterialDiagnostics';
 import { VH_PER_BEAT, timeline } from '../experience/chapters';
-import { SiteContent } from './site/SiteContent';
 
 gsap.registerPlugin(ScrollTrigger);
 
 export function ExperienceRoot() {
-  const containerRef = useRef<HTMLDivElement>(null);
   const [ready, setReady] = useState(false);
   const lenisRef = useRef<Lenis | null>(null);
   const [introFinished, setIntroFinished] = useState(false);
-  // When the 3D hero scroll completes, fade the fixed canvas/HUD layer out so
-  // the website below sits cleanly on its own. The 3D experience itself is
-  // untouched — this only controls the opacity of the fixed overlay layer.
+  const [heroTransitioning, setHeroTransitioning] = useState(false);
   const [heroComplete, setHeroComplete] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isCompletelyCovered, setIsCompletelyCovered] = useState(false);
 
   useEffect(() => {
     // Determine tier
@@ -58,15 +57,43 @@ export function ExperienceRoot() {
       end: 'bottom bottom',
       onUpdate: (self) => {
         scrollState.target = self.progress;
-        // Fade the fixed hero layer out once its scroll range is complete, so the
-        // website content below is not overlaid by the canvas/HUD.
-        setHeroComplete(self.progress >= 0.999);
+        // As we reach the final beats, fade out the bottom HUD cues so they don't clash with incoming content
+        setHeroTransitioning(self.progress >= 0.90);
+        // Chapter indicator fades once the 3D sequence has concluded
+        setHeroComplete(self.progress >= 0.98);
       },
-      onLeave: () => setHeroComplete(true),
-      onEnterBack: () => setHeroComplete(false),
+      onLeave: () => {
+        setHeroTransitioning(true);
+        setHeroComplete(true);
+      },
+      onEnterBack: (self) => {
+        if (self.progress < 0.95) {
+          setHeroComplete(false);
+        }
+        if (self.progress < 0.88) {
+          setHeroTransitioning(false);
+        }
+      },
     });
 
+    // Track scroll position for navbar styling & GPU canvas culling once completely obscured
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      setIsScrolled(scrollY > 40);
+
+      const scrollContainer = document.getElementById('scroll-container');
+      if (scrollContainer) {
+        const triggerHeight = scrollContainer.offsetHeight;
+        // Covered when user has scrolled past the entire scroll-container height
+        setIsCompletelyCovered(scrollY >= triggerHeight);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+
     return () => {
+      window.removeEventListener('scroll', handleScroll);
       lenis.destroy();
       registerLenis(null);
       st.kill();
@@ -82,19 +109,20 @@ export function ExperienceRoot() {
   }, [introFinished]);
 
   const totalBeats = timeline.totalBeats;
-  // Always aim for clean presentation
   const isHighTier = ready && getTier() !== 'low';
-  // Use higher DPR for this render quality pass
   const dpr = ready ? (getTier() === 'low' ? 1 : Math.min(window.devicePixelRatio || 1, 2)) : 1;
 
   return (
     <>
+      {/* 1. Permanent Fixed Top Navbar across entire page */}
+      <Navbar heroComplete={heroComplete} isScrolled={isScrolled} />
+
+      {/* 2. Fixed 3D Canvas Layer */}
       <div
-        ref={containerRef}
-        className="fixed inset-0 w-full h-full pointer-events-none bg-[#07090A] overflow-hidden transition-opacity duration-700 ease-out"
+        className="fixed inset-0 w-full h-full pointer-events-none bg-[#07090A] overflow-hidden"
         style={{
-          opacity: heroComplete ? 0 : 1,
-          visibility: heroComplete ? 'hidden' : 'visible',
+          zIndex: 0,
+          visibility: isCompletelyCovered ? 'hidden' : 'visible',
         }}
       >
         {ready && (
@@ -102,12 +130,12 @@ export function ExperienceRoot() {
             className="w-full h-full"
             camera={{ near: 0.1, far: 100 }}
             dpr={dpr}
-            gl={{ 
-              antialias: isHighTier, 
-              alpha: false, 
+            gl={{
+              antialias: isHighTier,
+              alpha: false,
               preserveDrawingBuffer: false,
               toneMapping: THREE.ACESFilmicToneMapping,
-              toneMappingExposure: 1.0, // Base exposure for cinematic look
+              toneMappingExposure: 1.0,
             }}
             shadows
           >
@@ -118,8 +146,8 @@ export function ExperienceRoot() {
           </Canvas>
         )}
 
-        {/* HUD reinstated */}
-        <HUD />
+        {/* HUD: Chapter Typography and Bottom Telemetry / Explore Cue */}
+        <HUD hideBottomCues={heroTransitioning} />
 
         {/* Scrubber / Tweakpane controls (gated behind ?debug=true flag) */}
         <DebugPanel />
@@ -128,13 +156,11 @@ export function ExperienceRoot() {
       {/* HTML overlay injected below the canvas relative to pointer events */}
       <MaterialDiagnostics />
 
+      {/* Scroll track for the 3D chapters */}
       <div
         id="scroll-container"
         style={{ width: '100%', height: `${totalBeats * VH_PER_BEAT}vh` }}
       />
-
-      {/* Main website — begins below the 3D hero as its own scroll section. */}
-      <SiteContent />
 
       {!introFinished && <CinematicIntro onComplete={() => setIntroFinished(true)} />}
     </>
