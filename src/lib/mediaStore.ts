@@ -456,7 +456,7 @@ export async function deleteMediaAsset(
   db: any,
   driver: StorageDriver | null,
   id: string,
-  confirmFilename: string,
+  confirmFilename?: string,
   actorAdmin = 'admin'
 ): Promise<{ deleted: boolean }> {
   const asset = await db
@@ -470,8 +470,8 @@ export async function deleteMediaAsset(
     throw err;
   }
 
-  // Confirmation filename check
-  if (confirmFilename?.trim() !== asset.filename?.trim()) {
+  // Confirmation filename check (if provided, must match)
+  if (confirmFilename && confirmFilename.trim() !== asset.filename?.trim()) {
     const err: any = new Error(
       `Confirmation mismatch. Please type '${asset.filename}' to confirm deletion.`
     );
@@ -520,6 +520,144 @@ export async function deleteMediaAsset(
   });
 
   return { deleted: true };
+}
+
+/**
+ * Unlink a media asset from usage locations and/or services.
+ * If location is provided, unlinks only that specific reference.
+ * If location is omitted or 'all', unlinks all references to this asset.
+ */
+export async function unlinkMediaAsset(
+  db: any,
+  id: string,
+  location?: string,
+  actorAdmin = 'admin'
+): Promise<{ unlinked: boolean; remainingUsageLocations: string[] }> {
+  const asset = await db
+    .prepare('SELECT id, filename FROM media_assets WHERE id = ?')
+    .bind(id)
+    .first();
+
+  if (!asset) {
+    const err: any = new Error('Media asset not found.');
+    err.status = 404;
+    throw err;
+  }
+
+  const unlinkedLocations: string[] = [];
+
+  if (!location || location === 'all') {
+    // 1. Remove all media_references for this asset
+    const rawRefs = await db
+      .prepare('SELECT usageLocation FROM media_references WHERE mediaAssetId = ?')
+      .bind(id)
+      .all();
+    for (const r of rawRefs?.results || []) {
+      unlinkedLocations.push(r.usageLocation);
+    }
+    await db.prepare('DELETE FROM media_references WHERE mediaAssetId = ?').bind(id).run();
+
+    // 2. Unlink from all services referencing this asset
+    const rawServices = await db
+      .prepare('SELECT id, title FROM services WHERE mediaAssetId = ?')
+      .bind(id)
+      .all();
+    for (const s of rawServices?.results || []) {
+      unlinkedLocations.push(`Service: ${s.title}`);
+    }
+    await db
+      .prepare(
+        "UPDATE services SET mediaAssetId = NULL, updatedAt = datetime('now'), updatedBy = ? WHERE mediaAssetId = ?"
+      )
+      .bind(actorAdmin, id)
+      .run();
+
+    await recordAuditEvent(db, {
+      entityType: 'media',
+      entityId: id,
+      action: 'unlink_all',
+      actorAdmin,
+      summary: { filename: asset.filename, unlinkedLocations },
+    });
+  } else {
+    // Unlink specific location
+    const trimmedLoc = location.trim();
+    if (trimmedLoc.startsWith('Service:')) {
+      const serviceTitle = trimmedLoc.replace(/^Service:\s*/, '').trim();
+      const svc = await db
+        .prepare('SELECT id, title FROM services WHERE mediaAssetId = ? AND (title = ? OR id = ?)')
+        .bind(id, serviceTitle, trimmedLoc)
+        .first();
+
+      if (svc) {
+        await db
+          .prepare(
+            "UPDATE services SET mediaAssetId = NULL, updatedAt = datetime('now'), updatedBy = ? WHERE id = ?"
+          )
+          .bind(actorAdmin, svc.id)
+          .run();
+        unlinkedLocations.push(`Service: ${svc.title}`);
+      }
+    } else {
+      // Could be in media_references
+      const ref = await db
+        .prepare('SELECT usageLocation FROM media_references WHERE mediaAssetId = ? AND usageLocation = ?')
+        .bind(id, trimmedLoc)
+        .first();
+
+      if (ref) {
+        await db
+          .prepare('DELETE FROM media_references WHERE mediaAssetId = ? AND usageLocation = ?')
+          .bind(id, trimmedLoc)
+          .run();
+        unlinkedLocations.push(trimmedLoc);
+      } else {
+        // Also check if matches service ID or title directly
+        const svc = await db
+          .prepare('SELECT id, title FROM services WHERE mediaAssetId = ? AND (id = ? OR title = ?)')
+          .bind(id, trimmedLoc, trimmedLoc)
+          .first();
+
+        if (svc) {
+          await db
+            .prepare(
+              "UPDATE services SET mediaAssetId = NULL, updatedAt = datetime('now'), updatedBy = ? WHERE id = ?"
+            )
+            .bind(actorAdmin, svc.id)
+            .run();
+          unlinkedLocations.push(`Service: ${svc.title}`);
+        }
+      }
+    }
+
+    await recordAuditEvent(db, {
+      entityType: 'media',
+      entityId: id,
+      action: 'unlink',
+      actorAdmin,
+      summary: { filename: asset.filename, location: trimmedLoc, unlinkedLocations },
+    });
+  }
+
+  // Calculate remaining usage locations
+  const remainingRefs = await db
+    .prepare('SELECT usageLocation FROM media_references WHERE mediaAssetId = ?')
+    .bind(id)
+    .all();
+  const remainingLocations: string[] = (remainingRefs?.results || []).map((r: any) => r.usageLocation);
+
+  const remainingServices = await db
+    .prepare('SELECT title FROM services WHERE mediaAssetId = ?')
+    .bind(id)
+    .all();
+  for (const s of remainingServices?.results || []) {
+    remainingLocations.push(`Service: ${s.title}`);
+  }
+
+  return {
+    unlinked: true,
+    remainingUsageLocations: remainingLocations,
+  };
 }
 
 /**

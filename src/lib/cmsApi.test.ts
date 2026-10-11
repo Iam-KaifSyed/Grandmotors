@@ -3,6 +3,7 @@ import { createTestD1Database } from './testDbHelper';
 import { MockStorageDriver } from './testStorageDriver';
 import { GET as getMedia, POST as postMedia } from '../pages/api/admin/cms/media/index';
 import { DELETE as deleteMedia } from '../pages/api/admin/cms/media/[id]';
+import { POST as unlinkMedia } from '../pages/api/admin/cms/media/[id]/unlink';
 import { POST as assignMedia } from '../pages/api/admin/cms/media/assign';
 import { GET as getServices, POST as postService } from '../pages/api/admin/cms/services/index';
 import { PATCH as patchService, DELETE as deleteServiceApi } from '../pages/api/admin/cms/services/[id]';
@@ -274,5 +275,85 @@ describe('CMS Admin API Handlers', () => {
     });
     const badResp = await (serveMedia as any)(badKeyCtx);
     expect(badResp.status).toBe(404);
+  });
+
+  it('handles media unlink and deletion without confirmFilename via API', async () => {
+    // 1. Upload asset
+    const fd = new FormData();
+    const file = new File([validPngBytes], 'unlink-test.png', { type: 'image/png' });
+    fd.append('file', file);
+    const uploadCtx = makeApiCtx({ db, driver, formData: fd });
+    const uploadRes = await (postMedia as any)(uploadCtx);
+    expect(uploadRes.status).toBe(201);
+    const assetId = (await uploadRes.json()).asset.id;
+
+    // 2. Assign to section and link to service
+    await (assignMedia as any)(
+      makeApiCtx({
+        db,
+        driver,
+        body: { usageLocation: 'services-hero', mediaAssetId: assetId },
+      })
+    );
+    await db
+      .prepare('INSERT INTO services (id, title, itemsJson, mediaAssetId, displayOrder) VALUES (?, ?, ?, ?, ?)')
+      .bind('svc-unlink', 'Unlink Service', '[]', assetId, 99)
+      .run();
+
+    // 3. Delete is blocked (409) with usage locations
+    const deleteBlockedCtx = makeApiCtx({
+      db,
+      driver,
+      params: { id: assetId },
+    });
+    const deleteBlockedRes = await (deleteMedia as any)(deleteBlockedCtx);
+    expect(deleteBlockedRes.status).toBe(409);
+    const blockedData = await deleteBlockedRes.json();
+    expect(blockedData.usageLocations).toContain('services-hero');
+    expect(blockedData.usageLocations).toContain('Service: Unlink Service');
+
+    // 4. Unlink without authorization is rejected (401)
+    const unauthedUnlinkCtx = makeApiCtx({
+      db,
+      driver,
+      session: new MockSession(),
+      params: { id: assetId },
+    });
+    const unauthedRes = await (unlinkMedia as any)(unauthedUnlinkCtx);
+    expect(unauthedRes.status).toBe(401);
+
+    // 5. Unlink specific location via API
+    const unlinkSectionCtx = makeApiCtx({
+      db,
+      driver,
+      params: { id: assetId },
+      body: { location: 'services-hero' },
+    });
+    const unlinkSectionRes = await (unlinkMedia as any)(unlinkSectionCtx);
+    expect(unlinkSectionRes.status).toBe(200);
+    const sectionData = await unlinkSectionRes.json();
+    expect(sectionData.remainingUsageLocations).toEqual(['Service: Unlink Service']);
+
+    // 6. Unlink remaining service via API
+    const unlinkAllCtx = makeApiCtx({
+      db,
+      driver,
+      params: { id: assetId },
+      body: { location: 'all' },
+    });
+    const unlinkAllRes = await (unlinkMedia as any)(unlinkAllCtx);
+    expect(unlinkAllRes.status).toBe(200);
+    const allData = await unlinkAllRes.json();
+    expect(allData.remainingUsageLocations).toEqual([]);
+
+    // 7. Delete unreferenced asset succeeds without confirmFilename (200)
+    const deleteCtx = makeApiCtx({
+      db,
+      driver,
+      params: { id: assetId },
+    });
+    const deleteRes = await (deleteMedia as any)(deleteCtx);
+    expect(deleteRes.status).toBe(200);
+    expect(driver.files.has(assetId)).toBe(false);
   });
 });

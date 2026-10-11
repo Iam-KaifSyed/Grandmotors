@@ -29,10 +29,10 @@ export function MediaLibrary() {
 
   // Delete modal state
   const [deletingAsset, setDeletingAsset] = useState<MediaAssetRecord | null>(null);
-  const [confirmName, setConfirmName] = useState('');
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [deleteUsageConflicts, setDeleteUsageConflicts] = useState<string[] | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isUnlinking, setIsUnlinking] = useState(false);
 
   // Assign modal state
   const [assigningAsset, setAssigningAsset] = useState<MediaAssetRecord | null>(null);
@@ -144,30 +144,62 @@ export function MediaLibrary() {
     if (!deletingAsset) return;
     setIsDeleting(true);
     setDeleteError(null);
-    setDeleteUsageConflicts(null);
 
     try {
       const res = await fetch(`/api/admin/cms/media/${deletingAsset.id}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ confirmFilename: confirmName }),
+        body: JSON.stringify({ confirmFilename: deletingAsset.filename }),
       });
 
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        if (data.usageLocations) {
+        if (data.usageLocations && data.usageLocations.length > 0) {
           setDeleteUsageConflicts(data.usageLocations);
         }
         throw new Error(data.error || 'Delete failed');
       }
 
       setDeletingAsset(null);
-      setConfirmName('');
+      setDeleteUsageConflicts(null);
       loadData();
     } catch (err: any) {
       setDeleteError(err?.message || 'Delete failed');
     } finally {
       setIsDeleting(false);
+    }
+  };
+
+  const handleUnlink = async (location?: string) => {
+    if (!deletingAsset) return;
+    setIsUnlinking(true);
+    setDeleteError(null);
+
+    try {
+      const res = await fetch(`/api/admin/cms/media/${deletingAsset.id}/unlink`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ location }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to unlink asset');
+      }
+
+      const remaining: string[] = data.remainingUsageLocations || [];
+      if (remaining.length === 0) {
+        setDeleteUsageConflicts(null);
+        setDeletingAsset((prev) => (prev ? { ...prev, usageLocations: [] } : null));
+      } else {
+        setDeleteUsageConflicts(remaining);
+        setDeletingAsset((prev) => (prev ? { ...prev, usageLocations: remaining } : null));
+      }
+      loadData();
+    } catch (err: any) {
+      setDeleteError(err?.message || 'Failed to unlink asset');
+    } finally {
+      setIsUnlinking(false);
     }
   };
 
@@ -363,9 +395,12 @@ export function MediaLibrary() {
                         type="button"
                         onClick={() => {
                           setDeletingAsset(asset);
-                          setConfirmName('');
                           setDeleteError(null);
-                          setDeleteUsageConflicts(null);
+                          setDeleteUsageConflicts(
+                            asset.usageLocations && asset.usageLocations.length > 0
+                              ? asset.usageLocations
+                              : null
+                          );
                         }}
                         className="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-[#FF5F5F] bg-[#FF5F5F]/10 hover:bg-[#FF5F5F]/20 border border-[#FF5F5F]/20 rounded cursor-pointer transition-colors"
                       >
@@ -423,65 +458,153 @@ export function MediaLibrary() {
       )}
 
       {/* Delete Modal */}
-      {deletingAsset && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#040404]/85 backdrop-blur-md">
-          <div className="bg-[#0D0F12] border border-white/10 rounded-2xl max-w-md w-full p-6 space-y-4">
-            <h2 className="text-lg font-bold text-[#FF5F5F] uppercase">Delete Media Asset</h2>
+      {deletingAsset && (() => {
+        const usageLocationsInUse =
+          deleteUsageConflicts !== null
+            ? deleteUsageConflicts
+            : deletingAsset.usageLocations || [];
+        const isBlocked = usageLocationsInUse.length > 0;
 
-            {deleteUsageConflicts && deleteUsageConflicts.length > 0 ? (
-              <div className="p-3 bg-red-950/40 border border-red-500/40 rounded-lg space-y-2 text-xs text-red-200">
-                <p className="font-bold">Cannot delete asset: it is currently in use by:</p>
-                <ul className="list-disc list-inside space-y-1">
-                  {deleteUsageConflicts.map((loc) => (
-                    <li key={loc}>{loc}</li>
-                  ))}
-                </ul>
-                <p className="text-[11px] text-red-300/80">
-                  Reassign or clear these locations before deleting.
-                </p>
-              </div>
-            ) : (
-              <>
-                <p className="text-xs text-[#A7AAAD] leading-relaxed">
-                  To prevent accidental deletion, please type the filename{' '}
-                  <strong className="text-[#F2F0EA] font-mono">{deletingAsset.filename}</strong>{' '}
-                  below to confirm.
-                </p>
+        return (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#040404]/85 backdrop-blur-md">
+            <div className="bg-[#0D0F12] border border-white/10 rounded-2xl max-w-md w-full p-6 space-y-4">
+              <h2 className="text-lg font-bold text-[#F2F0EA] uppercase">
+                Delete this image?
+              </h2>
 
-                <input
-                  type="text"
-                  value={confirmName}
-                  onChange={(e) => setConfirmName(e.target.value)}
-                  placeholder={deletingAsset.filename}
-                  className="w-full bg-[#0A0C0D] border border-white/10 rounded-lg px-3 py-2 text-xs text-[#F2F0EA] font-mono focus:border-[#FF5F5F] focus:outline-none"
-                />
-              </>
-            )}
+              {isBlocked ? (
+                <div className="space-y-4">
+                  <div className="p-3 bg-red-950/40 border border-red-500/40 rounded-lg space-y-2 text-xs text-red-200">
+                    <p className="font-semibold text-red-300">
+                      Deletion blocked: This image is currently referenced by a website section or service.
+                    </p>
+                    <p className="text-[11px] text-red-300/80">
+                      You must replace or unlink this image before it can be deleted.
+                    </p>
+                  </div>
 
-            {deleteError && <p className="text-xs text-red-400">{deleteError}</p>}
+                  <div>
+                    <span className="text-[10px] font-bold tracking-wider uppercase text-[#B88952] block mb-2">
+                      Where it's used ({usageLocationsInUse.length})
+                    </span>
+                    <ul className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
+                      {usageLocationsInUse.map((loc) => {
+                        const def = usageLocations.find((u) => u.key === loc);
+                        const label = def ? def.name : loc;
+                        return (
+                          <li
+                            key={loc}
+                            className="flex items-center justify-between gap-2 p-2 rounded bg-white/5 border border-white/5 text-xs text-[#F2F0EA]"
+                          >
+                            <span className="truncate" title={label}>
+                              {label}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => handleUnlink(loc)}
+                              disabled={isUnlinking}
+                              className="px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[#E5A93C] bg-[#E5A93C]/10 hover:bg-[#E5A93C]/20 border border-[#E5A93C]/20 rounded cursor-pointer disabled:opacity-50 transition-colors shrink-0"
+                            >
+                              Unlink
+                            </button>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
 
-            <div className="flex items-center justify-end gap-3 pt-3">
-              <button
-                type="button"
-                onClick={() => setDeletingAsset(null)}
-                className="px-4 py-2 text-xs font-semibold text-[#A7AAAD] hover:text-[#F2F0EA] cursor-pointer"
-              >
-                Close
-              </button>
-              {!deleteUsageConflicts && (
-                <button
-                  type="button"
-                  onClick={handleDelete}
-                  disabled={confirmName.trim() !== deletingAsset.filename.trim() || isDeleting}
-                  className="px-5 py-2 text-xs font-semibold uppercase tracking-wider text-[#F2F0EA] bg-[#FF5F5F] hover:bg-[#e04848] disabled:opacity-30 rounded-lg cursor-pointer transition-colors"
-                >
-                  {isDeleting ? 'Deleting…' : 'Confirm Delete'}
-                </button>
+                  {deleteError && <p className="text-xs text-red-400">{deleteError}</p>}
+
+                  <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-white/10">
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const assetToReplace = deletingAsset;
+                          setDeletingAsset(null);
+                          setDeleteUsageConflicts(null);
+                          setReplacingAsset(assetToReplace);
+                          setReplaceFile(null);
+                          setReplaceError(null);
+                        }}
+                        className="px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-[#60A5FA] bg-[#60A5FA]/10 hover:bg-[#60A5FA]/20 border border-[#60A5FA]/20 rounded-lg cursor-pointer transition-colors"
+                      >
+                        Replace Image
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleUnlink()}
+                        disabled={isUnlinking}
+                        className="px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-[#E5A93C] bg-[#E5A93C]/10 hover:bg-[#E5A93C]/20 border border-[#E5A93C]/20 rounded-lg cursor-pointer disabled:opacity-50 transition-colors"
+                      >
+                        {isUnlinking ? 'Unlinking…' : 'Unlink All'}
+                      </button>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setDeletingAsset(null);
+                        setDeleteUsageConflicts(null);
+                      }}
+                      className="px-4 py-2 text-xs font-semibold text-[#A7AAAD] hover:text-[#F2F0EA] cursor-pointer"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3 p-3 bg-white/5 border border-white/5 rounded-lg">
+                    <img
+                      src={deletingAsset.url}
+                      alt={deletingAsset.filename}
+                      className="w-12 h-12 object-cover rounded border border-white/10"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
+                      }}
+                    />
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs font-semibold text-[#F2F0EA] truncate">
+                        {deletingAsset.filename}
+                      </p>
+                      <p className="text-[11px] text-[#A7AAAD]/70 font-mono mt-0.5">
+                        {formatBytes(deletingAsset.byteSize)}
+                      </p>
+                    </div>
+                  </div>
+
+                  <p className="text-xs text-[#A7AAAD] leading-relaxed">
+                    This image is not currently used by any website sections or services. Deleting it will permanently remove it from the library.
+                  </p>
+
+                  {deleteError && <p className="text-xs text-red-400">{deleteError}</p>}
+
+                  <div className="flex items-center justify-end gap-3 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setDeletingAsset(null);
+                        setDeleteUsageConflicts(null);
+                      }}
+                      className="px-4 py-2 text-xs font-semibold text-[#A7AAAD] hover:text-[#F2F0EA] cursor-pointer"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleDelete}
+                      disabled={isDeleting}
+                      className="px-5 py-2 text-xs font-semibold uppercase tracking-wider text-[#F2F0EA] bg-[#FF5F5F] hover:bg-[#e04848] disabled:opacity-50 rounded-lg cursor-pointer transition-colors"
+                    >
+                      {isDeleting ? 'Deleting…' : 'Delete'}
+                    </button>
+                  </div>
+                </div>
               )}
             </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* Assign Modal */}
       {assigningAsset && (

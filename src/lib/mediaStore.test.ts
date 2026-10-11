@@ -6,6 +6,7 @@ import {
   createMediaUpload,
   replaceMediaAsset,
   deleteMediaAsset,
+  unlinkMediaAsset,
   assignMediaToUsageLocation,
   listMediaAssets,
   getMediaUrlForUsageLocation,
@@ -155,5 +156,81 @@ describe('mediaStore & Image Validation', () => {
     const res = await deleteMediaAsset(db, driver, asset.id, 'delete-me.png', 'test-admin');
     expect(res.deleted).toBe(true);
     expect(driver.files.has(asset.objectKey!)).toBe(false);
+  });
+
+  it('deletes unreferenced media asset immediately without confirmFilename', async () => {
+    const asset = await createMediaUpload(
+      db,
+      driver,
+      { filename: 'simple-delete.png', bytes: validPngBytes, mimeType: 'image/png' },
+      'test-admin'
+    );
+
+    const res = await deleteMediaAsset(db, driver, asset.id);
+    expect(res.deleted).toBe(true);
+    expect(driver.files.has(asset.objectKey!)).toBe(false);
+  });
+
+  it('unlinks media asset from usage locations and services then allows deletion', async () => {
+    const asset = await createMediaUpload(
+      db,
+      driver,
+      { filename: 'multi-ref.png', bytes: validPngBytes, mimeType: 'image/png' },
+      'test-admin'
+    );
+
+    // Link to a section and a service
+    await assignMediaToUsageLocation(db, 'services-hero', asset.id, 'test-admin');
+    await db
+      .prepare('INSERT INTO services (id, title, itemsJson, mediaAssetId, displayOrder) VALUES (?, ?, ?, ?, ?)')
+      .bind('svc-test', 'Test Service', '[]', asset.id, 99)
+      .run();
+
+    // Verify deletion is blocked initially
+    try {
+      await deleteMediaAsset(db, driver, asset.id);
+      expect.unreachable('Should have thrown 409 conflict');
+    } catch (err: any) {
+      expect(err.status).toBe(409);
+      expect(err.usageLocations).toContain('services-hero');
+      expect(err.usageLocations).toContain('Service: Test Service');
+    }
+
+    // Unlink specific section
+    const res1 = await unlinkMediaAsset(db, asset.id, 'services-hero', 'test-admin');
+    expect(res1.unlinked).toBe(true);
+    expect(res1.remainingUsageLocations).toEqual(['Service: Test Service']);
+
+    // Unlink service
+    const res2 = await unlinkMediaAsset(db, asset.id, 'Service: Test Service', 'test-admin');
+    expect(res2.unlinked).toBe(true);
+    expect(res2.remainingUsageLocations).toEqual([]);
+
+    // Now deletion succeeds immediately
+    const delRes = await deleteMediaAsset(db, driver, asset.id);
+    expect(delRes.deleted).toBe(true);
+    expect(driver.files.has(asset.objectKey!)).toBe(false);
+  });
+
+  it('unlinks all references at once with unlinkMediaAsset(id, "all")', async () => {
+    const asset = await createMediaUpload(
+      db,
+      driver,
+      { filename: 'unlink-all.png', bytes: validPngBytes, mimeType: 'image/png' },
+      'test-admin'
+    );
+
+    await assignMediaToUsageLocation(db, 'services-cta', asset.id, 'test-admin');
+    await db
+      .prepare('INSERT INTO services (id, title, itemsJson, mediaAssetId, displayOrder) VALUES (?, ?, ?, ?, ?)')
+      .bind('svc-test-2', 'Another Service', '[]', asset.id, 100)
+      .run();
+
+    const unlinkRes = await unlinkMediaAsset(db, asset.id, 'all', 'test-admin');
+    expect(unlinkRes.unlinked).toBe(true);
+    expect(unlinkRes.remainingUsageLocations).toEqual([]);
+
+    const delRes = await deleteMediaAsset(db, driver, asset.id);
+    expect(delRes.deleted).toBe(true);
   });
 });
