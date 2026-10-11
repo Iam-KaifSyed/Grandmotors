@@ -11,6 +11,12 @@
   --color-text-nav: #d8d6d0;
   --color-accent: #b88952;
 
+  --color-background: #07090a;
+  --color-foreground: #f2f0ea;
+  --color-border: rgba(255, 255, 255, 0.12);
+  --color-muted: #181b1e;
+  --color-primary: #b88952;
+
   --font-sans: "Inter", "Manrope", system-ui, -apple-system, sans-serif;
   --font-display: "Inter", "Space Grotesk", system-ui, sans-serif;
 }

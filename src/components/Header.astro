@@ -1,5 +1,14 @@
 ---
+import { NavBar } from './ui/tubelight-navbar';
+
 const pathname = new URL(Astro.request.url).pathname;
+const navItems = [
+  { name: 'Home', url: '/' },
+  { name: 'Services', url: '/services' },
+  { name: 'Bookings', url: '/my-bookings' },
+  { name: 'About', url: '/about' },
+  { name: 'Contact', url: '/contact' },
+];
 const links = [
   { href: '/', label: 'Home' },
   { href: '/services', label: 'Services' },
@@ -22,24 +31,21 @@ const links = [
       <span class="w-1.5 h-1.5 rounded-full bg-[#B88952] shadow-[0_0_8px_rgba(184,137,82,0.8)]"></span>
     </a>
 
-    <!-- Desktop / Tablet Centered Nav Pill -->
-    <nav class="hidden md:flex items-center bg-black/40 backdrop-blur-md border border-white/10 rounded-full px-2 py-1.5 pointer-events-auto shadow-lg shadow-black/40">
-      {links.map(link => {
-        const isActive = link.href === '/' ? pathname === '/' : pathname.startsWith(link.href);
-        return (
-          <a 
-            href={link.href} 
-            class={`px-3.5 lg:px-4 py-1.5 text-xs font-semibold tracking-[0.1em] uppercase whitespace-nowrap rounded-full transition-all duration-300 ${
-              isActive 
-                ? 'bg-[#B88952]/20 text-[#B88952] shadow-[inset_0_0_8px_rgba(184,137,82,0.2)]' 
-                : 'text-[#A7AAAD] hover:text-[#F2F0EA] hover:bg-white/5'
-            }`}
-          >
-            {link.label}
-          </a>
-        )
-      })}
-    </nav>
+    <!-- Desktop / Tablet Centered Tubelight Nav Pill -->
+    <NavBar
+      client:load
+      items={navItems}
+      currentPath={pathname}
+      className="pointer-events-auto static sm:static translate-x-0 mb-0 sm:pt-0 hidden md:block"
+    />
+
+    <!-- Mobile Floating Tubelight Nav Dock -->
+    <NavBar
+      client:load
+      items={navItems}
+      currentPath={pathname}
+      className="pointer-events-auto md:hidden"
+    />
 
     <!-- Right Controls -->
     <div class="flex items-center gap-2.5 sm:gap-3 pointer-events-auto">

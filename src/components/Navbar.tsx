@@ -3,6 +3,17 @@ import gsap from 'gsap';
 import { getFrame } from '../lib/directorState';
 import { CHAPTER_DATA } from '../lib/chapterTransitions';
 
+import { Home, Wrench, Calendar, Info, Phone } from 'lucide-react';
+import { NavBar, type NavItem } from './ui/tubelight-navbar';
+
+const navItems: NavItem[] = [
+  { name: 'Home', url: '/', icon: Home },
+  { name: 'Services', url: '/services', icon: Wrench },
+  { name: 'Bookings', url: '/my-bookings', icon: Calendar },
+  { name: 'About', url: '/about', icon: Info },
+  { name: 'Contact', url: '/contact', icon: Phone },
+];
+
 const navLinks = [
   { href: '/', label: 'HOME' },
   { href: '/services', label: 'SERVICES' },
@@ -82,21 +93,19 @@ export function Navbar({ heroComplete = false, isScrolled = false }: NavbarProps
           <span className="w-1.5 h-1.5 rounded-full bg-[#B88952] opacity-80 group-hover:opacity-100 transition-opacity shadow-[0_0_6px_rgba(184,137,82,0.8)]" />
         </a>
 
-        {/* Minimal Desktop Navigation Links */}
-        <nav
-          aria-label="Main Navigation"
-          className="hidden md:flex items-center gap-6 lg:gap-10 pointer-events-auto bg-black/40 backdrop-blur-md border border-white/10 rounded-full px-5 py-2 shadow-lg shadow-black/30"
-        >
-          {navLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              className="text-[11px] font-semibold tracking-[0.16em] text-[#D8D6D0]/80 hover:text-[#B88952] transition-colors duration-200 uppercase"
-            >
-              {link.label}
-            </a>
-          ))}
-        </nav>
+        {/* Tubelight Navigation Bar (Desktop) */}
+        <NavBar
+          items={navItems}
+          currentPath="/"
+          className="pointer-events-auto static sm:static translate-x-0 mb-0 sm:pt-0 hidden md:block"
+        />
+
+        {/* Tubelight Navigation Bar (Mobile Floating Dock) */}
+        <NavBar
+          items={navItems}
+          currentPath="/"
+          className="pointer-events-auto md:hidden"
+        />
 
         {/* Right Side Controls */}
         <div className="flex items-center gap-3 sm:gap-5 md:gap-7 pointer-events-auto">
