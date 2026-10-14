@@ -606,32 +606,32 @@ export function AdminDashboard({
       </div>
 
       {/* Table / Cards / states */}
-      <div className="rounded-xl border border-[var(--gm-border-subtle)] bg-[var(--gm-bg-card)] overflow-hidden shadow-sm">
-        {isLoading ? (
-          <div className="py-16 flex items-center justify-center">
-            <div className="w-8 h-8 rounded-full border-2 border-[var(--gm-accent-primary)]/20 border-t-[var(--gm-accent-primary)] animate-spin" />
-          </div>
-        ) : error ? (
-          <div className="py-12 px-6 text-center">
-            <p className="text-sm text-red-500 dark:text-red-300">{error}</p>
-            <button
-              type="button"
-              onClick={loadBookings}
-              className="mt-4 inline-flex items-center px-5 py-2.5 text-[11px] font-semibold tracking-[0.16em] uppercase text-[var(--gm-accent-foreground)] bg-[var(--gm-accent-primary)] hover:bg-[var(--gm-accent-primary-hover)] rounded-lg transition-colors cursor-pointer"
-            >
-              Retry
-            </button>
-          </div>
-        ) : filtered.length === 0 ? (
-          <div className="py-16 px-6 text-center">
-            <p className="text-sm text-[var(--gm-text-secondary)]">
-              {bookings && bookings.length === 0 ? 'No bookings have been created yet.' : 'No bookings match your filters.'}
-            </p>
-          </div>
-        ) : (
-          <>
-            {/* Desktop Table: fits expanded width with responsive horizontal scrolling fallback */}
-            <div className="hidden lg:block w-full overflow-x-auto [scrollbar-width:thin] [scrollbar-color:var(--gm-border-medium)_transparent]">
+      {isLoading ? (
+        <div className="rounded-xl border border-[var(--gm-border-subtle)] bg-[var(--gm-bg-card)] overflow-hidden shadow-sm py-16 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-full border-2 border-[var(--gm-accent-primary)]/20 border-t-[var(--gm-accent-primary)] animate-spin" />
+        </div>
+      ) : error ? (
+        <div className="rounded-xl border border-[var(--gm-border-subtle)] bg-[var(--gm-bg-card)] overflow-hidden shadow-sm py-12 px-6 text-center">
+          <p className="text-sm text-red-500 dark:text-red-300">{error}</p>
+          <button
+            type="button"
+            onClick={loadBookings}
+            className="mt-4 inline-flex items-center px-5 py-2.5 text-[11px] font-semibold tracking-[0.16em] uppercase text-[var(--gm-accent-foreground)] bg-[var(--gm-accent-primary)] hover:bg-[var(--gm-accent-primary-hover)] rounded-lg transition-colors cursor-pointer"
+          >
+            Retry
+          </button>
+        </div>
+      ) : filtered.length === 0 ? (
+        <div className="rounded-xl border border-[var(--gm-border-subtle)] bg-[var(--gm-bg-card)] overflow-hidden shadow-sm py-16 px-6 text-center">
+          <p className="text-sm text-[var(--gm-text-secondary)]">
+            {bookings && bookings.length === 0 ? 'No bookings have been created yet.' : 'No bookings match your filters.'}
+          </p>
+        </div>
+      ) : (
+        <>
+          {/* Desktop Table: fits expanded width with responsive horizontal scrolling fallback */}
+          <div className="hidden lg:block rounded-xl border border-[var(--gm-border-subtle)] bg-[var(--gm-bg-card)] overflow-hidden shadow-sm">
+            <div className="w-full overflow-x-auto [scrollbar-width:thin] [scrollbar-color:var(--gm-border-medium)_transparent]">
               <table className={`w-full table-fixed text-left text-sm divide-y divide-[var(--gm-border-subtle)] ${viewTab === 'active' ? 'min-w-[1180px]' : 'min-w-[1240px]'}`}>
                 <thead className="bg-[var(--gm-bg-surface)]">
                   <tr className="text-[10px] uppercase tracking-[0.14em] text-[var(--gm-text-secondary)]">
@@ -872,158 +872,172 @@ export function AdminDashboard({
                 </tbody>
               </table>
             </div>
+          </div>
 
-            {/* Mobile / Tablet Responsive Card Layout */}
-            <div className="lg:hidden divide-y divide-[var(--gm-border-subtle)]">
-              {filtered.map((b) => {
-                const vehicleName = b.vehicle || `${b.vehicleMake || ''} ${b.vehicleModel || ''}`.trim() || '—';
-                const categoryName = serviceTitle(b.serviceCategory);
-                const phoneNum = b.phoneNumber || b.phone;
-                const custName = b.customerName || b.fullName || '—';
-                const repeatInfo = repeatCustomerMap.get(b.id);
+          {/* Mobile / Tablet Responsive Separated Card Layout */}
+          <div className="lg:hidden space-y-4">
+            {filtered.map((b) => {
+              const vehicleName = b.vehicle || `${b.vehicleMake || ''} ${b.vehicleModel || ''}`.trim() || '—';
+              const categoryName = serviceTitle(b.serviceCategory);
+              const phoneNum = b.phoneNumber || b.phone;
+              const custName = b.customerName || b.fullName || '—';
+              const repeatInfo = repeatCustomerMap.get(b.id);
 
-                return (
-                  <div
-                    key={b.id}
-                    className="p-4 sm:p-5 space-y-4 hover:bg-[var(--gm-bg-card-hover)] transition-colors"
-                  >
-                    {/* Card Top: ID & Status */}
-                    <div className="flex items-center justify-between gap-3">
-                      <div className="min-w-0">
-                        <span
-                          className="font-mono font-bold text-xs sm:text-sm text-[var(--gm-text-primary)] tracking-wide select-all"
-                          title={`Booking ID: ${b.id}`}
+              return (
+                <article
+                  key={b.id}
+                  className="rounded-xl border border-[var(--gm-border-subtle)] bg-[var(--gm-bg-card)] p-4 sm:p-5 shadow-xs space-y-3.5 transition-all"
+                >
+                  {/* Card Header: Booking ID & Status */}
+                  <div className="flex items-center justify-between gap-3 pb-3 border-b border-[var(--gm-border-subtle)]">
+                    <div className="min-w-0">
+                      <span className="block text-[9px] font-bold tracking-[0.18em] uppercase text-[var(--gm-text-muted)] mb-0.5">Booking ID</span>
+                      <span
+                        className="font-mono font-bold text-sm sm:text-base text-[var(--gm-text-primary)] tracking-wide select-all break-all"
+                        title={`Booking ID: ${b.id}`}
+                      >
+                        {b.id}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-[9px] font-semibold tracking-wider uppercase rounded ${
+                        b.serviceLocation === 'Doorstep Service'
+                          ? 'bg-[var(--gm-accent-muted)] text-[var(--gm-accent-primary)] border border-[var(--gm-accent-border)]'
+                          : 'bg-[var(--gm-bg-surface)] text-[var(--gm-text-secondary)] border border-[var(--gm-border-subtle)]'
+                      }`}>
+                        {b.serviceLocation === 'Doorstep Service' ? '🏠 Doorstep' : '🏢 Workshop'}
+                      </span>
+                      <StatusBadge status={b.status} />
+                    </div>
+                  </div>
+
+                  {/* Customer Details & Quick Contact */}
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                      <span className="block text-[9px] font-bold tracking-[0.18em] uppercase text-[var(--gm-text-muted)] mb-0.5">Customer</span>
+                      <h3
+                        className="text-sm font-semibold text-[var(--gm-text-primary)] break-words leading-snug"
+                        title={custName}
+                      >
+                        {custName}
+                      </h3>
+                      {b.email && (
+                        <p className="text-xs text-[var(--gm-text-muted)] break-all mt-0.5" title={b.email}>
+                          {b.email}
+                        </p>
+                      )}
+                      {phoneNum && (
+                        <p className="font-mono text-xs text-[var(--gm-text-secondary)] mt-0.5" title={phoneNum}>
+                          {phoneNum}
+                        </p>
+                      )}
+                    </div>
+                    {phoneNum && (
+                      <div className="flex items-center gap-1.5 shrink-0 pt-3">
+                        <a
+                          href={telHref(phoneNum)}
+                          className="inline-flex items-center justify-center min-h-[30px] px-3 py-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[var(--gm-text-primary)] bg-[var(--gm-bg-surface)] hover:bg-[var(--gm-bg-card-hover)] border border-[var(--gm-border-subtle)] rounded-md transition-colors shadow-xs"
+                          title={`Call ${phoneNum}`}
                         >
-                          {b.id}
+                          Call
+                        </a>
+                        <a
+                          href={waHref(phoneNum)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center justify-center min-h-[30px] px-3 py-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[#15803d] dark:text-[#25D366] bg-[#25D366]/10 hover:bg-[#25D366]/20 border border-[#25D366]/30 rounded-md transition-colors shadow-xs"
+                          title={`WhatsApp ${phoneNum}`}
+                        >
+                          WA
+                        </a>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Repeat Customer Alert in Card */}
+                  {repeatInfo?.isRepeatCustomer && (
+                    <div className="p-3 rounded-lg bg-[#b45309]/10 dark:bg-[#E5A84B]/10 border border-[#b45309]/30 dark:border-[#E5A84B]/30 space-y-1.5 text-xs">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="inline-flex items-center gap-1.5 font-bold text-[10px] tracking-wider uppercase text-[#b45309] dark:text-[#E5A84B]">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#b45309] dark:bg-[#E5A84B] animate-pulse" />
+                          Multiple Bookings Found
+                        </span>
+                        <span className="text-[10px] font-semibold text-[var(--gm-text-primary)] bg-[var(--gm-bg-surface)] px-2 py-0.5 rounded-full border border-[var(--gm-border-subtle)]">
+                          {repeatInfo.totalBookingCount} Total
                         </span>
                       </div>
-                      <div className="flex items-center gap-2 shrink-0">
-                        <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 text-[9px] font-semibold tracking-wider uppercase rounded ${
-                          b.serviceLocation === 'Doorstep Service'
-                            ? 'bg-[var(--gm-accent-muted)] text-[var(--gm-accent-primary)] border border-[var(--gm-accent-border)]'
-                            : 'bg-[var(--gm-bg-surface)] text-[var(--gm-text-secondary)] border border-[var(--gm-border-subtle)]'
-                        }`}>
-                          {b.serviceLocation === 'Doorstep Service' ? '🏠 Doorstep' : '🏢 Workshop'}
-                        </span>
-                        <StatusBadge status={b.status} />
+                      <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+                        <span className="text-[10px] text-[var(--gm-text-muted)] shrink-0">Other Bookings:</span>
+                        {repeatInfo.otherBookingIds.map((otherId) => {
+                          const otherBooking = (bookings || []).find((x) => x.id === otherId);
+                          return (
+                            <button
+                              key={otherId}
+                              type="button"
+                              onClick={() => {
+                                if (otherBooking) openDetails(otherBooking);
+                              }}
+                              className="inline-flex items-center min-h-[26px] px-2.5 py-0.5 rounded-md bg-[var(--gm-bg-surface)] border border-[var(--gm-border-subtle)] hover:border-[var(--gm-accent-primary)] font-mono text-[10px] font-semibold text-[var(--gm-accent-primary)] hover:text-[var(--gm-accent-primary-hover)] transition-colors cursor-pointer shrink-0"
+                              title={`Open booking ${otherId}`}
+                            >
+                              {otherId}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Vehicle, Service, Schedule & Source Details */}
+                  <div className="rounded-lg bg-[var(--gm-bg-surface)] border border-[var(--gm-border-subtle)] p-3 space-y-3 text-xs">
+                    {/* Vehicle */}
+                    <div className="min-w-0">
+                      <span className="block text-[9px] font-bold tracking-[0.16em] uppercase text-[var(--gm-text-muted)] mb-0.5">Vehicle</span>
+                      <p className="text-[var(--gm-text-primary)] font-semibold text-xs break-words" title={vehicleName}>
+                        {vehicleName}
+                      </p>
+                      <div className="flex flex-wrap items-center gap-1.5 mt-1 text-[11px] text-[var(--gm-text-secondary)]">
+                        {(b.vehicleMake || b.vehicleModel) && (
+                          <span className="text-[var(--gm-accent-primary)] font-medium">
+                            {b.vehicleMake || '—'} / {b.vehicleModel || '—'}
+                          </span>
+                        )}
+                        {b.fuelType && (
+                          <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-[#b45309]/10 dark:bg-[#E5A84B]/15 text-[#b45309] dark:text-[#E5A84B] border border-[#b45309]/30">
+                            Fuel: {b.fuelType}
+                          </span>
+                        )}
+                        {b.registrationNumber && (
+                          <span className="font-mono text-[10px] text-[var(--gm-text-muted)] bg-[var(--gm-bg-card)] px-1.5 py-0.5 rounded border border-[var(--gm-border-subtle)]" title={`Reg: ${b.registrationNumber}`}>
+                            {b.registrationNumber}
+                          </span>
+                        )}
                       </div>
                     </div>
 
-                    {/* Customer & Quick Contact */}
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0">
-                        <h3
-                          className="text-sm sm:text-base font-semibold text-[var(--gm-text-primary)] truncate"
-                          title={custName}
-                        >
-                          {custName}
-                        </h3>
-                        {b.email && (
-                          <p className="text-xs text-[var(--gm-text-muted)] truncate" title={b.email}>
-                            {b.email}
-                          </p>
-                        )}
-                        {phoneNum && (
-                          <p className="font-mono text-xs text-[var(--gm-text-secondary)] mt-0.5" title={phoneNum}>
-                            {phoneNum}
-                          </p>
-                        )}
-                      </div>
-                      {phoneNum && (
-                        <div className="flex items-center gap-1.5 shrink-0">
-                          <a
-                            href={telHref(phoneNum)}
-                            className="px-2.5 py-1 text-[10px] font-semibold tracking-[0.1em] uppercase text-[var(--gm-text-primary)] bg-[var(--gm-bg-surface)] hover:bg-[var(--gm-bg-card-hover)] border border-[var(--gm-border-subtle)] rounded-md transition-colors"
-                            title={`Call ${phoneNum}`}
-                          >
-                            Call
-                          </a>
-                          <a
-                            href={waHref(phoneNum)}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="px-2.5 py-1 text-[10px] font-semibold tracking-[0.1em] uppercase text-[#15803d] dark:text-[#25D366] bg-[#25D366]/10 hover:bg-[#25D366]/20 border border-[#25D366]/30 rounded-md transition-colors"
-                            title={`WhatsApp ${phoneNum}`}
-                          >
-                            WA
-                          </a>
-                        </div>
+                    {/* Service */}
+                    <div className="min-w-0 pt-2.5 border-t border-[var(--gm-border-subtle)]">
+                      <span className="block text-[9px] font-bold tracking-[0.16em] uppercase text-[var(--gm-text-muted)] mb-0.5">Service</span>
+                      <p className="text-[var(--gm-text-primary)] font-semibold text-xs break-words" title={categoryName}>
+                        {categoryName}
+                      </p>
+                      {b.specificService && (
+                        <p className="text-[11px] text-[var(--gm-text-muted)] mt-0.5 break-words" title={b.specificService}>
+                          {b.specificService}
+                        </p>
+                      )}
+                      {b.serviceLocation === 'Doorstep Service' && b.doorstepCity && (
+                        <p className="text-[10px] text-[var(--gm-text-muted)] mt-1">
+                          Doorstep City: {b.doorstepCity}
+                        </p>
                       )}
                     </div>
 
-                    {/* Repeat Customer Alert in Card */}
-                    {repeatInfo?.isRepeatCustomer && (
-                      <div className="p-3 rounded-lg bg-[#b45309]/10 dark:bg-[#E5A84B]/10 border border-[#b45309]/30 dark:border-[#E5A84B]/30 space-y-1.5 text-xs">
-                        <div className="flex items-center justify-between gap-2">
-                          <span className="inline-flex items-center gap-1.5 font-bold text-[10px] tracking-wider uppercase text-[#b45309] dark:text-[#E5A84B]">
-                            <span className="w-1.5 h-1.5 rounded-full bg-[#b45309] dark:bg-[#E5A84B]" />
-                            Multiple Bookings Found
-                          </span>
-                          <span className="text-[10px] font-semibold text-[var(--gm-text-primary)] bg-[var(--gm-bg-surface)] px-2 py-0.5 rounded-full border border-[var(--gm-border-subtle)]">
-                            {repeatInfo.totalBookingCount} Total
-                          </span>
-                        </div>
-                        <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
-                          <span className="text-[10px] text-[var(--gm-text-muted)]">Other Bookings:</span>
-                          {repeatInfo.otherBookingIds.map((otherId) => {
-                            const otherBooking = (bookings || []).find((x) => x.id === otherId);
-                            return (
-                              <button
-                                key={otherId}
-                                type="button"
-                                onClick={() => {
-                                  if (otherBooking) openDetails(otherBooking);
-                                }}
-                                className="px-2 py-0.5 rounded bg-[var(--gm-bg-surface)] border border-[var(--gm-border-subtle)] hover:border-[var(--gm-accent-primary)] font-mono text-[10px] font-medium text-[var(--gm-accent-primary)] hover:text-[var(--gm-accent-primary-hover)] transition-colors cursor-pointer"
-                                title={`Open booking ${otherId}`}
-                              >
-                                {otherId}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Details Grid */}
-                    <div className="grid grid-cols-2 gap-2.5 p-3 rounded-lg bg-[var(--gm-bg-surface)] border border-[var(--gm-border-subtle)] text-xs">
-                      <div className="min-w-0">
-                        <span className="block text-[9px] font-bold tracking-[0.16em] uppercase text-[var(--gm-text-muted)] mb-0.5">Vehicle</span>
-                        <p className="text-[var(--gm-text-primary)] font-medium truncate" title={vehicleName}>
-                          {vehicleName}
-                        </p>
-                        {(b.vehicleMake || b.vehicleModel) && (
-                          <p className="text-[10px] text-[var(--gm-accent-primary)] truncate">
-                            {b.vehicleMake || '—'} <span className="text-[var(--gm-text-muted)]">/</span> {b.vehicleModel || '—'}
-                          </p>
-                        )}
-                        {b.fuelType && (
-                          <p className="text-[10px] text-[#b45309] dark:text-[#E5A84B] truncate font-medium">
-                            Fuel: {b.fuelType}
-                          </p>
-                        )}
-                        {b.registrationNumber && (
-                          <p className="font-mono text-[10px] text-[var(--gm-text-muted)] truncate mt-0.5" title={`Reg: ${b.registrationNumber}`}>
-                            {b.registrationNumber}
-                          </p>
-                        )}
-                      </div>
-
-                      <div className="min-w-0">
-                        <span className="block text-[9px] font-bold tracking-[0.16em] uppercase text-[var(--gm-text-muted)] mb-0.5">Service</span>
-                        <p className="text-[var(--gm-text-primary)] font-medium truncate" title={categoryName}>
-                          {categoryName}
-                        </p>
-                        {b.specificService && (
-                          <p className="text-[10px] text-[var(--gm-text-muted)] truncate" title={b.specificService}>
-                            {b.specificService}
-                          </p>
-                        )}
-                      </div>
-
+                    {/* Requested & Lead Source */}
+                    <div className="grid grid-cols-2 gap-3 pt-2.5 border-t border-[var(--gm-border-subtle)]">
                       <div className="min-w-0">
                         <span className="block text-[9px] font-bold tracking-[0.16em] uppercase text-[var(--gm-text-muted)] mb-0.5">Requested</span>
-                        <p className="text-[var(--gm-text-primary)] truncate" title={`${b.preferredDate}${b.preferredTime ? ` · ${b.preferredTime}` : ''}`}>
+                        <p className="font-mono text-xs text-[var(--gm-text-primary)]" title={`${b.preferredDate}${b.preferredTime ? ` · ${b.preferredTime}` : ''}`}>
                           {b.preferredDate || '—'}
                         </p>
                         {b.preferredTime && (
@@ -1032,63 +1046,56 @@ export function AdminDashboard({
                       </div>
 
                       <div className="min-w-0">
-                        <span className="block text-[9px] font-bold tracking-[0.16em] uppercase text-[var(--gm-text-muted)] mb-0.5">Location</span>
-                        <p className="text-[var(--gm-text-primary)] truncate" title={b.serviceLocation || 'Workshop Visit'}>
-                          {b.serviceLocation === 'Doorstep Service' ? `🏠 Doorstep (${b.doorstepCity || 'City'})` : '🏢 Workshop Bay'}
-                        </p>
-                      </div>
-
-                      <div className="min-w-0">
-                        <span className="block text-[9px] font-bold tracking-[0.16em] uppercase text-[var(--gm-text-muted)] mb-1">Source</span>
+                        <span className="block text-[9px] font-bold tracking-[0.16em] uppercase text-[var(--gm-text-muted)] mb-1">Lead Source</span>
                         <SourceBadge source={b.source} />
                       </div>
                     </div>
+                  </div>
 
-                    {/* Card Footer: View & Lifecycle Actions */}
-                    <div className="flex flex-wrap items-center justify-end gap-2 pt-2 border-t border-[var(--gm-border-subtle)]">
+                  {/* Card Dedicated Footer: View Details & Actions */}
+                  <div className="pt-3 border-t border-[var(--gm-border-subtle)] flex items-center gap-2.5">
+                    <button
+                      type="button"
+                      onClick={() => openDetails(b)}
+                      className="flex-1 min-h-[38px] inline-flex items-center justify-center px-3 py-2 text-xs font-semibold tracking-[0.08em] uppercase text-[var(--gm-text-primary)] bg-[var(--gm-bg-surface)] hover:bg-[var(--gm-accent-primary)] hover:text-[var(--gm-accent-foreground)] border border-[var(--gm-border-subtle)] hover:border-[var(--gm-accent-primary)] rounded-lg transition-all cursor-pointer shadow-xs active:scale-[0.98]"
+                    >
+                      View Details
+                    </button>
+                    {viewTab === 'active' ? (
                       <button
                         type="button"
-                        onClick={() => openDetails(b)}
-                        className="inline-flex items-center justify-center px-3 py-1.5 text-[11px] font-semibold tracking-[0.1em] uppercase text-[var(--gm-text-primary)] bg-[var(--gm-bg-surface)] hover:bg-[var(--gm-accent-primary)] hover:text-[var(--gm-accent-foreground)] border border-[var(--gm-border-subtle)] hover:border-[var(--gm-accent-primary)] rounded-lg transition-all cursor-pointer"
+                        onClick={() => handleArchive(b)}
+                        disabled={actionLoadingId === b.id}
+                        className="flex-1 min-h-[38px] inline-flex items-center justify-center px-3 py-2 text-xs font-semibold tracking-[0.08em] uppercase text-[var(--gm-text-secondary)] hover:text-amber-500 dark:hover:text-amber-400 hover:border-amber-500/40 hover:bg-amber-500/10 bg-[var(--gm-bg-surface)] border border-[var(--gm-border-subtle)] rounded-lg transition-colors cursor-pointer disabled:opacity-50 shadow-xs active:scale-[0.98]"
                       >
-                        View Details
+                        {actionLoadingId === b.id ? 'Archiving…' : 'Archive'}
                       </button>
-                      {viewTab === 'active' ? (
+                    ) : (
+                      <>
                         <button
                           type="button"
-                          onClick={() => handleArchive(b)}
+                          onClick={() => handleRestore(b)}
                           disabled={actionLoadingId === b.id}
-                          className="inline-flex items-center justify-center px-3 py-1.5 text-[11px] font-semibold tracking-[0.1em] uppercase text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)] bg-[var(--gm-bg-surface)] hover:bg-[var(--gm-bg-card-hover)] border border-[var(--gm-border-subtle)] rounded-lg transition-colors cursor-pointer disabled:opacity-50"
+                          className="flex-1 min-h-[38px] inline-flex items-center justify-center px-3 py-2 text-xs font-semibold tracking-[0.08em] uppercase text-[#15803d] dark:text-[#25D366] bg-[#25D366]/10 hover:bg-[#25D366]/20 border border-[#25D366]/30 rounded-lg transition-colors cursor-pointer disabled:opacity-50 shadow-xs active:scale-[0.98]"
                         >
-                          {actionLoadingId === b.id ? 'Archiving…' : 'Archive'}
+                          {actionLoadingId === b.id ? 'Restoring…' : 'Restore'}
                         </button>
-                      ) : (
-                        <>
-                          <button
-                            type="button"
-                            onClick={() => handleRestore(b)}
-                            disabled={actionLoadingId === b.id}
-                            className="inline-flex items-center justify-center px-3 py-1.5 text-[11px] font-semibold tracking-[0.1em] uppercase text-[#15803d] dark:text-[#25D366] bg-[#25D366]/10 hover:bg-[#25D366]/20 border border-[#25D366]/30 rounded-lg transition-colors cursor-pointer disabled:opacity-50"
-                          >
-                            {actionLoadingId === b.id ? 'Restoring…' : 'Restore'}
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => openDeleteConfirm(b)}
-                            className="inline-flex items-center justify-center px-3 py-1.5 text-[11px] font-semibold tracking-[0.1em] uppercase text-red-600 dark:text-red-400 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 rounded-lg transition-colors cursor-pointer"
-                          >
-                            Delete
-                          </button>
-                        </>
-                      )}
-                    </div>
+                        <button
+                          type="button"
+                          onClick={() => openDeleteConfirm(b)}
+                          className="flex-1 min-h-[38px] inline-flex items-center justify-center px-3 py-2 text-xs font-semibold tracking-[0.08em] uppercase text-red-600 dark:text-red-400 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 rounded-lg transition-colors cursor-pointer shadow-xs active:scale-[0.98]"
+                        >
+                          Delete
+                        </button>
+                      </>
+                    )}
                   </div>
-                );
-              })}
-            </div>
-          </>
-        )}
-      </div>
+                </article>
+              );
+            })}
+          </div>
+        </>
+      )}
 
       {/* Detail drawer */}
       {selected && (

@@ -1,5 +1,4 @@
 import { describe, it, expect } from 'vitest';
-import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { AdminDashboard } from './AdminDashboard';
 
@@ -80,13 +79,33 @@ describe('AdminDashboard Table Layout & Accessibility', () => {
     expect(html).toContain('Direct/Unknown');
   });
 
-  it('preserves mobile and tablet card view alongside desktop table', () => {
+  it('renders distinct, separated mobile cards with prominent Booking IDs and dedicated footers', () => {
     const html = renderToString(<AdminDashboard initialBookings={sampleBookings} />);
 
-    // Desktop table hidden on mobile/tablet
-    expect(html).toContain('hidden lg:block');
+    // Mobile layout uses space-y-4 container with isolated article cards
+    expect(html).toContain('lg:hidden space-y-4');
+    expect(html).toContain('<article');
+    expect(html).toContain('rounded-xl border border-[var(--gm-border-subtle)] bg-[var(--gm-bg-card)]');
 
-    // Mobile/tablet card layout hidden on desktop
-    expect(html).toContain('lg:hidden');
+    // Prominent Booking ID at top of card
+    expect(html).toContain('Booking ID');
+    expect(html).toContain('GM-20261014-9988');
+
+    // Customer details with quick contact
+    expect(html).toContain('Aarav Patel');
+    expect(html).toContain('aarav.patel@example.com');
+    expect(html).toContain('+91 98490 12345');
+    expect(html).toContain('Call');
+    expect(html).toContain('WA');
+
+    // Structured vehicle, service and schedule details
+    expect(html).toContain('Mercedes-Benz E-Class E220d');
+    expect(html).toContain('Fuel: Diesel');
+    expect(html).toContain('Doorstep City: Hyderabad');
+
+    // Dedicated card footer with equal-width buttons
+    expect(html).toContain('flex-1 min-h-[38px]');
+    expect(html).toContain('View Details');
+    expect(html).toContain('Archive');
   });
 });
