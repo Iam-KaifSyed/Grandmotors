@@ -145,7 +145,18 @@ export function AdminDashboard() {
     const q = query.trim().toLowerCase();
     if (q) {
       list = list.filter((b) =>
-        [b.id, b.customerName, b.phoneNumber, b.vehicle, b.registrationNumber, b.serviceLocation, b.doorstepCity, b.doorstepPincode]
+        [
+          b.id,
+          b.customerName,
+          b.phoneNumber,
+          b.vehicle,
+          b.vehicleMake,
+          b.vehicleModel,
+          b.registrationNumber,
+          b.serviceLocation,
+          b.doorstepCity,
+          b.doorstepPincode,
+        ]
           .filter(Boolean)
           .some((v) => String(v).toLowerCase().includes(q))
       );
@@ -427,14 +438,21 @@ export function AdminDashboard() {
                         {/* Vehicle */}
                         <td className="px-4 py-3.5 align-middle">
                           <div
-                            className="truncate text-xs text-[#F2F0EA]"
+                            className="truncate text-xs font-medium text-[#F2F0EA]"
                             title={vehicleName}
                           >
                             {vehicleName}
                           </div>
+                          {(b.vehicleMake || b.vehicleModel) && (
+                            <div className="flex items-center gap-1.5 text-[10px] text-[#A7AAAD]/80 mt-0.5 truncate">
+                              <span className="text-[#B88952] font-semibold">{b.vehicleMake || '—'}</span>
+                              <span className="text-white/20">•</span>
+                              <span className="truncate">{b.vehicleModel || '—'}</span>
+                            </div>
+                          )}
                           {b.registrationNumber && (
                             <div
-                              className="truncate text-[11px] font-mono text-[#A7AAAD]/70 tracking-wider"
+                              className="truncate text-[11px] font-mono text-[#A7AAAD]/70 tracking-wider mt-0.5"
                               title={`Reg: ${b.registrationNumber}`}
                             >
                               {b.registrationNumber}
@@ -633,8 +651,13 @@ export function AdminDashboard() {
                         <p className="text-[#F2F0EA] font-medium truncate" title={vehicleName}>
                           {vehicleName}
                         </p>
+                        {(b.vehicleMake || b.vehicleModel) && (
+                          <p className="text-[10px] text-[#B88952] truncate">
+                            {b.vehicleMake || '—'} <span className="text-[#A7AAAD]">/</span> {b.vehicleModel || '—'}
+                          </p>
+                        )}
                         {b.registrationNumber && (
-                          <p className="font-mono text-[10px] text-[#A7AAAD]/80 truncate" title={`Reg: ${b.registrationNumber}`}>
+                          <p className="font-mono text-[10px] text-[#A7AAAD]/80 truncate mt-0.5" title={`Reg: ${b.registrationNumber}`}>
                             {b.registrationNumber}
                           </p>
                         )}
@@ -773,7 +796,9 @@ export function AdminDashboard() {
                 <Field label="Phone" value={selected.phoneNumber} mono />
                 <Field label="Email" value={selected.email || '—'} />
                 <Field label="Registration" value={selected.registrationNumber} mono />
-                <Field label="Vehicle" value={`${selected.vehicleMake} ${selected.vehicleModel}`.trim()} />
+                <Field label="Car Brand / Make" value={selected.vehicleMake || '—'} />
+                <Field label="Car Model" value={selected.vehicleModel || '—'} />
+                <Field label="Vehicle (Combined)" value={`${selected.vehicleMake || ''} ${selected.vehicleModel || ''}`.trim() || selected.vehicle || '—'} />
                 <Field label="Service Category" value={serviceTitle(selected.serviceCategory)} />
                 <Field label="Specific Service" value={selected.specificService || '—'} />
                 <Field label="Service Location" value={selected.serviceLocation || 'Workshop Visit'} />

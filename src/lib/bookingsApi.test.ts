@@ -262,6 +262,64 @@ describe('Bookings API Endpoints (/api/bookings)', () => {
       expect(data.error).toContain('YYYY-MM-DD');
     });
 
+    it('rejects missing or empty vehicle make', async () => {
+      const invalid = { ...validBooking, vehicleMake: '   ' };
+      const req = createRequest('POST', invalid);
+      const resp = await (createBooking as any)({ request: req, locals: createLocals() });
+
+      expect(resp.status).toBe(400);
+      const data = await resp.json();
+      expect(data.error).toContain('Vehicle make is required');
+    });
+
+    it('rejects missing or empty vehicle model', async () => {
+      const invalid = { ...validBooking, vehicleModel: '' };
+      const req = createRequest('POST', invalid);
+      const resp = await (createBooking as any)({ request: req, locals: createLocals() });
+
+      expect(resp.status).toBe(400);
+      const data = await resp.json();
+      expect(data.error).toContain('Vehicle model is required');
+    });
+
+    it('successfully creates booking with custom unlisted ("Other") brand and model', async () => {
+      const customVehicle = {
+        ...validBooking,
+        vehicleMake: 'Koenigsegg',
+        vehicleModel: 'Jesko Attack',
+      };
+      const req = createRequest('POST', customVehicle);
+      const resp = await (createBooking as any)({ request: req, locals: createLocals() });
+
+      expect(resp.status).toBe(201);
+      const data = await resp.json();
+      expect(data.success).toBe(true);
+      expect(data.booking.vehicleMake).toBe('Koenigsegg');
+      expect(data.booking.vehicleModel).toBe('Jesko Attack');
+      expect(data.booking.vehicle).toBe('Koenigsegg Jesko Attack');
+
+      const saved = mockDb.records.get(data.id);
+      expect(saved.vehicleMake).toBe('Koenigsegg');
+      expect(saved.vehicleModel).toBe('Jesko Attack');
+    });
+
+    it('successfully creates booking with standard brand and custom unlisted model', async () => {
+      const customModelBooking = {
+        ...validBooking,
+        vehicleMake: 'Mercedes-Benz',
+        vehicleModel: '190E 2.5-16 Evolution II',
+      };
+      const req = createRequest('POST', customModelBooking);
+      const resp = await (createBooking as any)({ request: req, locals: createLocals() });
+
+      expect(resp.status).toBe(201);
+      const data = await resp.json();
+      expect(data.success).toBe(true);
+      expect(data.booking.vehicleMake).toBe('Mercedes-Benz');
+      expect(data.booking.vehicleModel).toBe('190E 2.5-16 Evolution II');
+      expect(data.booking.vehicle).toBe('Mercedes-Benz 190E 2.5-16 Evolution II');
+    });
+
     it('allows multiple service booking submissions for the same customer, vehicle and date', async () => {
       // First submission
       const req1 = createRequest('POST', validBooking);

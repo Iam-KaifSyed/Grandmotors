@@ -1,10 +1,17 @@
-import { useState, useId } from 'react';
+import { useState, useId, useMemo } from 'react';
 import { SERVICES } from './servicesData';
 import { saveBookingRecord, type BookingRecord } from '../../lib/bookingStore';
 import {
   DEFAULT_BOOKING_FORM_CONFIG,
   type BookingFormConfig,
 } from '../../lib/bookingFormConfigStore';
+import { SearchableSelect } from './SearchableSelect';
+import {
+  ALL_CAR_BRANDS,
+  getModelsForBrand,
+  OTHER_OPTION,
+  BRAND_SEARCH_ALIASES,
+} from '../../lib/carBrandsData';
 
 export interface BookingFormData {
   fullName: string;
@@ -76,6 +83,80 @@ export const BookServiceForm = ({
   const [submittedData, setSubmittedData] = useState<BookingFormData | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
+
+  // Car Brand & Model selection state
+  const [selectedBrand, setSelectedBrand] = useState<string>('');
+  const [customBrand, setCustomBrand] = useState<string>('');
+  const [selectedModel, setSelectedModel] = useState<string>('');
+  const [customModel, setCustomModel] = useState<string>('');
+
+  const availableModels = useMemo(() => getModelsForBrand(selectedBrand), [selectedBrand]);
+
+  const handleBrandChange = (brand: string) => {
+    setSelectedBrand(brand);
+    clearError('vehicleMake');
+    clearError('vehicleModel');
+
+    if (!brand) {
+      setCustomBrand('');
+      setSelectedModel('');
+      setCustomModel('');
+      setFormState((prev) => ({ ...prev, vehicleMake: '', vehicleModel: '' }));
+      return;
+    }
+
+    if (brand === OTHER_OPTION) {
+      setSelectedModel(OTHER_OPTION);
+      setFormState((prev) => ({
+        ...prev,
+        vehicleMake: customBrand.trim(),
+        vehicleModel: customModel.trim(),
+      }));
+    } else {
+      setCustomBrand('');
+      setSelectedModel('');
+      setCustomModel('');
+      setFormState((prev) => ({
+        ...prev,
+        vehicleMake: brand,
+        vehicleModel: '',
+      }));
+    }
+  };
+
+  const handleCustomBrandChange = (val: string) => {
+    setCustomBrand(val);
+    setFormState((prev) => ({ ...prev, vehicleMake: val.trim() }));
+    if (val.trim()) {
+      clearError('vehicleMake');
+    }
+  };
+
+  const handleModelChange = (model: string) => {
+    setSelectedModel(model);
+    clearError('vehicleModel');
+
+    if (!model) {
+      setCustomModel('');
+      setFormState((prev) => ({ ...prev, vehicleModel: '' }));
+      return;
+    }
+
+    if (model === OTHER_OPTION) {
+      setFormState((prev) => ({ ...prev, vehicleModel: customModel.trim() }));
+    } else {
+      setCustomModel('');
+      setFormState((prev) => ({ ...prev, vehicleModel: model }));
+    }
+  };
+
+  const handleCustomModelChange = (val: string) => {
+    setCustomModel(val);
+    setFormState((prev) => ({ ...prev, vehicleModel: val.trim() }));
+    if (val.trim()) {
+      clearError('vehicleModel');
+    }
+  };
 
   // Geolocation states
   const [isLocating, setIsLocating] = useState(false);
@@ -198,12 +279,32 @@ export const BookServiceForm = ({
       newErrors.email = 'Enter a valid email address';
     }
 
-    if (!formState.vehicleMake.trim()) {
-      newErrors.vehicleMake = `${labels.vehicleMake || 'Vehicle Make'} is required`;
+    // Validate Car Brand
+    if (!selectedBrand) {
+      newErrors.vehicleMake = 'Please select a car brand';
+    } else if (selectedBrand === OTHER_OPTION && !customBrand.trim()) {
+      newErrors.vehicleMake = 'Please enter your car brand';
+    } else if (selectedBrand === OTHER_OPTION && customBrand.trim().length > 50) {
+      newErrors.vehicleMake = 'Car brand must be 50 characters or fewer';
     }
 
-    if (!formState.vehicleModel.trim()) {
-      newErrors.vehicleModel = `${labels.vehicleModel || 'Vehicle Model'} is required`;
+    // Validate Car Model (depends on selected brand)
+    if (!selectedBrand) {
+      newErrors.vehicleModel = 'Please select a car brand first';
+    } else if (selectedBrand === OTHER_OPTION) {
+      if (!customModel.trim()) {
+        newErrors.vehicleModel = 'Please enter your car model';
+      } else if (customModel.trim().length > 50) {
+        newErrors.vehicleModel = 'Car model must be 50 characters or fewer';
+      }
+    } else {
+      if (!selectedModel) {
+        newErrors.vehicleModel = 'Please select a car model';
+      } else if (selectedModel === OTHER_OPTION && !customModel.trim()) {
+        newErrors.vehicleModel = 'Please enter your car model';
+      } else if (selectedModel === OTHER_OPTION && customModel.trim().length > 50) {
+        newErrors.vehicleModel = 'Car model must be 50 characters or fewer';
+      }
     }
 
     if (!formState.registrationNumber.trim()) {
@@ -288,12 +389,19 @@ export const BookServiceForm = ({
 
         const isDoorstep = formState.serviceLocation === 'Doorstep Service';
 
+        const effectiveMake =
+          selectedBrand === OTHER_OPTION ? customBrand.trim() : selectedBrand.trim();
+        const effectiveModel =
+          selectedBrand === OTHER_OPTION || selectedModel === OTHER_OPTION
+            ? customModel.trim()
+            : selectedModel.trim();
+
         const payload = {
           fullName: formState.fullName.trim(),
           phoneNumber: formState.phoneNumber.trim(),
           email: formState.email.trim(),
-          vehicleMake: formState.vehicleMake.trim(),
-          vehicleModel: formState.vehicleModel.trim(),
+          vehicleMake: effectiveMake,
+          vehicleModel: effectiveModel,
           registrationNumber: formState.registrationNumber.trim().toUpperCase(),
           serviceCategory: formState.serviceCategory,
           specificService: formState.specificService,
@@ -361,6 +469,8 @@ export const BookServiceForm = ({
 
         const finalData: BookingFormData = {
           ...formState,
+          vehicleMake: payload.vehicleMake,
+          vehicleModel: payload.vehicleModel,
           submittedAt: confirmedRecord.createdAt,
           bookingRef: serverId,
         };
@@ -580,6 +690,32 @@ export const BookServiceForm = ({
             onClick={() => {
               setSubmittedData(null);
               setServerError(null);
+              setSelectedBrand('');
+              setCustomBrand('');
+              setSelectedModel('');
+              setCustomModel('');
+              setFormState({
+                fullName: '',
+                phoneNumber: '',
+                email: '',
+                vehicleMake: '',
+                vehicleModel: '',
+                registrationNumber: '',
+                serviceCategory: '',
+                specificService: '',
+                preferredDate: '',
+                preferredTime: '',
+                additionalMessage: '',
+                serviceLocation: 'Workshop Visit',
+                doorstepHouseFlat: '',
+                doorstepStreetLocality: '',
+                doorstepCity: '',
+                doorstepPincode: '',
+                doorstepLatitude: null,
+                doorstepLongitude: null,
+                doorstepMapUrl: '',
+                customAnswers: {},
+              });
             }}
             className="inline-flex items-center justify-center px-6 py-3.5 text-xs font-semibold tracking-[0.15em] uppercase text-[#F2F0EA] bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-colors text-center cursor-pointer"
           >
@@ -725,55 +861,52 @@ export const BookServiceForm = ({
           </h3>
         </div>
 
-        <div className="grid gap-5 sm:gap-6 sm:grid-cols-3">
-          {/* Vehicle Make */}
+        <div className="grid gap-5 sm:gap-6 md:grid-cols-3">
+          {/* Searchable Car Brand / Make */}
           <div>
-            <label
-              htmlFor={vehicleMakeId}
-              className="block text-xs font-semibold tracking-[0.1em] text-[#F2F0EA] uppercase mb-2"
-            >
-              {labels.vehicleMake || 'Make'} <span className="text-[#B88952]">*</span>
-            </label>
-            <input
+            <SearchableSelect
               id={vehicleMakeId}
-              type="text"
-              value={formState.vehicleMake}
-              onChange={(e) => {
-                setFormState({ ...formState, vehicleMake: e.target.value });
-                clearError('vehicleMake');
-              }}
-              placeholder="e.g. Mercedes-Benz"
-              className={`w-full bg-[#0A0C0D] border ${
-                errors.vehicleMake ? 'border-red-500/80' : 'border-white/10 focus:border-[#B88952]'
-              } rounded-lg px-4 py-3 text-base sm:text-sm text-[#F2F0EA] placeholder-[#A7AAAD]/40 focus:outline-none transition-colors`}
+              label={labels.vehicleMake || 'Car Brand'}
+              required
+              value={selectedBrand}
+              options={ALL_CAR_BRANDS}
+              aliases={BRAND_SEARCH_ALIASES}
+              placeholder="Select car brand..."
+              searchPlaceholder="Search brand (e.g. Porsche)..."
+              error={errors.vehicleMake}
+              onChange={handleBrandChange}
+              manualValue={customBrand}
+              onManualValueChange={handleCustomBrandChange}
+              manualLabel="Specify Car Brand"
+              manualPlaceholder="e.g. Bugatti, Koenigsegg"
+              manualError={errors.vehicleMake}
             />
-            {errors.vehicleMake && <p className="mt-1.5 text-xs text-red-400">{errors.vehicleMake}</p>}
           </div>
 
-          {/* Vehicle Model */}
+          {/* Searchable Car Model (depends on selected brand) */}
           <div>
-            <label
-              htmlFor={vehicleModelId}
-              className="block text-xs font-semibold tracking-[0.1em] text-[#F2F0EA] uppercase mb-2"
-            >
-              {labels.vehicleModel || 'Model'} <span className="text-[#B88952]">*</span>
-            </label>
-            <input
+            <SearchableSelect
               id={vehicleModelId}
-              type="text"
-              value={formState.vehicleModel}
-              onChange={(e) => {
-                setFormState({ ...formState, vehicleModel: e.target.value });
-                clearError('vehicleModel');
-              }}
-              placeholder="e.g. C-Class / AMG"
-              className={`w-full bg-[#0A0C0D] border ${
-                errors.vehicleModel ? 'border-red-500/80' : 'border-white/10 focus:border-[#B88952]'
-              } rounded-lg px-4 py-3 text-base sm:text-sm text-[#F2F0EA] placeholder-[#A7AAAD]/40 focus:outline-none transition-colors`}
+              label={labels.vehicleModel || 'Car Model'}
+              required
+              value={selectedModel}
+              options={availableModels}
+              disabled={!selectedBrand}
+              disabledTooltip="Select brand first"
+              placeholder={!selectedBrand ? 'Select brand first...' : 'Select car model...'}
+              searchPlaceholder={
+                selectedBrand && selectedBrand !== OTHER_OPTION
+                  ? `Search ${selectedBrand} models...`
+                  : 'Search model...'
+              }
+              error={errors.vehicleModel}
+              onChange={handleModelChange}
+              manualValue={customModel}
+              onManualValueChange={handleCustomModelChange}
+              manualLabel="Specify Car Model"
+              manualPlaceholder="e.g. Chiron, Agera RS"
+              manualError={errors.vehicleModel}
             />
-            {errors.vehicleModel && (
-              <p className="mt-1.5 text-xs text-red-400">{errors.vehicleModel}</p>
-            )}
           </div>
 
           {/* Registration Number */}
