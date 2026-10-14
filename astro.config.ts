@@ -20,6 +20,17 @@ export default defineConfig({
       assetsInlineLimit: 0,
     },
     optimizeDeps: {
+      include: [
+        '@react-three/fiber',
+        '@react-three/drei',
+        '@react-three/postprocessing',
+        'three',
+        'gsap',
+        'gsap/ScrollTrigger',
+        'lenis',
+        'detect-gpu',
+        'tweakpane',
+      ],
       exclude: ['astro:middleware', 'astro/virtual-modules/middleware.js', 'framer-motion'],
     },
     ssr: {

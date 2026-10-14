@@ -9,7 +9,17 @@ import { SiteContent } from '../components/site/SiteContent';
   description="Grand Motors, Habeeb Nagar, Moosapet, Hyderabad."
   showHeader={false}
 >
-  <main>
+  <script is:inline>
+    // Ensure homepage starts at the top for the 3D Intro sequence
+    if (window.location.pathname === '/' && !window.location.hash) {
+      if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+      }
+      window.scrollTo(0, 0);
+    }
+  </script>
+
+  <main style="overflow-anchor: none;">
     <h1 class="sr-only">Grand Motors</h1>
     <ExperienceRoot client:only="react" />
     <SiteContent client:visible />

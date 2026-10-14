@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import Lenis from 'lenis';
 import gsap from 'gsap';
@@ -22,7 +22,7 @@ import { VH_PER_BEAT, timeline } from '../experience/chapters';
 gsap.registerPlugin(ScrollTrigger);
 
 export function ExperienceRoot() {
-  const [ready, setReady] = useState(false);
+  const [ready, setReady] = useState(true);
   const lenisRef = useRef<Lenis | null>(null);
   const [introFinished, setIntroFinished] = useState(false);
   const [heroTransitioning, setHeroTransitioning] = useState(false);
@@ -31,8 +31,21 @@ export function ExperienceRoot() {
   const [isCompletelyCovered, setIsCompletelyCovered] = useState(false);
 
   useEffect(() => {
-    // Determine tier
-    detectTier().then(() => setReady(true));
+    // Reset director state and scroll position to 0 for initial 3D experience
+    scrollState.target = 0;
+    scrollState.current = 0;
+
+    if (typeof window !== 'undefined') {
+      if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+      }
+      if (window.scrollY > 0 && !window.location.hash) {
+        window.scrollTo(0, 0);
+      }
+    }
+
+    // Determine tier in background (non-blocking)
+    detectTier().catch(() => {}).finally(() => setReady(true));
 
     // Setup Lenis
     const lenis = new Lenis({
@@ -84,8 +97,8 @@ export function ExperienceRoot() {
       const scrollContainer = document.getElementById('scroll-container');
       if (scrollContainer) {
         const triggerHeight = scrollContainer.offsetHeight;
-        // Covered when user has scrolled past the entire scroll-container height
-        setIsCompletelyCovered(scrollY >= triggerHeight);
+        // Covered ONLY when user has scrolled past the valid, non-zero scroll-container height
+        setIsCompletelyCovered(triggerHeight > 0 && scrollY >= triggerHeight);
       }
     };
 
@@ -143,8 +156,10 @@ export function ExperienceRoot() {
           >
             <Director />
             <CameraManager />
-            <Environment />
-            <HeroVehicle />
+            <Suspense fallback={null}>
+              <Environment />
+              <HeroVehicle />
+            </Suspense>
           </Canvas>
         )}
 
