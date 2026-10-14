@@ -94,18 +94,11 @@ export function Navbar({ heroComplete = false, isScrolled = false }: NavbarProps
           <span className="w-1.5 h-1.5 rounded-full bg-[#B88952] opacity-80 group-hover:opacity-100 transition-opacity shadow-[0_0_6px_rgba(184,137,82,0.8)]" />
         </a>
 
-        {/* Tubelight Navigation Bar (Desktop) */}
+        {/* Tubelight Navigation Bar (Desktop / Tablet) */}
         <NavBar
           items={navItems}
           currentPath="/"
           className="pointer-events-auto static sm:static translate-x-0 mb-0 sm:pt-0 hidden md:block"
-        />
-
-        {/* Tubelight Navigation Bar (Mobile Floating Dock) */}
-        <NavBar
-          items={navItems}
-          currentPath="/"
-          className="pointer-events-auto md:hidden"
         />
 
         {/* Right Side Controls */}
