@@ -9,7 +9,7 @@ import { NavBar, type NavItem } from './ui/tubelight-navbar';
 const navItems: NavItem[] = [
   { name: 'Home', url: '/', icon: Home },
   { name: 'Services', url: '/services', icon: Wrench },
-  { name: 'Bookings', url: '/my-bookings', icon: Calendar },
+  { name: 'My Bookings', url: '/my-bookings', icon: Calendar },
   { name: 'About', url: '/about', icon: Info },
   { name: 'Contact', url: '/contact', icon: Phone },
 ];
