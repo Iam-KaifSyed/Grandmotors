@@ -190,6 +190,7 @@ export function MyBookingsView() {
               'serviceCategory',
               'vehicleMake',
               'vehicleModel',
+              'fuelType',
               'registrationNumber',
               'serviceLocation',
               'doorstepHouseFlat',
@@ -499,6 +500,11 @@ export function MyBookingsView() {
                           <h4 className="text-lg font-bold text-[#F2F0EA]">
                             {booking.vehicle || `${booking.vehicleMake} ${booking.vehicleModel}`}
                           </h4>
+                          {booking.fuelType && (
+                            <span className="text-xs px-2 py-0.5 rounded bg-[#B88952]/10 border border-[#B88952]/30 text-[#B88952] font-semibold">
+                              {booking.fuelType}
+                            </span>
+                          )}
                           {booking.registrationNumber && (
                             <span className="text-xs font-mono font-semibold px-2 py-0.5 rounded bg-black/40 border border-white/10 text-[#D8D6D0]">
                               {booking.registrationNumber}
@@ -677,6 +683,11 @@ export function MyBookingsView() {
                   <span className="text-lg text-[#F2F0EA] group-hover:text-white transition-colors block">
                     {selectedBooking.vehicle || `${selectedBooking.vehicleMake} ${selectedBooking.vehicleModel}`}
                   </span>
+                  {selectedBooking.fuelType && (
+                    <span className="text-xs text-[#B88952] font-medium mt-1 inline-block">
+                      Fuel Type: {selectedBooking.fuelType}
+                    </span>
+                  )}
                 </div>
 
                 {/* Registration */}
@@ -685,7 +696,7 @@ export function MyBookingsView() {
                     Registration Number
                   </span>
                   <span className="inline-block text-base font-mono font-bold px-3 py-1.5 rounded-lg bg-black/40 border border-white/5 text-[#F2F0EA] shadow-inner">
-                    {selectedBooking.registrationNumber}
+                    {selectedBooking.registrationNumber || '—'}
                   </span>
                 </div>
 

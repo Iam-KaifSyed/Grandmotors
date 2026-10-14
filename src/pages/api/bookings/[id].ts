@@ -70,6 +70,7 @@ export const GET: APIRoute = async ({ params, request, locals }) => {
       vehicleMake: row.vehicleMake,
       vehicleModel: row.vehicleModel,
       vehicle: `${row.vehicleMake} ${row.vehicleModel}`.trim(),
+      fuelType: row.fuelType || '',
       registrationNumber: row.registrationNumber,
       serviceCategory: row.serviceCategory,
       specificService: row.specificService || '',

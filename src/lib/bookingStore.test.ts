@@ -300,4 +300,47 @@ describe('Customer Booking Store (localStorage)', () => {
     expect(stored?.doorstepLongitude).toBe(78.4321);
     expect(stored?.doorstepMapUrl).toBe('https://www.google.com/maps?q=17.4123,78.4321');
   });
+
+  it('saves and normalizes vehicle fuelType correctly', () => {
+    saveBookingRecord({
+      id: 'GM-991122',
+      fullName: 'Ananya Roy',
+      phoneNumber: '+91 97777 66666',
+      vehicleMake: 'Tata',
+      vehicleModel: 'Nexon EV',
+      fuelType: 'Electric (EV)',
+      registrationNumber: 'TS 09 EV 1000',
+      serviceCategory: 'general-service',
+      preferredDate: '2026-10-29',
+      preferredTime: 'Morning',
+      status: 'Pending',
+      createdAt: '2026-10-10',
+    });
+
+    const stored = getBookingById('GM-991122');
+    expect(stored).not.toBeNull();
+    expect(stored?.fuelType).toBe('Electric (EV)');
+    expect(stored?.vehicle).toBe('Tata Nexon EV');
+  });
+
+  it('handles legacy bookings without fuelType gracefully without breaking', () => {
+    saveBookingRecord({
+      id: 'GM-991133',
+      fullName: 'Legacy User',
+      phoneNumber: '+91 97777 55555',
+      vehicleMake: 'Toyota',
+      vehicleModel: 'Fortuner',
+      registrationNumber: 'TS 09 TF 2000',
+      serviceCategory: 'general-service',
+      preferredDate: '2026-10-29',
+      preferredTime: 'Morning',
+      status: 'Confirmed',
+      createdAt: '2026-10-10',
+    });
+
+    const stored = getBookingById('GM-991133');
+    expect(stored).not.toBeNull();
+    expect(stored?.fuelType).toBe('');
+    expect(stored?.vehicle).toBe('Toyota Fortuner');
+  });
 });

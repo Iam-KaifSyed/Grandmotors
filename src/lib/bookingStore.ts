@@ -1,6 +1,17 @@
 export type BookingStatus = 'Pending' | 'Confirmed' | 'In Progress' | 'Completed' | 'Cancelled';
 export type ServiceLocation = 'Workshop Visit' | 'Doorstep Service';
 
+export const FUEL_TYPES = [
+  'Petrol',
+  'Diesel',
+  'CNG',
+  'Electric (EV)',
+  'Hybrid',
+  'Other',
+] as const;
+
+export type FuelType = (typeof FUEL_TYPES)[number];
+
 export interface BookingRecord {
   id: string; // Booking ID e.g. GM-229397
   bookingId?: string; // Standard alias
@@ -12,6 +23,7 @@ export interface BookingRecord {
   vehicle?: string; // e.g. "BMW M3 Competition"
   vehicleMake: string;
   vehicleModel: string;
+  fuelType?: FuelType | string;
   registrationNumber: string;
   serviceCategory: string;
   specificService?: string;
@@ -104,6 +116,7 @@ export function normalizeBooking(
     vehicle,
     vehicleMake: vehicleMake || vehicle,
     vehicleModel: vehicleModel || '',
+    fuelType: (raw.fuelType !== undefined ? raw.fuelType : existing?.fuelType || '').trim(),
     registrationNumber: (raw.registrationNumber || existing?.registrationNumber || '').trim().toUpperCase(),
     serviceCategory: raw.serviceCategory || existing?.serviceCategory || '',
     specificService: raw.specificService || existing?.specificService || '',
@@ -225,6 +238,7 @@ export const DEMO_BOOKINGS: BookingRecord[] = [
     vehicle: 'BMW M3 Competition',
     vehicleMake: 'BMW',
     vehicleModel: 'M3 Competition',
+    fuelType: 'Petrol',
     registrationNumber: 'TS 09 EG 4499',
     serviceCategory: 'brakes',
     specificService: 'Brake pad & rotor replacement',
@@ -248,6 +262,7 @@ export const DEMO_BOOKINGS: BookingRecord[] = [
     vehicle: 'Mercedes-Benz AMG GT',
     vehicleMake: 'Mercedes-Benz',
     vehicleModel: 'AMG GT',
+    fuelType: 'Petrol',
     registrationNumber: 'TS 09 AB 1234',
     serviceCategory: 'engine-diagnostics',
     specificService: 'Computerised OBD / ECU diagnostics',
@@ -278,6 +293,7 @@ export const DEMO_BOOKINGS: BookingRecord[] = [
     vehicle: 'Porsche Cayenne GTS',
     vehicleMake: 'Porsche',
     vehicleModel: 'Cayenne GTS',
+    fuelType: 'Petrol',
     registrationNumber: 'TS 07 HK 9000',
     serviceCategory: 'general-service',
     specificService: 'Periodic / scheduled service',

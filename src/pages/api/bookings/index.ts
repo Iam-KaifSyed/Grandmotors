@@ -1,6 +1,6 @@
 export const prerender = false;
 import type { APIRoute } from 'astro';
-import { normalizeBooking } from '../../../lib/bookingStore';
+import { normalizeBooking, FUEL_TYPES } from '../../../lib/bookingStore';
 import { isAuthorizedAdmin } from '../../../lib/serverAuth';
 import { getAppEnv, getDatabase } from '../../../lib/env';
 
@@ -59,6 +59,7 @@ export const GET: APIRoute = async ({ request, locals }) => {
         vehicleMake: row.vehicleMake,
         vehicleModel: row.vehicleModel,
         vehicle: `${row.vehicleMake} ${row.vehicleModel}`.trim(),
+        fuelType: row.fuelType || '',
         registrationNumber: row.registrationNumber,
         serviceCategory: row.serviceCategory,
         specificService: row.specificService || '',
@@ -126,6 +127,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const email = String(body.email || '').trim();
     const vehicleMake = String(body.vehicleMake || '').trim();
     const vehicleModel = String(body.vehicleModel || '').trim();
+    const fuelType = String(body.fuelType || '').trim();
     const registrationNumber = String(body.registrationNumber || '').trim().toUpperCase();
     const serviceCategory = String(body.serviceCategory || '').trim();
     const specificService = String(body.specificService || '').trim();
@@ -209,8 +211,25 @@ export const POST: APIRoute = async ({ request, locals }) => {
       });
     }
 
-    if (registrationNumber.length < 2 || registrationNumber.length > 25) {
-      return new Response(JSON.stringify({ error: 'Registration number is required (2-25 characters).' }), {
+    if (!fuelType) {
+      return new Response(JSON.stringify({ error: 'Fuel type is required.' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
+    if (!FUEL_TYPES.includes(fuelType as any)) {
+      return new Response(
+        JSON.stringify({ error: `Invalid fuel type. Must be one of: ${FUEL_TYPES.join(', ')}` }),
+        {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      );
+    }
+
+    if (registrationNumber && (registrationNumber.length < 2 || registrationNumber.length > 25)) {
+      return new Response(JSON.stringify({ error: 'Registration number must be 2-25 characters.' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' }
       });
@@ -293,6 +312,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       email,
       vehicleMake,
       vehicleModel,
+      fuelType,
       registrationNumber,
       serviceCategory,
       specificService,
@@ -315,17 +335,17 @@ export const POST: APIRoute = async ({ request, locals }) => {
       return await db.prepare(`
         INSERT INTO bookings (
           id, customerName, phoneNumber, email, vehicleMake, vehicleModel, 
-          registrationNumber, serviceCategory, specificService, preferredDate, 
+          fuelType, registrationNumber, serviceCategory, specificService, preferredDate, 
           preferredTime, status, additionalMessage, serviceLocation,
           doorstepHouseFlat, doorstepStreetLocality, doorstepCity,
           doorstepPincode, doorstepLatitude, doorstepLongitude, doorstepMapUrl,
           createdAt
         ) VALUES (
-          ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+          ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
         )
       `).bind(
         normalized.id, normalized.customerName, normalized.phoneNumber, normalized.email,
-        normalized.vehicleMake, normalized.vehicleModel, normalized.registrationNumber,
+        normalized.vehicleMake, normalized.vehicleModel, normalized.fuelType || null, normalized.registrationNumber,
         normalized.serviceCategory, normalized.specificService, normalized.preferredDate,
         normalized.preferredTime, normalized.status, normalized.additionalMessage,
         normalized.serviceLocation,
@@ -344,9 +364,15 @@ export const POST: APIRoute = async ({ request, locals }) => {
       await insertBooking();
     } catch (insertErr: any) {
       const msg = String(insertErr?.message || '');
-      // If table lacks doorstep columns in an unmigrated local or preview environment, self-heal and retry
-      if (msg.includes('no column named') || msg.includes('serviceLocation') || msg.includes('doorstep')) {
+      // If table lacks fuelType or doorstep columns in an unmigrated local or preview environment, self-heal and retry
+      if (
+        msg.includes('no column named') ||
+        msg.includes('serviceLocation') ||
+        msg.includes('doorstep') ||
+        msg.includes('fuelType')
+      ) {
         const alterStatements = [
+          `ALTER TABLE bookings ADD COLUMN fuelType TEXT`,
           `ALTER TABLE bookings ADD COLUMN serviceLocation TEXT DEFAULT 'Workshop Visit'`,
           `ALTER TABLE bookings ADD COLUMN doorstepHouseFlat TEXT`,
           `ALTER TABLE bookings ADD COLUMN doorstepStreetLocality TEXT`,

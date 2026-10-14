@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS bookings (
   email TEXT,
   vehicleMake TEXT NOT NULL,
   vehicleModel TEXT NOT NULL,
+  fuelType TEXT,
   registrationNumber TEXT NOT NULL,
   serviceCategory TEXT NOT NULL,
   specificService TEXT,

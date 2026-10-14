@@ -423,9 +423,19 @@ export const TrackBookingFlow = () => {
                 <span className="text-base text-[#F2F0EA] font-medium block">
                   {activeBooking.vehicleMake} {activeBooking.vehicleModel}
                 </span>
-                <span className="block text-xs text-[#A7AAAD] mt-0.5 font-mono">
-                  Reg: {activeBooking.registrationNumber}
-                </span>
+                {(activeBooking.registrationNumber || activeBooking.fuelType) && (
+                  <div className="flex items-center gap-2 mt-0.5 text-xs text-[#A7AAAD]">
+                    {activeBooking.registrationNumber ? (
+                      <span className="font-mono">Reg: {activeBooking.registrationNumber}</span>
+                    ) : null}
+                    {activeBooking.fuelType && (
+                      <>
+                        {activeBooking.registrationNumber ? <span className="text-white/20">•</span> : null}
+                        <span className="text-[#B88952] font-medium">{activeBooking.fuelType}</span>
+                      </>
+                    )}
+                  </div>
+                )}
               </div>
 
               <div>

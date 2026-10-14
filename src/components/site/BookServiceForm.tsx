@@ -1,6 +1,6 @@
 import { useState, useId, useMemo } from 'react';
 import { SERVICES } from './servicesData';
-import { saveBookingRecord, type BookingRecord } from '../../lib/bookingStore';
+import { saveBookingRecord, FUEL_TYPES, type BookingRecord, type FuelType } from '../../lib/bookingStore';
 import {
   DEFAULT_BOOKING_FORM_CONFIG,
   type BookingFormConfig,
@@ -19,6 +19,7 @@ export interface BookingFormData {
   email: string;
   vehicleMake: string;
   vehicleModel: string;
+  fuelType: FuelType | '';
   registrationNumber: string;
   serviceCategory: string;
   specificService: string;
@@ -61,6 +62,7 @@ export const BookServiceForm = ({
     email: '',
     vehicleMake: '',
     vehicleModel: '',
+    fuelType: '',
     registrationNumber: '',
     serviceCategory: '',
     specificService: '',
@@ -171,6 +173,7 @@ export const BookServiceForm = ({
   const emailId = useId();
   const vehicleMakeId = useId();
   const vehicleModelId = useId();
+  const fuelTypeId = useId();
   const registrationNumberId = useId();
   const serviceCategoryId = useId();
   const specificServiceId = useId();
@@ -307,8 +310,17 @@ export const BookServiceForm = ({
       }
     }
 
-    if (!formState.registrationNumber.trim()) {
-      newErrors.registrationNumber = `${labels.registrationNumber || 'Registration Number'} is required`;
+    if (!formState.fuelType) {
+      newErrors.fuelType = 'Please select a fuel type';
+    } else if (!FUEL_TYPES.includes(formState.fuelType as any)) {
+      newErrors.fuelType = 'Please select a valid fuel type';
+    }
+
+    if (
+      formState.registrationNumber.trim() &&
+      (formState.registrationNumber.trim().length < 2 || formState.registrationNumber.trim().length > 25)
+    ) {
+      newErrors.registrationNumber = 'Registration number must be 2-25 characters';
     }
 
     if (!formState.serviceCategory) {
@@ -402,6 +414,7 @@ export const BookServiceForm = ({
           email: formState.email.trim(),
           vehicleMake: effectiveMake,
           vehicleModel: effectiveModel,
+          fuelType: formState.fuelType,
           registrationNumber: formState.registrationNumber.trim().toUpperCase(),
           serviceCategory: formState.serviceCategory,
           specificService: formState.specificService,
@@ -447,6 +460,7 @@ export const BookServiceForm = ({
           vehicle: `${payload.vehicleMake} ${payload.vehicleModel}`.trim(),
           vehicleMake: payload.vehicleMake,
           vehicleModel: payload.vehicleModel,
+          fuelType: payload.fuelType,
           registrationNumber: payload.registrationNumber,
           serviceCategory: payload.serviceCategory,
           specificService: payload.specificService,
@@ -650,9 +664,14 @@ export const BookServiceForm = ({
                 Vehicle
               </span>
               <span className="font-semibold text-[#F2F0EA]">
-                {submittedData.vehicleMake} {submittedData.vehicleModel} (
-                {submittedData.registrationNumber})
+                {submittedData.vehicleMake} {submittedData.vehicleModel}
+                {submittedData.registrationNumber ? ` (${submittedData.registrationNumber})` : ''}
               </span>
+              {submittedData.fuelType && (
+                <span className="block text-xs text-[#B88952] mt-0.5 font-medium">
+                  Fuel Type: {submittedData.fuelType}
+                </span>
+              )}
             </div>
 
             <div>
@@ -700,6 +719,7 @@ export const BookServiceForm = ({
                 email: '',
                 vehicleMake: '',
                 vehicleModel: '',
+                fuelType: '',
                 registrationNumber: '',
                 serviceCategory: '',
                 specificService: '',
@@ -861,7 +881,7 @@ export const BookServiceForm = ({
           </h3>
         </div>
 
-        <div className="grid gap-5 sm:gap-6 md:grid-cols-3">
+        <div className="grid gap-5 sm:gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {/* Searchable Car Brand / Make */}
           <div>
             <SearchableSelect
@@ -909,6 +929,49 @@ export const BookServiceForm = ({
             />
           </div>
 
+          {/* Fuel Type */}
+          <div>
+            <label
+              htmlFor={fuelTypeId}
+              className="block text-xs font-semibold tracking-[0.1em] text-[#F2F0EA] uppercase mb-2"
+            >
+              {labels.fuelType || 'Fuel Type'}{' '}
+              <span className="text-[#B88952]">*</span>
+            </label>
+            <div className="relative">
+              <select
+                id={fuelTypeId}
+                value={formState.fuelType}
+                onChange={(e) => {
+                  setFormState({ ...formState, fuelType: e.target.value as FuelType });
+                  clearError('fuelType');
+                }}
+                className={`w-full bg-[#0A0C0D] border ${
+                  errors.fuelType
+                    ? 'border-red-500/80'
+                    : 'border-white/10 focus:border-[#B88952]'
+                } rounded-lg px-4 py-3 text-base sm:text-sm text-[#F2F0EA] focus:outline-none transition-colors cursor-pointer appearance-none pr-10`}
+              >
+                <option value="" disabled className="bg-[#111315] text-[#A7AAAD]/60">
+                  Select fuel type...
+                </option>
+                {FUEL_TYPES.map((type) => (
+                  <option key={type} value={type} className="bg-[#111315] text-[#F2F0EA]">
+                    {type}
+                  </option>
+                ))}
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3.5 text-[#A7AAAD]">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
+            {errors.fuelType && (
+              <p className="mt-1.5 text-xs text-red-400">{errors.fuelType}</p>
+            )}
+          </div>
+
           {/* Registration Number */}
           <div>
             <label
@@ -916,7 +979,7 @@ export const BookServiceForm = ({
               className="block text-xs font-semibold tracking-[0.1em] text-[#F2F0EA] uppercase mb-2"
             >
               {labels.registrationNumber || 'Registration No.'}{' '}
-              <span className="text-[#B88952]">*</span>
+              <span className="text-xs text-[#A7AAAD]/60 font-normal lowercase">(optional)</span>
             </label>
             <input
               id={registrationNumberId}

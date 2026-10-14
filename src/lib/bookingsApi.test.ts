@@ -52,7 +52,7 @@ class MockD1Database {
         if (q.startsWith('INSERT INTO BOOKINGS')) {
           const [
             id, customerName, phoneNumber, email, vehicleMake, vehicleModel,
-            registrationNumber, serviceCategory, specificService, preferredDate,
+            fuelType, registrationNumber, serviceCategory, specificService, preferredDate,
             preferredTime, status, additionalMessage, serviceLocation,
             doorstepHouseFlat, doorstepStreetLocality, doorstepCity,
             doorstepPincode, doorstepLatitude, doorstepLongitude, doorstepMapUrl,
@@ -61,6 +61,7 @@ class MockD1Database {
 
           const record = {
             id, customerName, phoneNumber, email, vehicleMake, vehicleModel,
+            fuelType: fuelType || '',
             registrationNumber, serviceCategory, specificService, preferredDate,
             preferredTime, status, additionalMessage,
             serviceLocation: serviceLocation || 'Workshop Visit',
@@ -163,6 +164,7 @@ describe('Bookings API Endpoints (/api/bookings)', () => {
         email: 'secret@example.com',
         vehicleMake: 'BMW',
         vehicleModel: 'M3',
+        fuelType: 'Petrol',
         registrationNumber: 'TS 09 AB 1234',
         serviceCategory: 'brakes',
         specificService: 'Rotor replace',
@@ -185,6 +187,7 @@ describe('Bookings API Endpoints (/api/bookings)', () => {
       const publicData = await publicResp.json();
       expect(publicData.id).toBe('GM-555555');
       expect(publicData.vehicleMake).toBe('BMW');
+      expect(publicData.fuelType).toBe('Petrol');
       expect(publicData.phoneNumber).toBeUndefined();
       expect(publicData.email).toBeUndefined();
       expect(publicData.additionalMessage).toBeUndefined();
@@ -199,6 +202,7 @@ describe('Bookings API Endpoints (/api/bookings)', () => {
 
       expect(adminResp.status).toBe(200);
       const adminData = await adminResp.json();
+      expect(adminData.fuelType).toBe('Petrol');
       expect(adminData.phoneNumber).toBe('+91 99999 11111');
       expect(adminData.email).toBe('secret@example.com');
       expect(adminData.additionalMessage).toBe('Private gate passcode 1234');
@@ -213,6 +217,7 @@ describe('Bookings API Endpoints (/api/bookings)', () => {
       email: 'vikram@example.com',
       vehicleMake: 'Porsche',
       vehicleModel: '911 Carrera',
+      fuelType: 'Petrol',
       registrationNumber: 'TS 09 AB 9999',
       serviceCategory: 'general-service',
       specificService: 'Periodic inspection',
@@ -229,7 +234,9 @@ describe('Bookings API Endpoints (/api/bookings)', () => {
       const data = await resp.json();
       expect(data.success).toBe(true);
       expect(data.id).toMatch(/^GM-\d{6}$/);
+      expect(data.booking.fuelType).toBe('Petrol');
       expect(mockDb.records.has(data.id)).toBe(true);
+      expect(mockDb.records.get(data.id).fuelType).toBe('Petrol');
     });
 
     it('rejects submission with missing required fields', async () => {
@@ -280,6 +287,92 @@ describe('Bookings API Endpoints (/api/bookings)', () => {
       expect(resp.status).toBe(400);
       const data = await resp.json();
       expect(data.error).toContain('Vehicle model is required');
+    });
+
+    it('rejects missing or empty fuel type', async () => {
+      const invalid = { ...validBooking, fuelType: '' };
+      const req = createRequest('POST', invalid);
+      const resp = await (createBooking as any)({ request: req, locals: createLocals() });
+
+      expect(resp.status).toBe(400);
+      const data = await resp.json();
+      expect(data.error).toContain('Fuel type is required');
+    });
+
+    it('rejects invalid fuel type not in allowed options', async () => {
+      const invalid = { ...validBooking, fuelType: 'Hydrogen' };
+      const req = createRequest('POST', invalid);
+      const resp = await (createBooking as any)({ request: req, locals: createLocals() });
+
+      expect(resp.status).toBe(400);
+      const data = await resp.json();
+      expect(data.error).toContain('Invalid fuel type');
+    });
+
+    it('accepts each of the allowed fuel types', async () => {
+      const allowedTypes = ['Petrol', 'Diesel', 'CNG', 'Electric (EV)', 'Hybrid', 'Other'];
+
+      for (const fType of allowedTypes) {
+        const payload = {
+          ...validBooking,
+          fuelType: fType,
+          registrationNumber: `TS 09 XY ${Math.floor(1000 + Math.random() * 9000)}`
+        };
+        const req = createRequest('POST', payload);
+        const resp = await (createBooking as any)({ request: req, locals: createLocals() });
+
+        expect(resp.status).toBe(201);
+        const data = await resp.json();
+        expect(data.success).toBe(true);
+        expect(data.booking.fuelType).toBe(fType);
+
+        const record = mockDb.records.get(data.id);
+        expect(record.fuelType).toBe(fType);
+      }
+    });
+
+    it('accepts booking when registrationNumber is empty or omitted', async () => {
+      // Test omitted registrationNumber
+      const { registrationNumber, ...withoutReg } = validBooking;
+      const req1 = createRequest('POST', withoutReg);
+      const resp1 = await (createBooking as any)({ request: req1, locals: createLocals() });
+
+      expect(resp1.status).toBe(201);
+      const data1 = await resp1.json();
+      expect(data1.success).toBe(true);
+      expect(data1.booking.registrationNumber).toBe('');
+      expect(mockDb.records.get(data1.id).registrationNumber).toBe('');
+
+      // Test empty string registrationNumber
+      const withEmptyReg = { ...validBooking, registrationNumber: '   ' };
+      const req2 = createRequest('POST', withEmptyReg);
+      const resp2 = await (createBooking as any)({ request: req2, locals: createLocals() });
+
+      expect(resp2.status).toBe(201);
+      const data2 = await resp2.json();
+      expect(data2.success).toBe(true);
+      expect(data2.booking.registrationNumber).toBe('');
+      expect(mockDb.records.get(data2.id).registrationNumber).toBe('');
+    });
+
+    it('rejects booking when registrationNumber is provided but invalid length', async () => {
+      // Too short (1 char)
+      const tooShort = { ...validBooking, registrationNumber: 'A' };
+      const req1 = createRequest('POST', tooShort);
+      const resp1 = await (createBooking as any)({ request: req1, locals: createLocals() });
+
+      expect(resp1.status).toBe(400);
+      const data1 = await resp1.json();
+      expect(data1.error).toContain('Registration number must be 2-25 characters');
+
+      // Too long (>25 chars)
+      const tooLong = { ...validBooking, registrationNumber: 'TS 09 AB 1234567890 1234567890' };
+      const req2 = createRequest('POST', tooLong);
+      const resp2 = await (createBooking as any)({ request: req2, locals: createLocals() });
+
+      expect(resp2.status).toBe(400);
+      const data2 = await resp2.json();
+      expect(data2.error).toContain('Registration number must be 2-25 characters');
     });
 
     it('successfully creates booking with custom unlisted ("Other") brand and model', async () => {

@@ -15,6 +15,7 @@ interface AdminBooking {
   vehicleMake: string;
   vehicleModel: string;
   vehicle: string;
+  fuelType?: string;
   registrationNumber: string;
   serviceCategory: string;
   specificService: string;
@@ -152,6 +153,7 @@ export function AdminDashboard() {
           b.vehicle,
           b.vehicleMake,
           b.vehicleModel,
+          b.fuelType,
           b.registrationNumber,
           b.serviceLocation,
           b.doorstepCity,
@@ -443,11 +445,17 @@ export function AdminDashboard() {
                           >
                             {vehicleName}
                           </div>
-                          {(b.vehicleMake || b.vehicleModel) && (
+                          {(b.vehicleMake || b.vehicleModel || b.fuelType) && (
                             <div className="flex items-center gap-1.5 text-[10px] text-[#A7AAAD]/80 mt-0.5 truncate">
                               <span className="text-[#B88952] font-semibold">{b.vehicleMake || '—'}</span>
                               <span className="text-white/20">•</span>
                               <span className="truncate">{b.vehicleModel || '—'}</span>
+                              {b.fuelType && (
+                                <>
+                                  <span className="text-white/20">•</span>
+                                  <span className="text-[#E5A84B] font-medium shrink-0">{b.fuelType}</span>
+                                </>
+                              )}
                             </div>
                           )}
                           {b.registrationNumber && (
@@ -656,6 +664,11 @@ export function AdminDashboard() {
                             {b.vehicleMake || '—'} <span className="text-[#A7AAAD]">/</span> {b.vehicleModel || '—'}
                           </p>
                         )}
+                        {b.fuelType && (
+                          <p className="text-[10px] text-[#E5A84B] truncate font-medium">
+                            Fuel: {b.fuelType}
+                          </p>
+                        )}
                         {b.registrationNumber && (
                           <p className="font-mono text-[10px] text-[#A7AAAD]/80 truncate mt-0.5" title={`Reg: ${b.registrationNumber}`}>
                             {b.registrationNumber}
@@ -795,9 +808,10 @@ export function AdminDashboard() {
                 <Field label="Customer Name" value={selected.customerName} />
                 <Field label="Phone" value={selected.phoneNumber} mono />
                 <Field label="Email" value={selected.email || '—'} />
-                <Field label="Registration" value={selected.registrationNumber} mono />
+                <Field label="Registration" value={selected.registrationNumber || '—'} mono />
                 <Field label="Car Brand / Make" value={selected.vehicleMake || '—'} />
                 <Field label="Car Model" value={selected.vehicleModel || '—'} />
+                <Field label="Fuel Type" value={selected.fuelType || '—'} />
                 <Field label="Vehicle (Combined)" value={`${selected.vehicleMake || ''} ${selected.vehicleModel || ''}`.trim() || selected.vehicle || '—'} />
                 <Field label="Service Category" value={serviceTitle(selected.serviceCategory)} />
                 <Field label="Specific Service" value={selected.specificService || '—'} />
