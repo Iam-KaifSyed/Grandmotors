@@ -285,26 +285,60 @@ if (schema) {
           var existing = sessionStorage.getItem(storageKey) || localStorage.getItem(storageKey);
           if (!existing) {
             var params = new URLSearchParams(window.location.search);
-            var utm = (params.get('utm_source') || params.get('source') || '').toLowerCase();
-            var gclid = params.get('gclid');
-            var fbclid = params.get('fbclid');
-            var ref = document.referrer ? document.referrer.toLowerCase() : '';
+            var utm = (params.get('utm_source') || params.get('source') || params.get('ref') || '').toLowerCase().trim();
+            var utmMedium = (params.get('utm_medium') || '').toLowerCase().trim();
+            var ref = document.referrer ? document.referrer.toLowerCase().trim() : '';
             var source = 'Direct/Unknown';
 
-            if (gclid || utm.indexOf('google') !== -1 || ref.indexOf('google.') !== -1 || ref.indexOf('googlequicksearchbox') !== -1) {
-              source = 'Google';
-            } else if (fbclid || utm === 'facebook' || utm === 'fb' || ref.indexOf('facebook.com') !== -1 || ref.indexOf('fb.me') !== -1) {
-              source = 'Facebook';
-            } else if (utm === 'instagram' || utm === 'ig' || ref.indexOf('instagram.com') !== -1) {
-              source = 'Instagram';
-            } else if (utm === 'whatsapp' || utm === 'wa' || ref.indexOf('whatsapp') !== -1 || ref.indexOf('wa.me') !== -1) {
-              source = 'WhatsApp';
-            } else if (ref && ref.indexOf(window.location.hostname) === -1 && ref.indexOf('grandmotors.in') === -1) {
-              source = 'Referral';
-            } else if (utm && utm !== 'direct' && utm !== 'none') {
+            // Priority 1: Explicit UTM source
+            if (utm) {
+              if (utm === 'google' || utm.indexOf('google') !== -1 || utm.indexOf('adwords') !== -1) {
+                source = 'Google';
+              } else if (utm === 'facebook' || utm === 'fb' || utm.indexOf('facebook') !== -1) {
+                source = 'Facebook';
+              } else if (utm === 'instagram' || utm === 'ig' || utm.indexOf('instagram') !== -1) {
+                source = 'Instagram';
+              } else if (utm === 'whatsapp' || utm === 'wa' || utm.indexOf('whatsapp') !== -1) {
+                source = 'WhatsApp';
+              } else if (utm !== 'direct' && utm !== 'none') {
+                source = 'Referral';
+              }
+            } else if (utmMedium === 'referral') {
               source = 'Referral';
             }
 
+            // Priority 2: Reliable advertising click IDs (if no explicit UTM source resolved)
+            if (source === 'Direct/Unknown') {
+              if (params.has('gclid') || params.has('gbraid') || params.has('wbraid')) {
+                source = 'Google';
+              } else if (params.has('fbclid')) {
+                source = 'Facebook';
+              } else if (params.has('igshid') || params.has('ig_rid')) {
+                source = 'Instagram';
+              }
+            }
+
+            // Priority 3: Recognized external referrer
+            if (source === 'Direct/Unknown' && ref && ref !== 'undefined' && ref !== 'null') {
+              if (ref.indexOf('google.') !== -1 || ref.indexOf('googlequicksearchbox') !== -1) {
+                source = 'Google';
+              } else if (ref.indexOf('facebook.com') !== -1 || ref.indexOf('fb.me') !== -1 || ref.indexOf('com.facebook') !== -1) {
+                source = 'Facebook';
+              } else if (ref.indexOf('instagram.com') !== -1 || ref.indexOf('com.instagram') !== -1) {
+                source = 'Instagram';
+              } else if (ref.indexOf('whatsapp') !== -1 || ref.indexOf('wa.me') !== -1 || ref.indexOf('com.whatsapp') !== -1) {
+                source = 'WhatsApp';
+              } else if (
+                ref.indexOf(window.location.hostname) === -1 &&
+                ref.indexOf('grandmotors.in') === -1 &&
+                ref.indexOf('localhost') === -1 &&
+                ref.indexOf('.') !== -1
+              ) {
+                source = 'Referral';
+              }
+            }
+
+            // Priority 4: Direct/Unknown (default if no reliable signal)
             sessionStorage.setItem(storageKey, source);
             localStorage.setItem(storageKey, source);
           }

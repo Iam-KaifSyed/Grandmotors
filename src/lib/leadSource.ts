@@ -34,137 +34,167 @@ export function determineLeadSource(
   referrer?: string,
   currentHost?: string
 ): LeadSource {
-  // 1. Inspect URL parameters (UTM parameters, click IDs, source tags)
+  let searchParams: URLSearchParams | null = null;
   if (currentUrl) {
     try {
       const parsedUrl = new URL(currentUrl, 'https://grandmotors.in');
-      const params = parsedUrl.searchParams;
-
-      const gclid = params.get('gclid');
-      if (gclid) return 'Google';
-
-      const fbclid = params.get('fbclid');
-      if (fbclid) return 'Facebook';
-
-      const utmSource = (params.get('utm_source') || '').trim().toLowerCase();
-      const refParam = (params.get('ref') || '').trim().toLowerCase();
-      const rawSourceParam = (params.get('source') || '').trim().toLowerCase();
-
-      // Check UTM / ref / source parameter values
-      const paramCandidates = [utmSource, refParam, rawSourceParam].filter(Boolean);
-
-      for (const val of paramCandidates) {
-        if (val === 'google' || val.includes('google') || val.includes('adwords')) {
-          return 'Google';
-        }
-        if (val === 'facebook' || val === 'fb' || val.includes('facebook')) {
-          return 'Facebook';
-        }
-        if (val === 'instagram' || val === 'ig' || val.includes('instagram')) {
-          return 'Instagram';
-        }
-        if (val === 'whatsapp' || val === 'wa' || val.includes('whatsapp')) {
-          return 'WhatsApp';
-        }
-      }
-
-      const utmMedium = (params.get('utm_medium') || '').trim().toLowerCase();
-      if (utmMedium === 'referral') {
-        return 'Referral';
-      }
-
-      // If utm_source is explicitly specified but not one of the majors, treat as Referral
-      if (utmSource && utmSource !== 'direct' && utmSource !== 'none') {
-        return 'Referral';
-      }
+      searchParams = parsedUrl.searchParams;
     } catch {
       // Ignore URL parsing errors
     }
   }
 
-  // 2. Inspect document.referrer / HTTP Referer header
+  // =========================================================================
+  // PRIORITY 1: Explicit UTM parameters
+  // =========================================================================
+  if (searchParams) {
+    const utmSource = (searchParams.get('utm_source') || '').trim().toLowerCase();
+    const utmMedium = (searchParams.get('utm_medium') || '').trim().toLowerCase();
+    const sourceParam = (searchParams.get('source') || '').trim().toLowerCase();
+    const refParam = (searchParams.get('ref') || '').trim().toLowerCase();
+
+    // Check primary utm_source parameter
+    if (utmSource) {
+      if (utmSource === 'google' || utmSource.includes('google') || utmSource.includes('adwords')) {
+        return 'Google';
+      }
+      if (utmSource === 'facebook' || utmSource === 'fb' || utmSource.includes('facebook')) {
+        return 'Facebook';
+      }
+      if (utmSource === 'instagram' || utmSource === 'ig' || utmSource.includes('instagram')) {
+        return 'Instagram';
+      }
+      if (utmSource === 'whatsapp' || utmSource === 'wa' || utmSource.includes('whatsapp')) {
+        return 'WhatsApp';
+      }
+      if (utmSource !== 'direct' && utmSource !== 'none') {
+        return 'Referral';
+      }
+    }
+
+    if (utmMedium === 'referral') {
+      return 'Referral';
+    }
+
+    // Check explicit secondary source / ref query parameters if utm_source was absent
+    const secondaryCandidates = [sourceParam, refParam].filter(Boolean);
+    for (const val of secondaryCandidates) {
+      if (val === 'google' || val.includes('google') || val.includes('adwords')) {
+        return 'Google';
+      }
+      if (val === 'facebook' || val === 'fb' || val.includes('facebook')) {
+        return 'Facebook';
+      }
+      if (val === 'instagram' || val === 'ig' || val.includes('instagram')) {
+        return 'Instagram';
+      }
+      if (val === 'whatsapp' || val === 'wa' || val.includes('whatsapp')) {
+        return 'WhatsApp';
+      }
+    }
+  }
+
+  // =========================================================================
+  // PRIORITY 2: Reliable advertising click IDs
+  // =========================================================================
+  if (searchParams) {
+    const hasGoogleClick =
+      searchParams.has('gclid') ||
+      searchParams.has('gbraid') ||
+      searchParams.has('wbraid');
+    if (hasGoogleClick) {
+      return 'Google';
+    }
+
+    const hasMetaClick = searchParams.has('fbclid');
+    if (hasMetaClick) {
+      return 'Facebook';
+    }
+
+    const hasInstagramClick = searchParams.has('igshid') || searchParams.has('ig_rid');
+    if (hasInstagramClick) {
+      return 'Instagram';
+    }
+  }
+
+  // =========================================================================
+  // PRIORITY 3: Recognized external referrer
+  // =========================================================================
   const cleanRef = (referrer || '').trim();
-  if (!cleanRef || cleanRef === 'undefined' || cleanRef === 'null') {
-    return 'Direct/Unknown';
+  if (cleanRef && cleanRef !== 'undefined' && cleanRef !== 'null') {
+    // 3A. Android app deep-links (e.g. android-app://com.whatsapp)
+    if (cleanRef.startsWith('android-app://')) {
+      const appRef = cleanRef.toLowerCase();
+      if (appRef.includes('com.google')) return 'Google';
+      if (appRef.includes('com.whatsapp')) return 'WhatsApp';
+      if (appRef.includes('com.instagram')) return 'Instagram';
+      if (appRef.includes('com.facebook')) return 'Facebook';
+      return 'Referral';
+    }
+
+    // 3B. Web referrer hostname
+    let refHost = '';
+    try {
+      const refUrl = new URL(cleanRef.startsWith('http') ? cleanRef : `https://${cleanRef}`);
+      refHost = refUrl.hostname.toLowerCase();
+    } catch {
+      const lower = cleanRef.toLowerCase();
+      if (lower.includes('google.')) return 'Google';
+      if (lower.includes('facebook.com') || lower.includes('fb.me')) return 'Facebook';
+      if (lower.includes('instagram.com')) return 'Instagram';
+      if (lower.includes('whatsapp') || lower.includes('wa.me')) return 'WhatsApp';
+    }
+
+    if (refHost) {
+      // Check known platforms by hostname
+      if (
+        refHost === 'google.com' ||
+        refHost.endsWith('.google.com') ||
+        refHost.includes('google.')
+      ) {
+        return 'Google';
+      }
+
+      if (
+        refHost === 'facebook.com' ||
+        refHost.endsWith('.facebook.com') ||
+        refHost === 'fb.me' ||
+        refHost.endsWith('.fb.me')
+      ) {
+        return 'Facebook';
+      }
+
+      if (refHost === 'instagram.com' || refHost.endsWith('.instagram.com')) {
+        return 'Instagram';
+      }
+
+      if (
+        refHost === 'whatsapp.com' ||
+        refHost.endsWith('.whatsapp.com') ||
+        refHost === 'wa.me' ||
+        refHost.endsWith('.wa.me')
+      ) {
+        return 'WhatsApp';
+      }
+
+      // Check internal navigation / self-referrals
+      const hostLower = (currentHost || '').toLowerCase();
+      const isInternal =
+        (hostLower && (refHost === hostLower || refHost.endsWith(`.${hostLower}`))) ||
+        refHost === 'grandmotors.in' ||
+        refHost.endsWith('.grandmotors.in') ||
+        refHost === 'localhost' ||
+        refHost === '127.0.0.1';
+
+      if (!isInternal && refHost.includes('.')) {
+        return 'Referral';
+      }
+    }
   }
 
-  // Android app deep-links (e.g. android-app://com.whatsapp)
-  if (cleanRef.startsWith('android-app://')) {
-    const appRef = cleanRef.toLowerCase();
-    if (appRef.includes('com.google')) return 'Google';
-    if (appRef.includes('com.whatsapp')) return 'WhatsApp';
-    if (appRef.includes('com.instagram')) return 'Instagram';
-    if (appRef.includes('com.facebook')) return 'Facebook';
-    return 'Referral';
-  }
-
-  // Parse hostname from referrer
-  let refHost = '';
-  try {
-    const refUrl = new URL(cleanRef.startsWith('http') ? cleanRef : `https://${cleanRef}`);
-    refHost = refUrl.hostname.toLowerCase();
-  } catch {
-    const lower = cleanRef.toLowerCase();
-    if (lower.includes('google.')) return 'Google';
-    if (lower.includes('facebook.com') || lower.includes('fb.me')) return 'Facebook';
-    if (lower.includes('instagram.com')) return 'Instagram';
-    if (lower.includes('whatsapp') || lower.includes('wa.me')) return 'WhatsApp';
-    return 'Direct/Unknown';
-  }
-
-  if (!refHost) {
-    return 'Direct/Unknown';
-  }
-
-  // Check known platforms by hostname
-  if (
-    refHost === 'google.com' ||
-    refHost.endsWith('.google.com') ||
-    refHost.includes('google.')
-  ) {
-    return 'Google';
-  }
-
-  if (
-    refHost === 'facebook.com' ||
-    refHost.endsWith('.facebook.com') ||
-    refHost === 'fb.me' ||
-    refHost.endsWith('.fb.me')
-  ) {
-    return 'Facebook';
-  }
-
-  if (refHost === 'instagram.com' || refHost.endsWith('.instagram.com')) {
-    return 'Instagram';
-  }
-
-  if (
-    refHost === 'whatsapp.com' ||
-    refHost.endsWith('.whatsapp.com') ||
-    refHost === 'wa.me' ||
-    refHost.endsWith('.wa.me')
-  ) {
-    return 'WhatsApp';
-  }
-
-  // Check internal navigation / self-referrals
-  const hostLower = (currentHost || '').toLowerCase();
-  const isInternal =
-    (hostLower && (refHost === hostLower || refHost.endsWith(`.${hostLower}`))) ||
-    refHost === 'grandmotors.in' ||
-    refHost.endsWith('.grandmotors.in') ||
-    refHost === 'localhost' ||
-    refHost === '127.0.0.1';
-
-  if (isInternal) {
-    return 'Direct/Unknown';
-  }
-
-  // Any other external domain with a valid dot-separated hostname is a Referral
-  if (refHost.includes('.')) {
-    return 'Referral';
-  }
-
+  // =========================================================================
+  // PRIORITY 4: Direct/Unknown (Never guess when reliable evidence is unavailable)
+  // =========================================================================
   return 'Direct/Unknown';
 }
 
