@@ -143,18 +143,25 @@ function SourceBadge({ source }: { source?: string }) {
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-semibold tracking-[0.14em] uppercase rounded-full border backdrop-blur-xs transition-all duration-200 ${styles.badge}`}
+      className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-semibold tracking-[0.1em] uppercase rounded-full border backdrop-blur-xs transition-all duration-200 shrink-0 max-w-full ${styles.badge}`}
+      title={`Lead source: ${displaySource}`}
     >
-      <span className={`w-1.5 h-1.5 rounded-full ${styles.dot}`} />
-      {displaySource}
+      <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${styles.dot}`} />
+      <span className="truncate">{displaySource}</span>
     </span>
   );
 }
 
-export function AdminDashboard() {
-  const [bookings, setBookings] = useState<AdminBooking[] | null>(null);
+export function AdminDashboard({
+  initialBookings,
+  initialLoading,
+}: {
+  initialBookings?: AdminBooking[];
+  initialLoading?: boolean;
+} = {}) {
+  const [bookings, setBookings] = useState<AdminBooking[] | null>(initialBookings ?? null);
   const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(initialLoading ?? (initialBookings ? false : true));
 
   const [query, setQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<'All' | Status>('All');
@@ -205,8 +212,10 @@ export function AdminDashboard() {
   };
 
   useEffect(() => {
-    loadBookings();
-  }, []);
+    if (!initialBookings) {
+      loadBookings();
+    }
+  }, [initialBookings]);
 
   const overallCounts = useMemo(() => {
     let active = 0;
@@ -621,20 +630,20 @@ export function AdminDashboard() {
           </div>
         ) : (
           <>
-            {/* Desktop Table: fits 100% width without horizontal scrolling */}
-            <div className="hidden lg:block w-full overflow-hidden">
-              <table className="w-full table-fixed text-left text-sm divide-y divide-[var(--gm-border-subtle)]">
+            {/* Desktop Table: fits expanded width with responsive horizontal scrolling fallback */}
+            <div className="hidden lg:block w-full overflow-x-auto [scrollbar-width:thin] [scrollbar-color:var(--gm-border-medium)_transparent]">
+              <table className={`w-full table-fixed text-left text-sm divide-y divide-[var(--gm-border-subtle)] ${viewTab === 'active' ? 'min-w-[1180px]' : 'min-w-[1240px]'}`}>
                 <thead className="bg-[var(--gm-bg-surface)]">
                   <tr className="text-[10px] uppercase tracking-[0.14em] text-[var(--gm-text-secondary)]">
-                    <th className="w-[11%] px-4 py-3.5 font-semibold">Booking ID</th>
-                    <th className="w-[13%] px-4 py-3.5 font-semibold">Customer</th>
-                    <th className="w-[10%] px-4 py-3.5 font-semibold">Phone</th>
-                    <th className="w-[13%] px-4 py-3.5 font-semibold">Vehicle</th>
-                    <th className="w-[13%] px-4 py-3.5 font-semibold">Service</th>
-                    <th className="w-[10%] px-4 py-3.5 font-semibold">Requested</th>
-                    <th className="w-[9%] px-4 py-3.5 font-semibold">Status</th>
-                    <th className="w-[9%] px-4 py-3.5 font-semibold text-[var(--gm-text-primary)]">Source</th>
-                    <th className="w-[12%] px-4 py-3.5 font-semibold text-right">Action</th>
+                    <th className="w-[10%] min-w-[120px] px-3.5 py-3.5 font-semibold">Booking ID</th>
+                    <th className={`${viewTab === 'active' ? 'w-[15%]' : 'w-[14%]'} min-w-[150px] px-3.5 py-3.5 font-semibold`}>Customer</th>
+                    <th className="w-[9%] min-w-[110px] px-3.5 py-3.5 font-semibold">Phone</th>
+                    <th className={`${viewTab === 'active' ? 'w-[14%]' : 'w-[13%]'} min-w-[145px] px-3.5 py-3.5 font-semibold`}>Vehicle</th>
+                    <th className={`${viewTab === 'active' ? 'w-[14%]' : 'w-[13%]'} min-w-[145px] px-3.5 py-3.5 font-semibold`}>Service</th>
+                    <th className={`${viewTab === 'active' ? 'w-[9%]' : 'w-[8%]'} min-w-[100px] px-3.5 py-3.5 font-semibold`}>Requested</th>
+                    <th className="w-[9%] min-w-[115px] px-3.5 py-3.5 font-semibold">Status</th>
+                    <th className={`${viewTab === 'active' ? 'w-[10%]' : 'w-[9%]'} min-w-[130px] px-3.5 py-3.5 font-semibold text-[var(--gm-text-primary)]`}>Source</th>
+                    <th className={`${viewTab === 'active' ? 'w-[10%] min-w-[165px]' : 'w-[15%] min-w-[225px]'} px-3.5 py-3.5 font-semibold text-right`}>Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[var(--gm-border-subtle)]">
@@ -653,9 +662,9 @@ export function AdminDashboard() {
                         className="hover:bg-[var(--gm-bg-card-hover)] transition-colors"
                       >
                         {/* Booking ID - prevent clipping with font-mono, whitespace-nowrap, tooltip */}
-                        <td className="px-4 py-3.5 align-middle">
+                        <td className="px-3.5 py-3.5 align-middle">
                           <span
-                            className="font-mono font-semibold text-xs text-[var(--gm-text-primary)] whitespace-nowrap tracking-wide select-all"
+                            className="font-mono font-semibold text-xs text-[var(--gm-text-primary)] whitespace-nowrap tracking-wide select-all block truncate"
                             title={`Booking ID: ${b.id}`}
                           >
                             {b.id}
@@ -663,7 +672,7 @@ export function AdminDashboard() {
                         </td>
 
                         {/* Customer */}
-                        <td className="px-4 py-3.5 align-middle">
+                        <td className="px-3.5 py-3.5 align-middle">
                           <div
                             className="truncate font-medium text-xs text-[var(--gm-text-primary)]"
                             title={custName}
@@ -712,7 +721,7 @@ export function AdminDashboard() {
                         </td>
 
                         {/* Phone */}
-                        <td className="px-4 py-3.5 align-middle">
+                        <td className="px-3.5 py-3.5 align-middle">
                           <a
                             href={telHref(phoneNum)}
                             className="truncate block font-mono text-xs text-[var(--gm-text-secondary)] hover:text-[var(--gm-accent-primary)] transition-colors"
@@ -723,7 +732,7 @@ export function AdminDashboard() {
                         </td>
 
                         {/* Vehicle */}
-                        <td className="px-4 py-3.5 align-middle">
+                        <td className="px-3.5 py-3.5 align-middle">
                           <div
                             className="truncate text-xs font-medium text-[var(--gm-text-primary)]"
                             title={vehicleName}
@@ -732,13 +741,13 @@ export function AdminDashboard() {
                           </div>
                           {(b.vehicleMake || b.vehicleModel || b.fuelType) && (
                             <div className="flex items-center gap-1.5 text-[10px] text-[var(--gm-text-secondary)] mt-0.5 truncate">
-                              <span className="text-[var(--gm-accent-primary)] font-semibold">{b.vehicleMake || '—'}</span>
-                              <span className="text-[var(--gm-border-medium)]">•</span>
-                              <span className="truncate">{b.vehicleModel || '—'}</span>
+                              <span className="text-[var(--gm-accent-primary)] font-semibold truncate" title={b.vehicleMake}>{b.vehicleMake || '—'}</span>
+                              <span className="text-[var(--gm-border-medium)] shrink-0">•</span>
+                              <span className="truncate" title={b.vehicleModel}>{b.vehicleModel || '—'}</span>
                               {b.fuelType && (
                                 <>
-                                  <span className="text-[var(--gm-border-medium)]">•</span>
-                                  <span className="text-[#b45309] dark:text-[#E5A84B] font-medium shrink-0">{b.fuelType}</span>
+                                  <span className="text-[var(--gm-border-medium)] shrink-0">•</span>
+                                  <span className="text-[#b45309] dark:text-[#E5A84B] font-medium shrink-0" title={`Fuel: ${b.fuelType}`}>{b.fuelType}</span>
                                 </>
                               )}
                             </div>
@@ -754,7 +763,7 @@ export function AdminDashboard() {
                         </td>
 
                         {/* Service */}
-                        <td className="px-4 py-3.5 align-middle">
+                        <td className="px-3.5 py-3.5 align-middle">
                           <div
                             className="truncate text-xs text-[var(--gm-text-primary)]"
                             title={categoryName}
@@ -770,7 +779,7 @@ export function AdminDashboard() {
                             </div>
                           )}
                           <div className="flex items-center gap-1.5 mt-1">
-                            <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 text-[9px] font-semibold tracking-wider uppercase rounded ${
+                            <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 text-[9px] font-semibold tracking-wider uppercase rounded shrink-0 ${
                               b.serviceLocation === 'Doorstep Service'
                                 ? 'bg-[var(--gm-accent-muted)] text-[var(--gm-accent-primary)] border border-[var(--gm-accent-border)]'
                                 : 'bg-[var(--gm-bg-surface)] text-[var(--gm-text-secondary)] border border-[var(--gm-border-subtle)]'
@@ -778,7 +787,7 @@ export function AdminDashboard() {
                               {b.serviceLocation === 'Doorstep Service' ? '🏠 Doorstep' : '🏢 Workshop'}
                             </span>
                             {b.serviceLocation === 'Doorstep Service' && b.doorstepCity && (
-                              <span className="text-[10px] text-[var(--gm-text-muted)] truncate">
+                              <span className="text-[10px] text-[var(--gm-text-muted)] truncate" title={`Doorstep City: ${b.doorstepCity}`}>
                                 ({b.doorstepCity})
                               </span>
                             )}
@@ -786,7 +795,7 @@ export function AdminDashboard() {
                         </td>
 
                         {/* Requested */}
-                        <td className="px-4 py-3.5 align-middle">
+                        <td className="px-3.5 py-3.5 align-middle">
                           <div
                             className="truncate text-xs text-[var(--gm-text-primary)]"
                             title={`Preferred: ${reqDate}${reqTime ? ` · ${reqTime}` : ''}`}
@@ -804,22 +813,22 @@ export function AdminDashboard() {
                         </td>
 
                         {/* Status */}
-                        <td className="px-4 py-3.5 align-middle whitespace-nowrap">
+                        <td className="px-3.5 py-3.5 align-middle whitespace-nowrap">
                           <StatusBadge status={b.status} />
                         </td>
 
                         {/* Source */}
-                        <td className="px-4 py-3.5 align-middle whitespace-nowrap">
+                        <td className="px-3.5 py-3.5 align-middle whitespace-nowrap">
                           <SourceBadge source={b.source} />
                         </td>
 
                         {/* Action */}
-                        <td className="px-4 py-3.5 align-middle text-right whitespace-nowrap">
-                          <div className="inline-flex items-center gap-1.5 justify-end">
+                        <td className="px-3.5 py-3.5 align-middle text-right whitespace-nowrap">
+                          <div className="inline-flex items-center gap-1.5 sm:gap-2 justify-end shrink-0">
                             <button
                               type="button"
                               onClick={() => openDetails(b)}
-                              className="inline-flex items-center px-2.5 py-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[var(--gm-text-primary)] bg-[var(--gm-bg-surface)] hover:bg-[var(--gm-accent-primary)] hover:text-[var(--gm-accent-foreground)] border border-[var(--gm-border-subtle)] hover:border-[var(--gm-accent-primary)] rounded-md transition-all cursor-pointer whitespace-nowrap"
+                              className="inline-flex items-center justify-center px-2.5 py-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[var(--gm-text-primary)] bg-[var(--gm-bg-surface)] hover:bg-[var(--gm-accent-primary)] hover:text-[var(--gm-accent-foreground)] border border-[var(--gm-border-subtle)] hover:border-[var(--gm-accent-primary)] rounded-md transition-all cursor-pointer whitespace-nowrap shrink-0 shadow-xs"
                               title="View full booking details"
                             >
                               View
@@ -829,7 +838,7 @@ export function AdminDashboard() {
                                 type="button"
                                 onClick={() => handleArchive(b)}
                                 disabled={actionLoadingId === b.id}
-                                className="inline-flex items-center px-2.5 py-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)] bg-[var(--gm-bg-surface)] hover:bg-[var(--gm-bg-card-hover)] border border-[var(--gm-border-subtle)] rounded-md transition-colors cursor-pointer whitespace-nowrap disabled:opacity-50"
+                                className="inline-flex items-center justify-center px-2.5 py-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[var(--gm-text-secondary)] hover:text-amber-500 dark:hover:text-amber-400 hover:border-amber-500/40 hover:bg-amber-500/10 bg-[var(--gm-bg-surface)] border border-[var(--gm-border-subtle)] rounded-md transition-colors cursor-pointer whitespace-nowrap shrink-0 disabled:opacity-50 shadow-xs"
                                 title="Archive booking (removes from active view, keeps tracking)"
                               >
                                 {actionLoadingId === b.id ? '…' : 'Archive'}
@@ -840,7 +849,7 @@ export function AdminDashboard() {
                                   type="button"
                                   onClick={() => handleRestore(b)}
                                   disabled={actionLoadingId === b.id}
-                                  className="inline-flex items-center px-2.5 py-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[#15803d] dark:text-[#25D366] bg-[#25D366]/10 hover:bg-[#25D366]/20 border border-[#25D366]/30 rounded-md transition-colors cursor-pointer whitespace-nowrap disabled:opacity-50"
+                                  className="inline-flex items-center justify-center px-2.5 py-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[#15803d] dark:text-[#25D366] bg-[#25D366]/10 hover:bg-[#25D366]/20 border border-[#25D366]/30 rounded-md transition-colors cursor-pointer whitespace-nowrap shrink-0 disabled:opacity-50 shadow-xs"
                                   title="Restore booking to active list"
                                 >
                                   {actionLoadingId === b.id ? '…' : 'Restore'}
@@ -848,7 +857,7 @@ export function AdminDashboard() {
                                 <button
                                   type="button"
                                   onClick={() => openDeleteConfirm(b)}
-                                  className="inline-flex items-center px-2 py-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-red-600 dark:text-red-400 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 rounded-md transition-colors cursor-pointer whitespace-nowrap"
+                                  className="inline-flex items-center justify-center px-2 py-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-red-600 dark:text-red-400 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 rounded-md transition-colors cursor-pointer whitespace-nowrap shrink-0 shadow-xs"
                                   title="Permanently delete booking"
                                 >
                                   Delete

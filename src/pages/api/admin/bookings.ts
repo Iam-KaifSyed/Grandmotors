@@ -49,9 +49,9 @@ export const GET: APIRoute = async ({ request, locals, session }) => {
       const url = new URL(request.url);
       const archivedParam = url.searchParams.get('archived');
       if (archivedParam === 'true') {
-        mapped = mapped.filter((b) => b.isArchived);
+        mapped = mapped.filter((b: any) => b.isArchived);
       } else if (archivedParam === 'false') {
-        mapped = mapped.filter((b) => !b.isArchived);
+        mapped = mapped.filter((b: any) => !b.isArchived);
       }
     } catch {
       // Ignore URL parsing errors

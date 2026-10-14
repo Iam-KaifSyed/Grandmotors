@@ -6,8 +6,14 @@ interface Props {
   title: string;
   /** When true, renders the admin top bar with brand + logout. */
   chrome?: boolean;
+  /** Container max-width class to expand desktop screen width. Defaults to wide admin layout. */
+  containerMaxWidth?: string;
 }
-const { title, chrome = true } = Astro.props;
+const {
+  title,
+  chrome = true,
+  containerMaxWidth = 'max-w-7xl xl:max-w-[1600px] 2xl:max-w-[1800px]',
+} = Astro.props;
 const pathname = Astro.url.pathname;
 ---
 
@@ -54,7 +60,7 @@ const pathname = Astro.url.pathname;
   <body class="min-h-screen selection:bg-[var(--gm-accent-muted)] selection:text-[var(--gm-text-primary)]">
     {chrome && (
       <header class="sticky top-0 z-30 border-b border-[var(--gm-border-subtle)] bg-[var(--gm-bg-surface)]/90 backdrop-blur-md">
-        <div class="max-w-7xl mx-auto px-4 sm:px-8 h-16 flex items-center justify-between gap-3 sm:gap-4">
+        <div class={`${containerMaxWidth} mx-auto px-4 sm:px-8 h-16 flex items-center justify-between gap-3 sm:gap-4`}>
           <div class="flex items-center gap-6 lg:gap-8 min-w-0">
             <a href="/admin" class="flex items-center gap-2 cursor-pointer group shrink-0">
               <span class="text-xs sm:text-sm font-semibold tracking-[0.25em] text-[var(--gm-text-primary)] uppercase group-hover:text-[var(--gm-accent-primary)] transition-colors">
@@ -169,7 +175,7 @@ const pathname = Astro.url.pathname;
       </header>
     )}
 
-    <main class="max-w-7xl mx-auto px-5 sm:px-8 py-8 sm:py-10">
+    <main class={`${containerMaxWidth} mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10`}>
       <slot />
     </main>
 
