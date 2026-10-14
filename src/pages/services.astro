@@ -114,12 +114,11 @@ const PROMISES = [
           alt=""
           loading="eager"
           decoding="async"
-          class="h-full w-full object-cover object-center"
+          class="services-hero-img h-full w-full object-cover object-[70%_center] sm:object-center transition-all duration-300"
         />
-        <div class="absolute inset-0 bg-[var(--gm-bg-page)]/85"></div>
-        <div
-          class="absolute inset-0 bg-gradient-to-t from-[var(--gm-bg-page)] via-[var(--gm-bg-page)]/60 to-[var(--gm-bg-page)]/30"
-        ></div>
+        <div class="services-hero-overlay-base absolute inset-0"></div>
+        <div class="services-hero-overlay-gradient absolute inset-0"></div>
+        <div class="services-hero-overlay-bottom absolute inset-x-0 bottom-0 h-40 sm:h-56 pointer-events-none"></div>
       </div>
 
       <div class="px-4 sm:px-8 md:px-12 lg:px-16 pt-32 pb-16 md:pt-44 md:pb-28">
@@ -339,19 +338,17 @@ const PROMISES = [
     <!-- ============================================================ -->
     <section class="px-4 sm:px-8 md:px-12 lg:px-16 pt-16 md:pt-28">
       <div class="max-w-7xl mx-auto">
-        <Reveal class="relative isolate overflow-hidden rounded-2xl sm:rounded-3xl border border-[var(--gm-border-subtle)] shadow-xl">
+        <Reveal class="relative isolate overflow-hidden rounded-2xl sm:rounded-3xl border border-[var(--gm-border-subtle)] bg-[var(--gm-bg-card)] shadow-xl">
           <div aria-hidden="true" class="absolute inset-0 -z-10">
             <img
               src={CTA_IMAGE}
               alt=""
               loading="lazy"
               decoding="async"
-              class="h-full w-full object-cover object-center"
+              class="services-cta-img h-full w-full object-cover object-[80%_center] sm:object-center transition-all duration-300"
             />
-            <div class="absolute inset-0 bg-[var(--gm-bg-page)]/85 sm:bg-[var(--gm-bg-page)]/80"></div>
-            <div
-              class="absolute inset-0 bg-gradient-to-r from-[var(--gm-bg-page)] via-[var(--gm-bg-page)]/80 to-transparent"
-            ></div>
+            <div class="services-cta-overlay-base absolute inset-0"></div>
+            <div class="services-cta-overlay-gradient absolute inset-0"></div>
           </div>
 
           <div class="px-6 py-10 sm:px-10 sm:py-14 md:px-14 md:py-20">

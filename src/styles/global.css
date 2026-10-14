@@ -674,3 +674,142 @@ html[data-theme-mode="light"] tbody tr:hover {
     animation: none;
   }
 }
+
+/* ============================================================ */
+/* SERVICES PAGE — HERO & CTA DAY / NIGHT ADAPTIVE STYLES       */
+/* Applies ONLY to the Services page hero & CTA visuals         */
+/* ============================================================ */
+
+/* --- Night Mode Defaults (Preserve Premium Cinematic Look) --- */
+.services-hero-img {
+  opacity: 1;
+  filter: brightness(1) contrast(1);
+}
+
+.services-hero-overlay-base {
+  background-color: rgba(7, 9, 10, 0.85);
+}
+
+.services-hero-overlay-gradient {
+  background: linear-gradient(to top, var(--gm-bg-page), rgba(7, 9, 10, 0.6) 50%, rgba(7, 9, 10, 0.3) 100%);
+}
+
+.services-hero-overlay-bottom {
+  background: linear-gradient(to top, var(--gm-bg-page) 0%, transparent 100%);
+}
+
+.services-cta-img {
+  opacity: 1;
+  filter: brightness(1) contrast(1);
+}
+
+.services-cta-overlay-base {
+  background-color: rgba(7, 9, 10, 0.85);
+}
+
+@media (min-width: 640px) {
+  .services-cta-overlay-base {
+    background-color: rgba(7, 9, 10, 0.80);
+  }
+}
+
+.services-cta-overlay-gradient {
+  background: linear-gradient(to right, var(--gm-bg-page), rgba(7, 9, 10, 0.8) 50%, transparent 100%);
+}
+
+/* --- Day Mode Enhancements (Vivid Car + Crystal Clear Text) --- */
+html[data-theme-mode="light"] .services-hero-img,
+html.light .services-hero-img {
+  opacity: 1;
+  filter: brightness(0.92) contrast(1.22) saturate(1.10);
+}
+
+html[data-theme-mode="light"] .services-hero-overlay-base,
+html.light .services-hero-overlay-base {
+  background-color: transparent;
+}
+
+@media (max-width: 639px) {
+  html[data-theme-mode="light"] .services-hero-overlay-base,
+  html.light .services-hero-overlay-base {
+    background-color: rgba(246, 247, 249, 0.12);
+  }
+
+  html[data-theme-mode="light"] .services-hero-overlay-gradient,
+  html.light .services-hero-overlay-gradient {
+    background: linear-gradient(
+      to bottom,
+      rgba(246, 247, 249, 0.94) 0%,
+      rgba(246, 247, 249, 0.82) 38%,
+      rgba(246, 247, 249, 0.40) 65%,
+      rgba(246, 247, 249, 0.92) 100%
+    );
+  }
+}
+
+@media (min-width: 640px) {
+  html[data-theme-mode="light"] .services-hero-overlay-gradient,
+  html.light .services-hero-overlay-gradient {
+    background: linear-gradient(
+      to right,
+      rgba(246, 247, 249, 0.96) 0%,
+      rgba(246, 247, 249, 0.92) 34%,
+      rgba(246, 247, 249, 0.70) 54%,
+      rgba(246, 247, 249, 0.18) 74%,
+      transparent 100%
+    );
+  }
+}
+
+html[data-theme-mode="light"] .services-hero-overlay-bottom,
+html.light .services-hero-overlay-bottom {
+  background: linear-gradient(
+    to top,
+    var(--gm-bg-page) 0%,
+    rgba(246, 247, 249, 0.88) 45%,
+    transparent 100%
+  );
+}
+
+html[data-theme-mode="light"] .services-cta-img,
+html.light .services-cta-img {
+  opacity: 1;
+  filter: brightness(0.94) contrast(1.20) saturate(1.08);
+}
+
+html[data-theme-mode="light"] .services-cta-overlay-base,
+html.light .services-cta-overlay-base {
+  background-color: transparent;
+}
+
+@media (max-width: 639px) {
+  html[data-theme-mode="light"] .services-cta-overlay-base,
+  html.light .services-cta-overlay-base {
+    background-color: rgba(246, 247, 249, 0.12);
+  }
+
+  html[data-theme-mode="light"] .services-cta-overlay-gradient,
+  html.light .services-cta-overlay-gradient {
+    background: linear-gradient(
+      to bottom,
+      rgba(246, 247, 249, 0.95) 0%,
+      rgba(246, 247, 249, 0.82) 45%,
+      rgba(246, 247, 249, 0.42) 75%,
+      rgba(246, 247, 249, 0.65) 100%
+    );
+  }
+}
+
+@media (min-width: 640px) {
+  html[data-theme-mode="light"] .services-cta-overlay-gradient,
+  html.light .services-cta-overlay-gradient {
+    background: linear-gradient(
+      to right,
+      rgba(246, 247, 249, 0.98) 0%,
+      rgba(246, 247, 249, 0.92) 40%,
+      rgba(246, 247, 249, 0.65) 58%,
+      rgba(246, 247, 249, 0.15) 78%,
+      transparent 100%
+    );
+  }
+}
