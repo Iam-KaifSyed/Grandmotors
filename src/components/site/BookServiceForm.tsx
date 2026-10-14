@@ -12,6 +12,7 @@ import {
   OTHER_OPTION,
   BRAND_SEARCH_ALIASES,
 } from '../../lib/carBrandsData';
+import { getLeadSource } from '../../lib/leadSource';
 
 export interface BookingFormData {
   fullName: string;
@@ -473,6 +474,7 @@ export const BookServiceForm = ({
           doorstepLatitude: isDoorstep ? formState.doorstepLatitude : null,
           doorstepLongitude: isDoorstep ? formState.doorstepLongitude : null,
           doorstepMapUrl: isDoorstep ? formState.doorstepMapUrl : '',
+          source: getLeadSource(),
         };
 
         const resp = await fetch('/api/bookings', {
@@ -522,6 +524,7 @@ export const BookServiceForm = ({
           doorstepLatitude: payload.doorstepLatitude,
           doorstepLongitude: payload.doorstepLongitude,
           doorstepMapUrl: payload.doorstepMapUrl,
+          source: data.booking?.source || payload.source,
           createdAt: new Date().toISOString(),
         };
 

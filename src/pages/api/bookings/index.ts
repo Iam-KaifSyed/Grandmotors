@@ -3,6 +3,7 @@ import type { APIRoute } from 'astro';
 import { normalizeBooking, FUEL_TYPES } from '../../../lib/bookingStore';
 import { isAuthorizedAdmin } from '../../../lib/serverAuth';
 import { getAppEnv, getDatabase } from '../../../lib/env';
+import { isValidLeadSource, determineLeadSource } from '../../../lib/leadSource';
 
 const PHONE_REGEX = /^\+?[\d\s-]{8,18}$/;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -77,6 +78,7 @@ export const GET: APIRoute = async ({ request, locals }) => {
         doorstepLatitude,
         doorstepLongitude,
         doorstepMapUrl,
+        source: row.source ? row.source : 'Unknown',
         createdAt: row.createdAt
       };
     });
@@ -304,6 +306,13 @@ export const POST: APIRoute = async ({ request, locals }) => {
       uniqueId = `GM-${Math.floor(100000 + Math.random() * 900000)}`;
     }
 
+    // Lead Source Determination & Validation
+    let source: string = String(body.source || '').trim();
+    if (!isValidLeadSource(source)) {
+      const referer = request.headers.get('referer') || '';
+      source = determineLeadSource(request.url, referer);
+    }
+
     const normalized = normalizeBooking({
       ...body,
       id: uniqueId,
@@ -327,6 +336,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       doorstepLatitude,
       doorstepLongitude,
       doorstepMapUrl,
+      source,
       status: 'Pending',
       createdAt: new Date().toISOString()
     });
@@ -339,9 +349,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
           preferredTime, status, additionalMessage, serviceLocation,
           doorstepHouseFlat, doorstepStreetLocality, doorstepCity,
           doorstepPincode, doorstepLatitude, doorstepLongitude, doorstepMapUrl,
+          source,
           createdAt
         ) VALUES (
-          ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+          ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
         )
       `).bind(
         normalized.id, normalized.customerName, normalized.phoneNumber, normalized.email,
@@ -356,6 +367,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
         normalized.doorstepLatitude ?? null,
         normalized.doorstepLongitude ?? null,
         normalized.doorstepMapUrl || null,
+        normalized.source || 'Direct/Unknown',
         normalized.createdAt
       ).run();
     };
@@ -364,12 +376,13 @@ export const POST: APIRoute = async ({ request, locals }) => {
       await insertBooking();
     } catch (insertErr: any) {
       const msg = String(insertErr?.message || '');
-      // If table lacks fuelType or doorstep columns in an unmigrated local or preview environment, self-heal and retry
+      // If table lacks fuelType, doorstep, or source columns in an unmigrated local or preview environment, self-heal and retry
       if (
         msg.includes('no column named') ||
         msg.includes('serviceLocation') ||
         msg.includes('doorstep') ||
-        msg.includes('fuelType')
+        msg.includes('fuelType') ||
+        msg.includes('source')
       ) {
         const alterStatements = [
           `ALTER TABLE bookings ADD COLUMN fuelType TEXT`,
@@ -381,6 +394,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
           `ALTER TABLE bookings ADD COLUMN doorstepLatitude REAL`,
           `ALTER TABLE bookings ADD COLUMN doorstepLongitude REAL`,
           `ALTER TABLE bookings ADD COLUMN doorstepMapUrl TEXT`,
+          `ALTER TABLE bookings ADD COLUMN source TEXT`,
         ];
 
         for (const sql of alterStatements) {

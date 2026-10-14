@@ -31,6 +31,7 @@ interface AdminBooking {
   doorstepLatitude?: number | null;
   doorstepLongitude?: number | null;
   doorstepMapUrl?: string;
+  source?: string;
   createdAt: string;
 }
 
@@ -158,6 +159,7 @@ export function AdminDashboard() {
           b.serviceLocation,
           b.doorstepCity,
           b.doorstepPincode,
+          b.source,
         ]
           .filter(Boolean)
           .some((v) => String(v).toLowerCase().includes(q))
@@ -342,14 +344,15 @@ export function AdminDashboard() {
               <table className="w-full table-fixed text-left text-sm divide-y divide-[var(--gm-border-subtle)]">
                 <thead className="bg-[var(--gm-bg-surface)]">
                   <tr className="text-[10px] uppercase tracking-[0.14em] text-[var(--gm-text-secondary)]">
-                    <th className="w-[14%] px-4 py-3.5 font-semibold">Booking ID</th>
+                    <th className="w-[13%] px-4 py-3.5 font-semibold">Booking ID</th>
                     <th className="w-[14%] px-4 py-3.5 font-semibold">Customer</th>
-                    <th className="w-[12%] px-4 py-3.5 font-semibold">Phone</th>
-                    <th className="w-[15%] px-4 py-3.5 font-semibold">Vehicle</th>
-                    <th className="w-[15%] px-4 py-3.5 font-semibold">Service</th>
-                    <th className="w-[12%] px-4 py-3.5 font-semibold">Requested</th>
-                    <th className="w-[10%] px-4 py-3.5 font-semibold">Status</th>
-                    <th className="w-[8%] px-4 py-3.5 font-semibold text-right">Action</th>
+                    <th className="w-[11%] px-4 py-3.5 font-semibold">Phone</th>
+                    <th className="w-[14%] px-4 py-3.5 font-semibold">Vehicle</th>
+                    <th className="w-[13%] px-4 py-3.5 font-semibold">Service</th>
+                    <th className="w-[11%] px-4 py-3.5 font-semibold">Requested</th>
+                    <th className="w-[9%] px-4 py-3.5 font-semibold">Status</th>
+                    <th className="w-[8%] px-4 py-3.5 font-semibold">Source</th>
+                    <th className="w-[7%] px-4 py-3.5 font-semibold text-right">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[var(--gm-border-subtle)]">
@@ -521,6 +524,13 @@ export function AdminDashboard() {
                         {/* Status */}
                         <td className="px-4 py-3.5 align-middle whitespace-nowrap">
                           <StatusBadge status={b.status} />
+                        </td>
+
+                        {/* Source */}
+                        <td className="px-4 py-3.5 align-middle whitespace-nowrap">
+                          <span className="text-xs text-[var(--gm-text-secondary)] font-medium">
+                            {b.source || 'Unknown'}
+                          </span>
                         </td>
 
                         {/* Action */}
@@ -704,6 +714,13 @@ export function AdminDashboard() {
                           {b.serviceLocation === 'Doorstep Service' ? `🏠 Doorstep (${b.doorstepCity || 'City'})` : '🏢 Workshop Bay'}
                         </p>
                       </div>
+
+                      <div className="min-w-0">
+                        <span className="block text-[9px] font-bold tracking-[0.16em] uppercase text-[var(--gm-text-muted)] mb-0.5">Source</span>
+                        <p className="text-[var(--gm-text-primary)] truncate" title={b.source || 'Unknown'}>
+                          {b.source || 'Unknown'}
+                        </p>
+                      </div>
                     </div>
 
                     {/* Card Footer: View Action */}
@@ -816,6 +833,7 @@ export function AdminDashboard() {
                 <Field label="Service Category" value={serviceTitle(selected.serviceCategory)} />
                 <Field label="Specific Service" value={selected.specificService || '—'} />
                 <Field label="Service Location" value={selected.serviceLocation || 'Workshop Visit'} />
+                <Field label="Source" value={selected.source || 'Unknown'} />
                 <Field label="Requested" value={`${selected.preferredDate}${selected.preferredTime ? ` · ${selected.preferredTime}` : ''}`} />
                 <Field label="Created" value={formatDateTime(selected.createdAt)} />
               </div>

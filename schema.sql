@@ -21,5 +21,6 @@ CREATE TABLE IF NOT EXISTS bookings (
   doorstepLatitude REAL,
   doorstepLongitude REAL,
   doorstepMapUrl TEXT,
+  source TEXT,
   createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
 );

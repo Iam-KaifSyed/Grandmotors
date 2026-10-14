@@ -56,6 +56,7 @@ class MockD1Database {
             preferredTime, status, additionalMessage, serviceLocation,
             doorstepHouseFlat, doorstepStreetLocality, doorstepCity,
             doorstepPincode, doorstepLatitude, doorstepLongitude, doorstepMapUrl,
+            source,
             createdAt
           ] = boundParams;
 
@@ -72,6 +73,7 @@ class MockD1Database {
             doorstepLatitude: doorstepLatitude ?? null,
             doorstepLongitude: doorstepLongitude ?? null,
             doorstepMapUrl: doorstepMapUrl || '',
+            source: source || 'Direct/Unknown',
             createdAt
           };
           self.records.set(id, record);

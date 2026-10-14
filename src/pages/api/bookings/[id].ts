@@ -87,6 +87,7 @@ export const GET: APIRoute = async ({ params, request, locals }) => {
       doorstepLatitude,
       doorstepLongitude,
       doorstepMapUrl,
+      source: row.source ? row.source : 'Unknown',
       additionalMessage: isAdmin ? (row.additionalMessage || '') : undefined,
       createdAt: row.createdAt
     };
