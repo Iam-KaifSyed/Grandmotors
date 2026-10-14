@@ -4,12 +4,201 @@ import Header from '../components/Header.astro';
 import { Footer } from '../components/site/Footer';
 
 interface Props {
-  title: string;
-  description: string;
+  title?: string;
+  description?: string;
+  keywords?: string;
+  canonical?: string;
+  ogType?: string;
+  ogImage?: string;
+  ogImageAlt?: string;
   showHeader?: boolean;
   showFooter?: boolean;
+  schema?: Record<string, any> | Array<Record<string, any>>;
+  noindex?: boolean;
 }
-const { title, description, showHeader = true, showFooter = true } = Astro.props;
+
+const {
+  title = 'Car Mechanic in Hyderabad | Best 24/7 Auto Repair Shop & Mobile Mechanic | Grand Motors',
+  description = 'Grand Motors is Hyderabad’s trusted car mechanic & auto service center. 24 hrs emergency car repair, doorstep mechanics in Madhapur & Shamshabad, battery jump start, engine, brake & AC repair.',
+  keywords = 'Car Mechanic, 24 Hrs car mechanic near me, Car mechanic near shamshabad Hyderabad, Car mechanic near me open now, Car mechanic near Madhapur Hyderabad, Car mechanic near me, Doorstep car mechanic near me, Mobile car mechanic near me, Who is the best car mechanic near me in Hyderabad, nearby car mechanic, car mechanic, nearby car mechanic shop, best car mechanic near me, online car mechanic near me, online car mechanic, car mechanic attapur, car mechanic and electrician near me, Jump start Service near me, Jump Start, a good car mechanic near me, car mechanic battery jump start near me, car mechanic book online, auto repair shop, mechanic near me, brake repair, oil change, engine repair, transmission repair, tire replacement Hyderabad, battery replacement Hyderabad, check engine light Hyderabad, auto mechanic Hyderabad, car maintenance Hyderabad, 24/7 mechanic Hyderabad, mobile mechanic Hyderabad, car AC repair Hyderabad, alternator replacement Hyderabad, auto service center Hyderabad, emergency car repair Hyderabad, cheap car repair Hyderabad',
+  canonical,
+  ogType = 'website',
+  ogImage = '/images/services-hero.jpg',
+  ogImageAlt = 'Grand Motors - Premier Car Mechanic and Auto Repair Shop in Hyderabad',
+  showHeader = true,
+  showFooter = true,
+  schema,
+  noindex = false,
+} = Astro.props;
+
+const siteUrl = 'https://grandmotors.in';
+const pathname = Astro.url.pathname;
+const cleanPath = pathname === '/' ? '' : pathname.replace(/\/$/, '');
+const canonicalUrl = canonical || `${siteUrl}${cleanPath}`;
+const ogImageUrl = ogImage.startsWith('http') ? ogImage : `${siteUrl}${ogImage.startsWith('/') ? '' : '/'}${ogImage}`;
+
+// Core Schema.org LocalBusiness & AutoRepair data
+const defaultLocalBusinessSchema = {
+  '@context': 'https://schema.org',
+  '@type': ['AutoRepair', 'AutoBodyShop', 'LocalBusiness'],
+  '@id': `${siteUrl}/#autorepair`,
+  name: 'Grand Motors - Car Mechanic & Auto Repair Shop',
+  alternateName: 'Grand Motors Hyderabad',
+  description: description,
+  url: siteUrl,
+  logo: `${siteUrl}/images/services-hero.jpg`,
+  image: [
+    `${siteUrl}/images/services-hero.jpg`,
+    `${siteUrl}/images/service-general.jpg`,
+    `${siteUrl}/images/service-brakes.jpg`
+  ],
+  telephone: '+918623948898',
+  email: 'contact@grandmotors.in',
+  priceRange: '₹₹',
+  currenciesAccepted: 'INR',
+  paymentAccepted: 'Cash, Credit Card, Debit Card, UPI, Net Banking',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'Metro Pillar No. 842, 5-7-73/NR, beside JSP Honda Showroom, Habeeb Nagar',
+    addressLocality: 'Moosapet',
+    addressRegion: 'Telangana',
+    postalCode: '500072',
+    addressCountry: 'IN'
+  },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: 17.4699,
+    longitude: 78.4312
+  },
+  openingHoursSpecification: [
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+      opens: '00:00',
+      closes: '23:59'
+    }
+  ],
+  areaServed: [
+    { '@type': 'City', name: 'Hyderabad' },
+    { '@type': 'Place', name: 'Moosapet' },
+    { '@type': 'Place', name: 'Madhapur' },
+    { '@type': 'Place', name: 'Shamshabad' },
+    { '@type': 'Place', name: 'Attapur' },
+    { '@type': 'Place', name: 'Kukatpally' },
+    { '@type': 'Place', name: 'Hitec City' },
+    { '@type': 'Place', name: 'Gachibowli' },
+    { '@type': 'Place', name: 'Jubilee Hills' },
+    { '@type': 'Place', name: 'Banjara Hills' }
+  ],
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: 'Car Mechanic & Auto Repair Services',
+    itemListElement: [
+      {
+        '@type': 'Offer',
+        itemOffered: {
+          '@type': 'Service',
+          name: 'Car Mechanic & Periodic Maintenance',
+          description: 'Comprehensive general service, fluid changes, multi-point inspection, and warranty-ready maintenance.'
+        }
+      },
+      {
+        '@type': 'Offer',
+        itemOffered: {
+          '@type': 'Service',
+          name: '24 Hrs Car Mechanic & Emergency Roadside Assistance',
+          description: 'Round-the-clock emergency mechanic dispatch, towing assistance, and breakdown support in Hyderabad.'
+        }
+      },
+      {
+        '@type': 'Offer',
+        itemOffered: {
+          '@type': 'Service',
+          name: 'Battery Jump Start Service & Replacement',
+          description: 'Immediate jump start service near you with surge protection and battery health testing.'
+        }
+      },
+      {
+        '@type': 'Offer',
+        itemOffered: {
+          '@type': 'Service',
+          name: 'Doorstep & Mobile Car Mechanic Service',
+          description: 'Convenient doorstep car repair and inspection at your home or office across Hyderabad.'
+        }
+      },
+      {
+        '@type': 'Offer',
+        itemOffered: {
+          '@type': 'Service',
+          name: 'Brake Repair & Disc Replacement',
+          description: 'Brake pads, rotors, caliper servicing, ABS diagnostics, and fluid flushing.'
+        }
+      },
+      {
+        '@type': 'Offer',
+        itemOffered: {
+          '@type': 'Service',
+          name: 'Engine Repair & Computer Diagnostics',
+          description: 'Check engine light diagnostics, ECU scanning, timing belts, cylinder head, and overhaul.'
+        }
+      },
+      {
+        '@type': 'Offer',
+        itemOffered: {
+          '@type': 'Service',
+          name: 'Transmission Repair & Clutch Overhaul',
+          description: 'Automatic and manual transmission servicing, gear fluid flush, and clutch replacement.'
+        }
+      },
+      {
+        '@type': 'Offer',
+        itemOffered: {
+          '@type': 'Service',
+          name: 'Car AC Repair & Electrical Diagnostics',
+          description: 'AC gas recharging, compressor overhaul, alternator replacement, starter motor and auto electrician repairs.'
+        }
+      },
+      {
+        '@type': 'Offer',
+        itemOffered: {
+          '@type': 'Service',
+          name: 'Tire Replacement & Wheel Alignment',
+          description: '3D laser wheel alignment, tire replacement Hyderabad, balancing, and puncture repairs.'
+        }
+      }
+    ]
+  }
+};
+
+const defaultWebSiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': `${siteUrl}/#website`,
+  url: siteUrl,
+  name: 'Grand Motors',
+  description: 'Premier automotive workshop and digital booking platform in Hyderabad.',
+  publisher: {
+    '@id': `${siteUrl}/#autorepair`
+  },
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: `${siteUrl}/services?q={search_term_string}`,
+    'query-input': 'required name=search_term_string'
+  }
+};
+
+const schemasToRender: Record<string, any>[] = [
+  defaultLocalBusinessSchema,
+  defaultWebSiteSchema,
+];
+
+if (schema) {
+  if (Array.isArray(schema)) {
+    schemasToRender.push(...schema);
+  } else {
+    schemasToRender.push(schema);
+  }
+}
 ---
 
 <!doctype html>
@@ -18,8 +207,51 @@ const { title, description, showHeader = true, showFooter = true } = Astro.props
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#07090A" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate icon" href="/favicon.svg" />
+
+    <!-- Primary Meta Tags -->
     <title>{title}</title>
+    <meta name="title" content={title} />
     <meta name="description" content={description} />
+    <meta name="keywords" content={keywords} />
+    <meta name="author" content="Grand Motors Hyderabad" />
+    <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'} />
+    <link rel="canonical" href={canonicalUrl} />
+
+    <!-- Geo Meta Tags for Hyderabad Local SEO -->
+    <meta name="geo.region" content="IN-TG" />
+    <meta name="geo.placename" content="Hyderabad" />
+    <meta name="geo.position" content="17.469900;78.431200" />
+    <meta name="ICBM" content="17.469900, 78.431200" />
+
+    <!-- Open Graph / Facebook / WhatsApp -->
+    <meta property="og:site_name" content="Grand Motors" />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:secure_url" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={ogImageAlt} />
+    <meta property="og:locale" content="en_IN" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content={canonicalUrl} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+    <meta name="twitter:image:alt" content={ogImageAlt} />
+
+    <!-- Schema.org JSON-LD Structured Data -->
+    {schemasToRender.map((s) => (
+      <script type="application/ld+json" set:html={JSON.stringify(s)} />
+    ))}
 
     <!-- Synchronous Theme Setup (Prevents FOUC on page load/navigation) -->
     <script is:inline>

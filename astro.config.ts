@@ -6,6 +6,7 @@ import cloudflare from '@astrojs/cloudflare';
 import { fileURLToPath } from 'node:url';
 
 export default defineConfig({
+  site: 'https://grandmotors.in',
   output: 'static',
   adapter: cloudflare(),
   integrations: [react()],

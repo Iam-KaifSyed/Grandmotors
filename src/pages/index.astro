@@ -2,11 +2,57 @@
 import Base from '../layouts/Base.astro';
 import { ExperienceRoot } from '../components/ExperienceRoot';
 import { SiteContent } from '../components/site/SiteContent';
+import SeoContent from '../components/site/SeoContent.astro';
+
+const seoTitle = 'Car Mechanic in Hyderabad | Best 24/7 Auto Repair Shop & Mobile Mechanic | Grand Motors';
+const seoDescription = 'Grand Motors is Hyderabad’s trusted car mechanic & auto repair shop. 24 hrs emergency car repair, doorstep mechanics in Madhapur & Shamshabad, battery jump start, engine, brake & AC repair.';
+const seoKeywords = 'Car Mechanic, 24 Hrs car mechanic near me, Car mechanic near shamshabad Hyderabad, Car mechanic near me open now, Car mechanic near Madhapur Hyderabad, Car mechanic near me, Doorstep car mechanic near me, Mobile car mechanic near me, Who is the best car mechanic near me in Hyderabad, nearby car mechanic, car mechanic, nearby car mechanic shop, best car mechanic near me, online car mechanic near me, online car mechanic, car mechanic attapur, car mechanic and electrician near me, Jump start Service near me, Jump Start, a good car mechanic near me, car mechanic battery jump start near me, car mechanic book online, auto repair shop, mechanic near me, brake repair, oil change, engine repair, transmission repair, tire replacement Hyderabad, battery replacement Hyderabad, check engine light Hyderabad, auto mechanic Hyderabad, car maintenance Hyderabad, 24/7 mechanic Hyderabad, mobile mechanic Hyderabad, car AC repair Hyderabad, alternator replacement Hyderabad, auto service center Hyderabad, emergency car repair Hyderabad, cheap car repair Hyderabad';
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'Who is the best car mechanic near me in Hyderabad?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Grand Motors is widely recognized as one of the best car mechanics in Hyderabad, featuring certified automotive technicians, 24/7 emergency roadside assistance, computerised diagnostics, transparent upfront pricing, and convenient doorstep mechanics across Moosapet, Madhapur, Shamshabad, and Attapur.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How quickly can a mobile car mechanic near me arrive for emergency car repair in Hyderabad?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Our mobile mechanic units typically arrive within 25 to 45 minutes across primary Hyderabad zones, equipped to handle battery jump starts, tire changes, electrical faults, and minor mechanical fixes.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How do I book an online car mechanic with Grand Motors?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Simply visit our Book Service page, select your car make and model, pick either doorstep or workshop care, choose your desired repairs, and submit. You will receive immediate booking confirmation and live tracking access.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Do you provide 24 hrs car mechanic near me and battery jump start services in Hyderabad?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes, Grand Motors operates a dedicated 24/7 emergency car repair and battery jump start service across Hyderabad with surge-protected booster units and on-the-spot battery replacement.',
+      },
+    },
+  ],
+};
 ---
 
 <Base
-  title="Grand Motors"
-  description="Grand Motors, Habeeb Nagar, Moosapet, Hyderabad."
+  title={seoTitle}
+  description={seoDescription}
+  keywords={seoKeywords}
+  schema={faqSchema}
   showHeader={false}
 >
   <script is:inline>
@@ -20,8 +66,9 @@ import { SiteContent } from '../components/site/SiteContent';
   </script>
 
   <main style="overflow-anchor: none;">
-    <h1 class="sr-only">Grand Motors</h1>
+    <h1 class="sr-only">Grand Motors — Professional Car Mechanic, 24/7 Mobile Mechanic & Auto Repair Shop in Hyderabad</h1>
     <ExperienceRoot client:only="react" />
     <SiteContent client:visible />
+    <SeoContent />
   </main>
 </Base>
