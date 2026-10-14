@@ -87,6 +87,68 @@ function StatusBadge({ status }: { status: Status }) {
   );
 }
 
+function sourceStyles(source?: string) {
+  switch (source) {
+    case 'Google':
+      return {
+        badge:
+          'text-[#2563eb] dark:text-[#93c5fd] border-[#3b82f6]/40 dark:border-[#60a5fa]/50 bg-[#3b82f6]/10 shadow-[0_0_12px_rgba(59,130,246,0.35)]',
+        dot: 'bg-[#3b82f6] dark:bg-[#60a5fa] shadow-[0_0_8px_#3b82f6]',
+      };
+    case 'Facebook':
+      return {
+        badge:
+          'text-[#4f46e5] dark:text-[#a5b4fc] border-[#6366f1]/40 dark:border-[#818cf8]/50 bg-[#6366f1]/10 shadow-[0_0_12px_rgba(99,102,241,0.35)]',
+        dot: 'bg-[#6366f1] dark:bg-[#818cf8] shadow-[0_0_8px_#6366f1]',
+      };
+    case 'Instagram':
+      return {
+        badge:
+          'text-[#db2777] dark:text-[#f9a8d4] border-[#ec4899]/40 dark:border-[#f472b6]/50 bg-[#ec4899]/10 shadow-[0_0_12px_rgba(236,72,153,0.35)]',
+        dot: 'bg-[#ec4899] dark:bg-[#f472b6] shadow-[0_0_8px_#ec4899]',
+      };
+    case 'WhatsApp':
+      return {
+        badge:
+          'text-[#059669] dark:text-[#6ee7b7] border-[#10b981]/40 dark:border-[#34d399]/50 bg-[#10b981]/10 shadow-[0_0_12px_rgba(16,185,129,0.35)]',
+        dot: 'bg-[#10b981] dark:bg-[#34d399] shadow-[0_0_8px_#10b981]',
+      };
+    case 'Referral':
+      return {
+        badge:
+          'text-[var(--gm-accent-primary)] border-[var(--gm-accent-border)] hover:border-[var(--gm-accent-border-hover)] bg-[var(--gm-accent-muted)] shadow-[0_0_12px_var(--gm-accent-glow)]',
+        dot: 'bg-[var(--gm-accent-primary)] shadow-[0_0_8px_var(--gm-accent-primary)]',
+      };
+    case 'Direct/Unknown':
+      return {
+        badge:
+          'text-[#0891b2] dark:text-[#67e8f9] border-[#06b6d4]/40 dark:border-[#22d3ee]/50 bg-[#06b6d4]/10 shadow-[0_0_12px_rgba(6,182,212,0.3)]',
+        dot: 'bg-[#06b6d4] dark:bg-[#22d3ee] shadow-[0_0_8px_#22d3ee]',
+      };
+    case 'Unknown':
+    default:
+      return {
+        badge:
+          'text-[var(--gm-text-muted)] border-[var(--gm-border-medium)] bg-[var(--gm-bg-card-subtle)] shadow-[0_0_8px_rgba(255,255,255,0.06)]',
+        dot: 'bg-[var(--gm-text-muted)] shadow-[0_0_4px_rgba(255,255,255,0.2)]',
+      };
+  }
+}
+
+function SourceBadge({ source }: { source?: string }) {
+  const displaySource = source || 'Unknown';
+  const styles = sourceStyles(displaySource);
+
+  return (
+    <span
+      className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-semibold tracking-[0.14em] uppercase rounded-full border backdrop-blur-xs transition-all duration-200 ${styles.badge}`}
+    >
+      <span className={`w-1.5 h-1.5 rounded-full ${styles.dot}`} />
+      {displaySource}
+    </span>
+  );
+}
+
 export function AdminDashboard() {
   const [bookings, setBookings] = useState<AdminBooking[] | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -344,14 +406,14 @@ export function AdminDashboard() {
               <table className="w-full table-fixed text-left text-sm divide-y divide-[var(--gm-border-subtle)]">
                 <thead className="bg-[var(--gm-bg-surface)]">
                   <tr className="text-[10px] uppercase tracking-[0.14em] text-[var(--gm-text-secondary)]">
-                    <th className="w-[13%] px-4 py-3.5 font-semibold">Booking ID</th>
-                    <th className="w-[14%] px-4 py-3.5 font-semibold">Customer</th>
-                    <th className="w-[11%] px-4 py-3.5 font-semibold">Phone</th>
-                    <th className="w-[14%] px-4 py-3.5 font-semibold">Vehicle</th>
+                    <th className="w-[12%] px-4 py-3.5 font-semibold">Booking ID</th>
+                    <th className="w-[13%] px-4 py-3.5 font-semibold">Customer</th>
+                    <th className="w-[10%] px-4 py-3.5 font-semibold">Phone</th>
+                    <th className="w-[13%] px-4 py-3.5 font-semibold">Vehicle</th>
                     <th className="w-[13%] px-4 py-3.5 font-semibold">Service</th>
                     <th className="w-[11%] px-4 py-3.5 font-semibold">Requested</th>
                     <th className="w-[9%] px-4 py-3.5 font-semibold">Status</th>
-                    <th className="w-[8%] px-4 py-3.5 font-semibold">Source</th>
+                    <th className="w-[12%] px-4 py-3.5 font-semibold text-[var(--gm-text-primary)]">Source</th>
                     <th className="w-[7%] px-4 py-3.5 font-semibold text-right">Action</th>
                   </tr>
                 </thead>
@@ -528,9 +590,7 @@ export function AdminDashboard() {
 
                         {/* Source */}
                         <td className="px-4 py-3.5 align-middle whitespace-nowrap">
-                          <span className="text-xs text-[var(--gm-text-secondary)] font-medium">
-                            {b.source || 'Unknown'}
-                          </span>
+                          <SourceBadge source={b.source} />
                         </td>
 
                         {/* Action */}
@@ -716,10 +776,8 @@ export function AdminDashboard() {
                       </div>
 
                       <div className="min-w-0">
-                        <span className="block text-[9px] font-bold tracking-[0.16em] uppercase text-[var(--gm-text-muted)] mb-0.5">Source</span>
-                        <p className="text-[var(--gm-text-primary)] truncate" title={b.source || 'Unknown'}>
-                          {b.source || 'Unknown'}
-                        </p>
+                        <span className="block text-[9px] font-bold tracking-[0.16em] uppercase text-[var(--gm-text-muted)] mb-1">Source</span>
+                        <SourceBadge source={b.source} />
                       </div>
                     </div>
 
@@ -833,7 +891,9 @@ export function AdminDashboard() {
                 <Field label="Service Category" value={serviceTitle(selected.serviceCategory)} />
                 <Field label="Specific Service" value={selected.specificService || '—'} />
                 <Field label="Service Location" value={selected.serviceLocation || 'Workshop Visit'} />
-                <Field label="Source" value={selected.source || 'Unknown'} />
+                <Field label="Source">
+                  <SourceBadge source={selected.source} />
+                </Field>
                 <Field label="Requested" value={`${selected.preferredDate}${selected.preferredTime ? ` · ${selected.preferredTime}` : ''}`} />
                 <Field label="Created" value={formatDateTime(selected.createdAt)} />
               </div>
@@ -936,11 +996,25 @@ export function AdminDashboard() {
   );
 }
 
-function Field({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
+function Field({
+  label,
+  value,
+  mono,
+  children,
+}: {
+  label: string;
+  value?: string;
+  mono?: boolean;
+  children?: React.ReactNode;
+}) {
   return (
     <div className="min-w-0">
       <span className="block text-[10px] font-bold tracking-[0.18em] text-[var(--gm-text-muted)] uppercase mb-1.5">{label}</span>
-      <span className={`block text-[var(--gm-text-primary)] break-words ${mono ? 'font-mono' : ''}`}>{value}</span>
+      {children ? (
+        children
+      ) : (
+        <span className={`block text-[var(--gm-text-primary)] break-words ${mono ? 'font-mono' : ''}`}>{value || '—'}</span>
+      )}
     </div>
   );
 }
