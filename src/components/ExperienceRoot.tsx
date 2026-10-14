@@ -117,12 +117,14 @@ export function ExperienceRoot() {
       {/* 1. Permanent Fixed Top Navbar across entire page */}
       <Navbar heroComplete={heroComplete} isScrolled={isScrolled} />
 
-      {/* 2. Fixed 3D Canvas Layer */}
+      {/* 2. Fixed 3D Canvas Layer (calibrated dark garage setup preserved) */}
       <div
+        id="experience-canvas-container"
         className="fixed inset-0 w-full h-full pointer-events-none bg-[#07090A] overflow-hidden"
         style={{
           zIndex: 0,
           visibility: isCompletelyCovered ? 'hidden' : 'visible',
+          backgroundColor: '#07090a',
         }}
       >
         {ready && (

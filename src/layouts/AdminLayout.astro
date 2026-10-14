@@ -10,13 +10,38 @@ const { title, chrome = true } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en" class="bg-[#07090A] text-[#F2F0EA] antialiased">
+<html lang="en" class="antialiased">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#07090A" />
     <meta name="robots" content="noindex, nofollow" />
     <title>{title}</title>
+
+    <!-- Synchronous Theme Setup (Prevents FOUC) -->
+    <script is:inline>
+      (function() {
+        try {
+          var mode = localStorage.getItem('gm-theme-mode') || 'dark';
+          var accent = localStorage.getItem('gm-theme-accent') || 'amber';
+          var effectiveMode = mode;
+          if (mode === 'system') {
+            effectiveMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+          }
+          var doc = document.documentElement;
+          doc.setAttribute('data-theme-mode', effectiveMode);
+          doc.setAttribute('data-theme-accent', accent);
+          doc.classList.toggle('dark', effectiveMode === 'dark');
+          doc.classList.toggle('light', effectiveMode === 'light');
+          
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) {
+            meta.setAttribute('content', effectiveMode === 'light' ? '#f6f7f9' : '#07090a');
+          }
+        } catch (e) {}
+      })();
+    </script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -24,17 +49,17 @@ const { title, chrome = true } = Astro.props;
       rel="stylesheet"
     />
   </head>
-  <body class="min-h-screen bg-[#07090A] text-[#F2F0EA] selection:bg-[#B88952]/30 selection:text-[#F2F0EA]">
+  <body class="min-h-screen selection:bg-[var(--gm-accent-muted)] selection:text-[var(--gm-text-primary)]">
     {chrome && (
-      <header class="sticky top-0 z-30 border-b border-white/8 bg-[#0A0C0D]/90 backdrop-blur-md">
+      <header class="sticky top-0 z-30 border-b border-[var(--gm-border-subtle)] bg-[var(--gm-bg-surface)]/90 backdrop-blur-md">
         <div class="max-w-7xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between">
           <div class="flex items-center gap-8">
             <a href="/admin" class="flex items-center gap-2.5 cursor-pointer group">
-              <span class="text-sm font-semibold tracking-[0.25em] text-[#F2F0EA] uppercase group-hover:text-[#B88952] transition-colors">
+              <span class="text-sm font-semibold tracking-[0.25em] text-[var(--gm-text-primary)] uppercase group-hover:text-[var(--gm-accent-primary)] transition-colors">
                 Grand Motors
               </span>
-              <span class="w-1.5 h-1.5 rounded-full bg-[#B88952]"></span>
-              <span class="ml-2 text-[10px] font-semibold tracking-[0.22em] uppercase text-[#A7AAAD]/70 border border-white/10 rounded-full px-2.5 py-0.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-[var(--gm-accent-primary)]"></span>
+              <span class="ml-2 text-[10px] font-semibold tracking-[0.22em] uppercase text-[var(--gm-text-secondary)]/70 border border-[var(--gm-border-subtle)] rounded-full px-2.5 py-0.5">
                 Admin
               </span>
             </a>
@@ -42,25 +67,25 @@ const { title, chrome = true } = Astro.props;
             <nav class="hidden md:flex items-center gap-1.5">
               <a
                 href="/admin"
-                class="px-3 py-1.5 text-[11px] font-semibold tracking-[0.14em] uppercase text-[#A7AAAD] hover:text-[#F2F0EA] hover:bg-white/5 rounded-lg transition-colors"
+                class="px-3 py-1.5 text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)] hover:bg-[var(--gm-bg-card-hover)] rounded-lg transition-colors"
               >
                 Bookings
               </a>
               <a
                 href="/admin/media"
-                class="px-3 py-1.5 text-[11px] font-semibold tracking-[0.14em] uppercase text-[#A7AAAD] hover:text-[#F2F0EA] hover:bg-white/5 rounded-lg transition-colors"
+                class="px-3 py-1.5 text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)] hover:bg-[var(--gm-bg-card-hover)] rounded-lg transition-colors"
               >
                 Media
               </a>
               <a
                 href="/admin/services"
-                class="px-3 py-1.5 text-[11px] font-semibold tracking-[0.14em] uppercase text-[#A7AAAD] hover:text-[#F2F0EA] hover:bg-white/5 rounded-lg transition-colors"
+                class="px-3 py-1.5 text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)] hover:bg-[var(--gm-bg-card-hover)] rounded-lg transition-colors"
               >
                 Services
               </a>
               <a
                 href="/admin/booking-form"
-                class="px-3 py-1.5 text-[11px] font-semibold tracking-[0.14em] uppercase text-[#A7AAAD] hover:text-[#F2F0EA] hover:bg-white/5 rounded-lg transition-colors"
+                class="px-3 py-1.5 text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)] hover:bg-[var(--gm-bg-card-hover)] rounded-lg transition-colors"
               >
                 Booking Form
               </a>
@@ -69,7 +94,7 @@ const { title, chrome = true } = Astro.props;
           <button
             type="button"
             id="admin-logout"
-            class="inline-flex items-center gap-2 px-4 py-2 text-[11px] font-semibold tracking-[0.16em] uppercase text-[#A7AAAD] hover:text-[#F2F0EA] bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-colors cursor-pointer"
+            class="inline-flex items-center gap-2 px-4 py-2 text-[11px] font-semibold tracking-[0.16em] uppercase text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)] bg-[var(--gm-bg-card)] hover:bg-[var(--gm-bg-card-hover)] border border-[var(--gm-border-subtle)] rounded-lg transition-colors cursor-pointer"
           >
             Log out
           </button>
@@ -95,5 +120,12 @@ const { title, chrome = true } = Astro.props;
         });
       </script>
     )}
+
+    <script>
+      import { initTheme } from '../lib/theme';
+      initTheme();
+      document.addEventListener('astro:page-load', initTheme);
+      document.addEventListener('astro:after-swap', initTheme);
+    </script>
   </body>
 </html>

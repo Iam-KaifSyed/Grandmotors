@@ -14,8 +14,6 @@ import {
 interface Props {
   error: unknown;
 }
-// The error prop is available but intentionally not displayed to users
-// to avoid exposing sensitive server-side error details.
 const { error: _error } = Astro.props;
 
 const PHONE_DISPLAY = '+91 86239 48898';
@@ -26,21 +24,11 @@ const PHONE_TEL = '+918623948898';
   title="500 — Service Unavailable | Grand Motors"
   description="We encountered an unexpected issue on our end. Our team has been notified. Please try again or contact us directly."
 >
-  <main class="relative min-h-[calc(100vh-80px)] pt-32 sm:pt-36 md:pt-40 pb-20 md:pb-28 overflow-hidden flex flex-col justify-center">
-    <!-- Ambient Background Glows — Red-tinted for error signal -->
+  <main class="relative min-h-[calc(100vh-80px)] pt-32 sm:pt-36 md:pt-40 pb-20 md:pb-28 overflow-hidden flex flex-col justify-center bg-[var(--gm-bg-page)] text-[var(--gm-text-primary)] transition-colors duration-200">
+    <!-- Ambient Background Glows -->
     <div
       aria-hidden="true"
       class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] sm:w-[500px] md:w-[700px] h-[300px] sm:h-[420px] bg-red-900/10 rounded-full blur-[120px] sm:blur-[160px] pointer-events-none"
-    ></div>
-    <div
-      aria-hidden="true"
-      class="absolute top-1/2 right-0 w-72 h-72 bg-[#B88952]/5 rounded-full blur-[100px] pointer-events-none"
-    ></div>
-
-    <!-- Technical Grid -->
-    <div
-      aria-hidden="true"
-      class="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_40%,#000_70%,transparent_100%)] pointer-events-none"
     ></div>
 
     <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-8 md:px-12 w-full text-center">
@@ -54,14 +42,6 @@ const PHONE_TEL = '+918623948898';
 
       <!-- Alert Triangles + 500 Stacked -->
       <div class="relative flex items-center justify-center select-none my-2 sm:my-4">
-        <!-- Background Monogram Watermark -->
-        <div
-          aria-hidden="true"
-          class="absolute font-mono font-black text-[130px] sm:text-[200px] md:text-[250px] lg:text-[290px] text-white/[0.02] tracking-widest leading-none pointer-events-none"
-        >
-          500
-        </div>
-
         <div class="relative z-10 flex flex-col items-center gap-2">
           <!-- Alert Icon in large format -->
           <div class="relative mb-2">
@@ -73,18 +53,18 @@ const PHONE_TEL = '+918623948898';
           </div>
 
           <!-- 500 Text -->
-          <div class="font-mono font-black text-6xl sm:text-8xl md:text-[110px] lg:text-[130px] leading-none tracking-[-0.04em] bg-gradient-to-b from-[#F2F0EA] via-[#e8e0d8] to-[#A7AAAD] bg-clip-text text-transparent">
+          <div class="font-mono font-black text-6xl sm:text-8xl md:text-[110px] lg:text-[130px] leading-none tracking-[-0.04em] bg-gradient-to-b from-[var(--gm-text-primary)] via-[var(--gm-text-secondary)] to-[var(--gm-text-muted)] bg-clip-text text-transparent">
             500
           </div>
         </div>
       </div>
 
       <!-- Editorial Headline -->
-      <h1 class="mt-4 sm:mt-6 text-2xl sm:text-3xl md:text-5xl font-extrabold uppercase tracking-[-0.03em] text-[#F2F0EA]">
+      <h1 class="mt-4 sm:mt-6 text-2xl sm:text-3xl md:text-5xl font-extrabold uppercase tracking-[-0.03em] text-[var(--gm-text-primary)]">
         Diagnostic Fault. <span class="text-red-400">System Error.</span>
       </h1>
 
-      <p class="mt-4 sm:mt-5 text-xs sm:text-sm md:text-base text-[#A7AAAD] max-w-xl mx-auto leading-relaxed">
+      <p class="mt-4 sm:mt-5 text-xs sm:text-sm md:text-base text-[var(--gm-text-secondary)] max-w-xl mx-auto leading-relaxed">
         Something unexpected failed on our end — like a fault code during a deep diagnostic scan. Our team has been automatically notified. Please try again shortly or reach us directly.
       </p>
 
@@ -92,7 +72,7 @@ const PHONE_TEL = '+918623948898';
       <div class="mt-8 sm:mt-10 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
         <button
           onclick="window.location.reload()"
-          class="group inline-flex items-center justify-center gap-2.5 px-6 sm:px-7 py-3 sm:py-3.5 bg-[#B88952] hover:bg-[#c99a63] active:bg-[#a67943] text-[#0A0C0D] font-bold text-xs sm:text-[13px] tracking-[0.16em] uppercase rounded-full transition-all shadow-lg shadow-[#B88952]/15 cursor-pointer border-none"
+          class="group inline-flex items-center justify-center gap-2.5 px-6 sm:px-7 py-3 sm:py-3.5 bg-[var(--gm-accent-primary)] hover:bg-[var(--gm-accent-hover)] active:bg-[var(--gm-accent-active)] text-[var(--gm-accent-foreground)] font-bold text-xs sm:text-[13px] tracking-[0.16em] uppercase rounded-full transition-all shadow-lg shadow-[var(--gm-accent-primary)]/20 cursor-pointer border-none"
         >
           <RefreshIcon className="w-4 h-4 transition-transform group-hover:rotate-180 duration-500" />
           <span>Retry</span>
@@ -100,7 +80,7 @@ const PHONE_TEL = '+918623948898';
 
         <a
           href="/"
-          class="group inline-flex items-center justify-center gap-2.5 px-6 sm:px-7 py-3 sm:py-3.5 bg-[#181B1E] hover:bg-[#22252a] text-[#F2F0EA] font-semibold text-xs sm:text-[13px] tracking-[0.16em] uppercase border border-white/10 hover:border-[#B88952]/40 rounded-full transition-all"
+          class="group inline-flex items-center justify-center gap-2.5 px-6 sm:px-7 py-3 sm:py-3.5 bg-[var(--gm-bg-card)] hover:bg-[var(--gm-bg-card-hover)] text-[var(--gm-text-primary)] font-semibold text-xs sm:text-[13px] tracking-[0.16em] uppercase border border-[var(--gm-border-medium)] hover:border-[var(--gm-accent-border)] rounded-full transition-all shadow-sm"
         >
           <ArrowLeftIcon className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
           <span>Return Home</span>
@@ -108,19 +88,19 @@ const PHONE_TEL = '+918623948898';
 
         <a
           href={`tel:${PHONE_TEL}`}
-          class="group inline-flex items-center justify-center gap-2 px-5 py-3 sm:py-3.5 text-[#A7AAAD] hover:text-[#F2F0EA] font-semibold text-xs sm:text-[13px] tracking-[0.14em] uppercase border border-white/5 hover:border-white/15 hover:bg-white/[0.02] rounded-full transition-all"
+          class="group inline-flex items-center justify-center gap-2 px-5 py-3 sm:py-3.5 text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)] font-semibold text-xs sm:text-[13px] tracking-[0.14em] uppercase border border-[var(--gm-border-subtle)] hover:border-[var(--gm-border-medium)] hover:bg-[var(--gm-bg-card-subtle)] rounded-full transition-all"
         >
-          <PhoneIcon className="w-4 h-4 text-[#B88952]" />
+          <PhoneIcon className="w-4 h-4 text-[var(--gm-accent-primary)]" />
           <span>Call Workshop</span>
         </a>
       </div>
 
        <!-- Quick Nav Links -->
-      <div class="mt-12 sm:mt-14 pt-8 border-t border-white/5">
-        <p class="text-[11px] font-semibold tracking-[0.18em] uppercase text-[#A7AAAD] mb-5 flex items-center justify-center gap-2">
-          <span class="h-px w-8 bg-white/20 inline-block"></span>
+      <div class="mt-12 sm:mt-14 pt-8 border-t border-[var(--gm-border-subtle)]">
+        <p class="text-[11px] font-semibold tracking-[0.18em] uppercase text-[var(--gm-text-secondary)] mb-5 flex items-center justify-center gap-2">
+          <span class="h-px w-8 bg-[var(--gm-border-medium)] inline-block"></span>
           Other pages
-          <span class="h-px w-8 bg-white/20 inline-block"></span>
+          <span class="h-px w-8 bg-[var(--gm-border-medium)] inline-block"></span>
         </p>
 
         <div class="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
@@ -133,32 +113,32 @@ const PHONE_TEL = '+918623948898';
           ].map(({ label, href, Icon }) => (
             <a
               href={href}
-              class="group inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#111315] border border-white/8 hover:border-[#B88952]/40 hover:bg-[#181B1E] text-[#A7AAAD] hover:text-[#F2F0EA] text-xs font-semibold tracking-[0.12em] uppercase transition-all"
+              class="group inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--gm-bg-card)] border border-[var(--gm-border-subtle)] hover:border-[var(--gm-accent-border)] hover:bg-[var(--gm-bg-card-hover)] text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)] text-xs font-semibold tracking-[0.12em] uppercase transition-all shadow-sm"
             >
-              {Icon && <Icon className="w-3.5 h-3.5 text-[#B88952]" />}
+              {Icon && <Icon className="w-3.5 h-3.5 text-[var(--gm-accent-primary)]" />}
               <span>{label}</span>
-              <ArrowRightIcon className="w-3 h-3 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-[#B88952]" />
+              <ArrowRightIcon className="w-3 h-3 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-[var(--gm-accent-primary)]" />
             </a>
           ))}
         </div>
       </div>
 
       <!-- Workshop Telemetry Bar -->
-      <div class="mt-10 sm:mt-12 p-4 rounded-xl border border-white/5 bg-black/40 backdrop-blur-sm flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#A7AAAD]">
+      <div class="mt-10 sm:mt-12 p-4 rounded-xl border border-[var(--gm-border-subtle)] bg-[var(--gm-bg-card)] backdrop-blur-sm flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[var(--gm-text-secondary)] shadow-sm">
         <div class="flex items-center gap-2">
-          <ShieldCheckIcon className="w-4 h-4 text-[#B88952]" />
+          <ShieldCheckIcon className="w-4 h-4 text-[var(--gm-accent-primary)]" />
           <span>Prefer to speak to someone? Our workshop team is available.</span>
         </div>
         <div class="flex items-center gap-4">
           <a
             href={`tel:${PHONE_TEL}`}
-            class="text-[#F2F0EA] hover:text-[#B88952] font-semibold transition-colors flex items-center gap-1.5"
+            class="text-[var(--gm-text-primary)] hover:text-[var(--gm-accent-primary)] font-semibold transition-colors flex items-center gap-1.5"
           >
-            <PhoneIcon className="w-3.5 h-3.5 text-[#B88952]" />
+            <PhoneIcon className="w-3.5 h-3.5 text-[var(--gm-accent-primary)]" />
             <span>{PHONE_DISPLAY}</span>
           </a>
-          <span class="text-white/20 hidden sm:inline">|</span>
-          <span class="text-[11px] font-mono text-[#A7AAAD]/70">
+          <span class="text-[var(--gm-border-medium)] hidden sm:inline">|</span>
+          <span class="text-[11px] font-mono text-[var(--gm-text-muted)]">
             MOOSAPET, HYDERABAD
           </span>
         </div>

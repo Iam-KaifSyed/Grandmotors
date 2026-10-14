@@ -5,6 +5,7 @@ import { CHAPTER_DATA } from '../lib/chapterTransitions';
 
 import { Home, Wrench, Calendar, Info, Phone } from 'lucide-react';
 import { NavBar, type NavItem } from './ui/tubelight-navbar';
+import { ThemeControls, ThemeModeToggle, MobileThemeControls } from './ui/ThemeControls';
 
 const navItems: NavItem[] = [
   { name: 'Home', url: '/', icon: Home },
@@ -77,21 +78,25 @@ export function Navbar({ heroComplete = false, isScrolled = false }: NavbarProps
     <header
       className={`fixed top-0 left-0 right-0 z-50 pointer-events-none transition-all duration-300 ${
         isScrolled || heroComplete
-          ? 'bg-[#07090A]/90 backdrop-blur-md border-b border-white/8 shadow-lg shadow-black/40 py-3 sm:py-3.5'
-          : 'bg-gradient-to-b from-[#07090A]/90 via-[#07090A]/40 to-transparent py-4 sm:py-5 md:py-6'
+          ? 'bg-[var(--gm-bg-nav)] backdrop-blur-md border-b border-[var(--gm-border-subtle)] shadow-sm py-3 sm:py-3.5'
+          : 'bg-gradient-to-b from-black/80 via-black/30 to-transparent py-4 sm:py-5 md:py-6'
       }`}
     >
       <div className="w-full px-4 sm:px-8 md:px-12 lg:px-16 flex items-center justify-between">
         {/* Brand */}
         <a
           href="/"
-          className="flex items-center gap-2 sm:gap-3 pointer-events-auto group shrink-0 pt-0.5"
+          className="flex items-center gap-2 sm:gap-2.5 pointer-events-auto group shrink-0 pt-0.5"
           aria-label="Grand Motors Home"
         >
-          <span className="text-xs md:text-sm font-semibold tracking-[0.25em] text-[#F2F0EA] uppercase group-hover:text-[#B88952] transition-colors">
+          <span
+            className={`text-xs md:text-sm font-semibold tracking-[0.25em] uppercase group-hover:text-[var(--gm-accent-primary)] transition-colors ${
+              isScrolled || heroComplete ? 'text-[var(--gm-text-primary)]' : 'text-white'
+            }`}
+          >
             GRAND MOTORS
           </span>
-          <span className="w-1.5 h-1.5 rounded-full bg-[#B88952] opacity-80 group-hover:opacity-100 transition-opacity shadow-[0_0_6px_rgba(184,137,82,0.8)]" />
+          <span className="w-1.5 h-1.5 rounded-full bg-[var(--gm-accent-primary)] opacity-80 group-hover:opacity-100 transition-opacity shadow-[0_0_8px_var(--gm-accent-glow)]" />
         </a>
 
         {/* Tubelight Navigation Bar (Desktop / Tablet) */}
@@ -102,16 +107,22 @@ export function Navbar({ heroComplete = false, isScrolled = false }: NavbarProps
         />
 
         {/* Right Side Controls */}
-        <div className="flex items-center gap-3 sm:gap-4 md:gap-5 pointer-events-auto">
+        <div className="flex items-center gap-2 sm:gap-2.5 md:gap-3 pointer-events-auto">
+          {/* Desktop Theme Controls (Mode Toggle + Accent Picker) */}
+          <ThemeControls className="hidden sm:flex" />
+
+          {/* Mobile Theme Mode Toggle (Sun/Moon direct tap) */}
+          <ThemeModeToggle className="sm:hidden" />
+
           {/* Doorstep Service Button Beside Book Service */}
           <div className="hidden lg:block">
             <a
               href="/book-service?location=doorstep#doorstep"
-              className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold tracking-[0.14em] uppercase text-[#F2F0EA] hover:text-[#B88952] bg-white/5 hover:bg-[#B88952]/10 border border-[#B88952]/30 hover:border-[#B88952]/60 rounded-full transition-all group pointer-events-auto cursor-pointer shadow-sm shadow-[#B88952]/5"
+              className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold tracking-[0.14em] uppercase text-[var(--gm-text-primary)] hover:text-[var(--gm-accent-primary)] bg-[var(--gm-bg-card)] hover:bg-[var(--gm-accent-muted)] border border-[var(--gm-border-subtle)] hover:border-[var(--gm-accent-border)] rounded-full transition-all group pointer-events-auto cursor-pointer shadow-sm"
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-[#B88952] animate-amber-glow" />
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--gm-accent-primary)] animate-accent-glow" />
               <span>Doorstep</span>
-              <span className="inline-flex items-center px-1.5 py-0.5 text-[9px] font-extrabold tracking-wider uppercase rounded-full bg-[#B88952]/20 text-[#B88952] border border-[#B88952]/50 animate-amber-glow shadow-[0_0_8px_rgba(184,137,82,0.4)]">
+              <span className="inline-flex items-center px-1.5 py-0.5 text-[9px] font-extrabold tracking-wider uppercase rounded-full bg-[var(--gm-accent-muted)] text-[var(--gm-accent-primary)] border border-[var(--gm-accent-border)] animate-accent-glow shadow-[0_0_8px_var(--gm-accent-glow)]">
                 NEW
               </span>
             </a>
@@ -121,7 +132,7 @@ export function Navbar({ heroComplete = false, isScrolled = false }: NavbarProps
           <div className="hidden sm:block">
             <a
               href="/book-service"
-              className="inline-flex items-center justify-center px-4 sm:px-5 py-2 text-xs font-semibold tracking-[0.14em] uppercase text-[#0A0C0D] bg-[#B88952] hover:bg-[#caa066] active:bg-[#a67943] rounded-full transition-colors pointer-events-auto shadow-md shadow-[#B88952]/15"
+              className="inline-flex items-center justify-center px-4 sm:px-4.5 py-1.5 sm:py-2 text-xs font-semibold tracking-[0.14em] uppercase text-[var(--gm-accent-foreground)] bg-[var(--gm-accent-primary)] hover:bg-[var(--gm-accent-hover)] active:bg-[var(--gm-accent-active)] rounded-full transition-colors pointer-events-auto shadow-md shadow-[var(--gm-accent-primary)]/20"
             >
               Book Service
             </a>
@@ -133,16 +144,16 @@ export function Navbar({ heroComplete = false, isScrolled = false }: NavbarProps
               heroComplete ? 'opacity-0 invisible pointer-events-none' : 'opacity-100 visible'
             }`}
           >
-            <div className="flex items-baseline justify-end gap-1 font-mono text-xs md:text-sm tracking-wider">
-              <span ref={indicatorNumberRef} className="text-[#F2F0EA] font-semibold">
+            <div className="flex items-baseline justify-end gap-1 font-mono text-xs md:text-sm tracking-wider text-white">
+              <span ref={indicatorNumberRef} className="text-white font-semibold">
                 01
               </span>
-              <span className="text-[#A7AAAD]/40">/</span>
-              <span className="text-[#A7AAAD]/60 text-[11px]">09</span>
+              <span className="text-white/40">/</span>
+              <span className="text-white/60 text-[11px]">09</span>
             </div>
             <div
               ref={indicatorLabelRef}
-              className="text-[9px] sm:text-[10px] md:text-[11px] font-medium tracking-[0.2em] sm:tracking-[0.22em] text-[#A7AAAD]/80 uppercase mt-0.5 truncate max-w-[120px] sm:max-w-none"
+              className="text-[9px] sm:text-[10px] md:text-[11px] font-medium tracking-[0.2em] sm:tracking-[0.22em] text-white/80 uppercase mt-0.5 truncate max-w-[120px] sm:max-w-none"
             >
               GARAGE ARRIVAL
             </div>
@@ -154,7 +165,7 @@ export function Navbar({ heroComplete = false, isScrolled = false }: NavbarProps
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle Navigation Menu"
             aria-expanded={mobileMenuOpen}
-            className="md:hidden flex items-center justify-center w-8 h-8 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-[#F2F0EA] hover:text-[#B88952] hover:border-[#B88952]/40 transition-all cursor-pointer pointer-events-auto"
+            className="md:hidden flex items-center justify-center w-8 h-8 rounded-full bg-[var(--gm-bg-card)]/80 backdrop-blur-md border border-[var(--gm-border-subtle)] text-[var(--gm-text-primary)] hover:text-[var(--gm-accent-primary)] hover:border-[var(--gm-accent-border)] transition-all cursor-pointer pointer-events-auto"
           >
             {mobileMenuOpen ? (
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -171,40 +182,44 @@ export function Navbar({ heroComplete = false, isScrolled = false }: NavbarProps
 
       {/* Mobile Drawer Menu Overlay */}
       {mobileMenuOpen && (
-        <div className="md:hidden fixed inset-x-4 top-[60px] z-50 pointer-events-auto animate-in fade-in duration-200">
-          <div className="bg-[#0e1013]/95 backdrop-blur-xl border border-white/12 rounded-2xl p-5 shadow-2xl space-y-4 max-w-sm mx-auto">
+        <div className="md:hidden fixed inset-x-4 top-[56px] z-50 pointer-events-auto animate-in fade-in duration-200">
+          <div className="bg-[var(--gm-bg-modal)]/95 backdrop-blur-xl border border-[var(--gm-border-medium)] rounded-2xl p-5 shadow-2xl space-y-4 max-w-sm mx-auto max-h-[calc(100dvh-72px)] overflow-y-auto">
             <nav className="flex flex-col gap-1">
               {navLinks.map((link) => (
                 <a
                   key={link.label}
                   href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-between px-4 py-2.5 text-xs font-bold tracking-[0.14em] uppercase text-[#D8D6D0] hover:text-[#B88952] hover:bg-white/5 rounded-xl transition-all"
+                  className="flex items-center justify-between px-4 py-2.5 text-xs font-bold tracking-[0.14em] uppercase text-[var(--gm-text-secondary)] hover:text-[var(--gm-accent-primary)] hover:bg-[var(--gm-bg-card-hover)] rounded-xl transition-all"
                 >
                   <div className="flex items-center gap-2">
                     <span>{link.label}</span>
                     {(link as any).badge && (
-                      <span className="inline-flex items-center px-1.5 py-0.5 text-[9px] font-extrabold tracking-wider uppercase rounded-full bg-[#B88952]/20 text-[#B88952] border border-[#B88952]/50 animate-amber-glow shadow-[0_0_8px_rgba(184,137,82,0.4)]">
+                      <span className="inline-flex items-center px-1.5 py-0.5 text-[9px] font-extrabold tracking-wider uppercase rounded-full bg-[var(--gm-accent-muted)] text-[var(--gm-accent-primary)] border border-[var(--gm-accent-border)] animate-accent-glow shadow-[0_0_8px_var(--gm-accent-glow)]">
                         {(link as any).badge}
                       </span>
                     )}
                   </div>
-                  <span className="text-[#B88952] text-xs">&rarr;</span>
+                  <span className="text-[var(--gm-accent-primary)] text-xs">&rarr;</span>
                 </a>
               ))}
             </nav>
-            <div className="pt-3 border-t border-white/8 space-y-2.5">
+
+            {/* Mobile Theme & Appearance Section */}
+            <MobileThemeControls />
+
+            <div className="pt-3 border-t border-[var(--gm-border-subtle)] space-y-2.5">
               <a
                 href="/book-service"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-center w-full px-4 py-2.5 text-xs font-bold tracking-[0.18em] uppercase text-[#0A0C0D] bg-[#B88952] hover:bg-[#caa066] rounded-xl transition-colors text-center shadow-lg shadow-[#B88952]/15"
+                className="flex items-center justify-center w-full px-4 py-2.5 text-xs font-bold tracking-[0.18em] uppercase text-[var(--gm-accent-foreground)] bg-[var(--gm-accent-primary)] hover:bg-[var(--gm-accent-hover)] rounded-xl transition-colors text-center shadow-lg shadow-[var(--gm-accent-primary)]/20"
               >
                 Book Service
               </a>
               <div className="grid grid-cols-2 gap-2 pt-1">
                 <a
                   href="tel:+918623948898"
-                  className="flex items-center justify-center gap-1.5 px-3 py-2 text-[11px] font-semibold tracking-wider uppercase text-[#F2F0EA] bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-colors"
+                  className="flex items-center justify-center gap-1.5 px-3 py-2 text-[11px] font-semibold tracking-wider uppercase text-[var(--gm-text-primary)] bg-[var(--gm-bg-card)] hover:bg-[var(--gm-bg-card-hover)] border border-[var(--gm-border-subtle)] rounded-xl transition-colors"
                 >
                   <span>Call</span>
                 </a>

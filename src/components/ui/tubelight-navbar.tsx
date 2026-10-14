@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import Link from "next/link"
 import {
@@ -107,7 +107,7 @@ export function NavBar({ items, className, currentPath }: NavBarProps) {
         className,
       )}
     >
-      <div className="flex items-center gap-2 sm:gap-3 bg-black/60 border border-white/10 backdrop-blur-xl py-1 px-1.5 rounded-full shadow-2xl shadow-black/60">
+      <div className="flex items-center gap-1.5 sm:gap-2.5 bg-[var(--gm-bg-card)]/80 border border-[var(--gm-border-subtle)] text-[var(--gm-text-primary)] backdrop-blur-xl py-1 px-1.5 rounded-full shadow-xl shadow-black/20">
         {items.map((item) => {
           const Icon = resolveIcon(item)
           const isActive = activeTab === item.name
@@ -118,15 +118,15 @@ export function NavBar({ items, className, currentPath }: NavBarProps) {
               href={item.url}
               onClick={() => setActiveTab(item.name)}
               className={cn(
-                "relative cursor-pointer text-xs md:text-sm font-semibold tracking-wide px-3 sm:px-5 py-2 rounded-full transition-colors flex items-center gap-1.5",
-                "text-foreground/80 hover:text-primary",
-                isActive && "bg-white/5 text-primary",
+                "relative cursor-pointer text-xs md:text-sm font-semibold tracking-wide px-3 sm:px-4.5 py-1.5 sm:py-2 rounded-full transition-colors flex items-center gap-1.5",
+                "text-[var(--gm-text-secondary)] hover:text-[var(--gm-accent-primary)]",
+                isActive && "text-[var(--gm-accent-primary)]",
               )}
             >
               <span className="hidden md:inline-flex items-center gap-1.5">
                 <span>{item.name}</span>
                 {item.badge && (
-                  <span className="inline-flex items-center px-1.5 py-0.5 text-[9px] font-extrabold tracking-wider uppercase rounded-full bg-[#B88952]/20 text-[#B88952] border border-[#B88952]/50 animate-amber-glow shadow-[0_0_8px_rgba(184,137,82,0.4)]">
+                  <span className="inline-flex items-center px-1.5 py-0.5 text-[9px] font-extrabold tracking-wider uppercase rounded-full bg-[var(--gm-accent-muted)] text-[var(--gm-accent-primary)] border border-[var(--gm-accent-border)] animate-accent-glow shadow-[0_0_8px_var(--gm-accent-glow)]">
                     {item.badge}
                   </span>
                 )}
@@ -134,13 +134,13 @@ export function NavBar({ items, className, currentPath }: NavBarProps) {
               <span className="md:hidden relative flex items-center justify-center">
                 <Icon size={18} strokeWidth={2.5} />
                 {item.badge && (
-                  <span className="absolute -top-1 -right-1.5 w-2 h-2 rounded-full bg-[#B88952] animate-amber-glow shadow-[0_0_6px_rgba(184,137,82,0.8)]" />
+                  <span className="absolute -top-1 -right-1.5 w-2 h-2 rounded-full bg-[var(--gm-accent-primary)] animate-accent-glow shadow-[0_0_6px_var(--gm-accent-glow)]" />
                 )}
               </span>
               {isActive && (
                 <motion.div
                   layoutId="lamp"
-                  className="absolute inset-0 w-full bg-primary/10 rounded-full -z-10"
+                  className="absolute inset-0 w-full bg-[var(--gm-accent-subtle)] rounded-full -z-10"
                   initial={false}
                   transition={{
                     type: "spring",
@@ -148,10 +148,10 @@ export function NavBar({ items, className, currentPath }: NavBarProps) {
                     damping: 30,
                   }}
                 >
-                  <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-8 h-1 bg-primary rounded-t-full shadow-[0_0_12px_var(--color-primary)]">
-                    <div className="absolute w-12 h-6 bg-primary/25 rounded-full blur-md -top-2 -left-2" />
-                    <div className="absolute w-8 h-6 bg-primary/25 rounded-full blur-md -top-1" />
-                    <div className="absolute w-4 h-4 bg-primary/30 rounded-full blur-sm top-0 left-2" />
+                  <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-8 h-1 bg-[var(--gm-accent-primary)] rounded-t-full shadow-[0_0_12px_var(--gm-accent-primary)]">
+                    <div className="absolute w-12 h-6 bg-[var(--gm-accent-muted)] rounded-full blur-md -top-2 -left-2" />
+                    <div className="absolute w-8 h-6 bg-[var(--gm-accent-muted)] rounded-full blur-md -top-1" />
+                    <div className="absolute w-4 h-4 bg-[var(--gm-accent-muted)] rounded-full blur-sm top-0 left-2" />
                   </div>
                 </motion.div>
               )}

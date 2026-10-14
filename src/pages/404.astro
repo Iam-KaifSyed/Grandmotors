@@ -51,27 +51,17 @@ const QUICK_DESTINATIONS = [
   title="404 — Route Not Found | Grand Motors"
   description="The page you requested could not be found. Navigate back to Grand Motors workshop services or book an appointment."
 >
-  <main class="relative min-h-[calc(100vh-80px)] pt-32 sm:pt-36 md:pt-40 pb-20 md:pb-28 overflow-hidden flex flex-col justify-center">
+  <main class="relative min-h-[calc(100vh-80px)] pt-32 sm:pt-36 md:pt-40 pb-20 md:pb-28 overflow-hidden flex flex-col justify-center bg-[var(--gm-bg-page)] text-[var(--gm-text-primary)] transition-colors duration-200">
     <!-- Ambient Background Glows -->
     <div
       aria-hidden="true"
-      class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] sm:w-[540px] md:w-[720px] h-[320px] sm:h-[450px] bg-[#B88952]/10 rounded-full blur-[120px] sm:blur-[160px] pointer-events-none"
-    ></div>
-    <div
-      aria-hidden="true"
-      class="absolute top-1/2 right-0 w-80 h-80 bg-white/[0.02] rounded-full blur-[100px] pointer-events-none"
-    ></div>
-
-    <!-- Subtle Technical Grid Lines -->
-    <div
-      aria-hidden="true"
-      class="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_40%,#000_70%,transparent_100%)] pointer-events-none"
+      class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] sm:w-[540px] md:w-[720px] h-[320px] sm:h-[450px] bg-[var(--gm-accent-primary)]/10 rounded-full blur-[120px] sm:blur-[160px] pointer-events-none"
     ></div>
 
     <div class="relative z-10 max-w-5xl mx-auto px-4 sm:px-8 md:px-12 w-full text-center">
       <!-- Telemetry Status Pill -->
-      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[#B88952]/30 bg-[#B88952]/10 text-[#B88952] shadow-[0_0_15px_rgba(184,137,82,0.15)] mb-6 sm:mb-8">
-        <span class="w-1.5 h-1.5 rounded-full bg-[#B88952] animate-pulse"></span>
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[var(--gm-accent-border)] bg-[var(--gm-accent-muted)] text-[var(--gm-accent-primary)] shadow-sm mb-6 sm:mb-8">
+        <span class="w-1.5 h-1.5 rounded-full bg-[var(--gm-accent-primary)] animate-pulse"></span>
         <span class="text-[10px] sm:text-[11px] font-semibold tracking-[0.22em] uppercase font-mono">
           STATUS 404 // ROUTE UNMAPPED
         </span>
@@ -79,25 +69,17 @@ const QUICK_DESTINATIONS = [
 
       <!-- Giant Sculpted 404 Display -->
       <div class="relative flex items-center justify-center select-none my-2 sm:my-4">
-        <!-- Background Monogram Watermark -->
-        <div
-          aria-hidden="true"
-          class="absolute font-mono font-black text-[130px] sm:text-[210px] md:text-[260px] lg:text-[300px] text-white/[0.02] tracking-widest leading-none pointer-events-none"
-        >
-          404
-        </div>
-
-        <div class="relative font-mono font-black text-7xl sm:text-9xl md:text-[130px] lg:text-[150px] leading-none tracking-[-0.04em] bg-gradient-to-b from-[#F2F0EA] via-[#B88952] to-[#6d4e28] bg-clip-text text-transparent drop-shadow-[0_12px_32px_rgba(184,137,82,0.22)]">
+        <div class="relative font-mono font-black text-7xl sm:text-9xl md:text-[130px] lg:text-[150px] leading-none tracking-[-0.04em] bg-gradient-to-b from-[var(--gm-text-primary)] via-[var(--gm-accent-primary)] to-[var(--gm-accent-active)] bg-clip-text text-transparent drop-shadow-[0_12px_32px_var(--gm-accent-glow)]">
           404
         </div>
       </div>
 
       <!-- Editorial Headline -->
-      <h1 class="mt-4 sm:mt-6 text-2xl sm:text-4xl md:text-5xl font-extrabold uppercase tracking-[-0.03em] text-[#F2F0EA]">
-        Off Track. <span class="text-[#B88952]">Route Uncharted.</span>
+      <h1 class="mt-4 sm:mt-6 text-2xl sm:text-4xl md:text-5xl font-extrabold uppercase tracking-[-0.03em] text-[var(--gm-text-primary)]">
+        Off Track. <span class="text-[var(--gm-accent-primary)]">Route Uncharted.</span>
       </h1>
 
-      <p class="mt-4 sm:mt-5 text-xs sm:text-sm md:text-base text-[#A7AAAD] max-w-xl mx-auto leading-relaxed">
+      <p class="mt-4 sm:mt-5 text-xs sm:text-sm md:text-base text-[var(--gm-text-secondary)] max-w-xl mx-auto leading-relaxed">
         The destination you are attempting to reach does not exist, has been relocated, or is currently under workshop maintenance. Re-calibrate your heading using the options below.
       </p>
 
@@ -105,7 +87,7 @@ const QUICK_DESTINATIONS = [
       <div class="mt-8 sm:mt-10 flex flex-wrap items-center justify-center gap-3 sm:gap-4 max-w-lg mx-auto">
         <a
           href="/"
-          class="group inline-flex items-center justify-center gap-2.5 px-6 sm:px-7 py-3 sm:py-3.5 bg-[#B88952] hover:bg-[#c99a63] active:bg-[#a67943] text-[#0A0C0D] font-bold text-xs sm:text-[13px] tracking-[0.16em] uppercase rounded-full transition-all shadow-lg shadow-[#B88952]/15"
+          class="group inline-flex items-center justify-center gap-2.5 px-6 sm:px-7 py-3 sm:py-3.5 bg-[var(--gm-accent-primary)] hover:bg-[var(--gm-accent-hover)] active:bg-[var(--gm-accent-active)] text-[var(--gm-accent-foreground)] font-bold text-xs sm:text-[13px] tracking-[0.16em] uppercase rounded-full transition-all shadow-lg shadow-[var(--gm-accent-primary)]/20"
         >
           <ArrowLeftIcon className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
           <span>Return Home</span>
@@ -113,31 +95,31 @@ const QUICK_DESTINATIONS = [
 
         <a
           href="/services"
-          class="group inline-flex items-center justify-center gap-2.5 px-6 sm:px-7 py-3 sm:py-3.5 bg-[#181B1E] hover:bg-[#22252a] text-[#F2F0EA] font-semibold text-xs sm:text-[13px] tracking-[0.16em] uppercase border border-white/10 hover:border-[#B88952]/40 rounded-full transition-all"
+          class="group inline-flex items-center justify-center gap-2.5 px-6 sm:px-7 py-3 sm:py-3.5 bg-[var(--gm-bg-card)] hover:bg-[var(--gm-bg-card-hover)] text-[var(--gm-text-primary)] font-semibold text-xs sm:text-[13px] tracking-[0.16em] uppercase border border-[var(--gm-border-medium)] hover:border-[var(--gm-accent-border)] rounded-full transition-all shadow-sm"
         >
-          <WrenchIcon className="w-4 h-4 text-[#B88952]" />
+          <WrenchIcon className="w-4 h-4 text-[var(--gm-accent-primary)]" />
           <span>Workshop Services</span>
         </a>
 
         <a
           href={`tel:${PHONE_TEL}`}
-          class="group inline-flex items-center justify-center gap-2 px-5 py-3 sm:py-3.5 text-[#A7AAAD] hover:text-[#F2F0EA] font-semibold text-xs sm:text-[13px] tracking-[0.14em] uppercase border border-white/5 hover:border-white/15 hover:bg-white/[0.02] rounded-full transition-all"
+          class="group inline-flex items-center justify-center gap-2 px-5 py-3 sm:py-3.5 text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)] font-semibold text-xs sm:text-[13px] tracking-[0.14em] uppercase border border-[var(--gm-border-subtle)] hover:border-[var(--gm-border-medium)] hover:bg-[var(--gm-bg-card-subtle)] rounded-full transition-all"
         >
-          <PhoneIcon className="w-4 h-4 text-[#B88952]" />
+          <PhoneIcon className="w-4 h-4 text-[var(--gm-accent-primary)]" />
           <span>Call Workshop</span>
         </a>
       </div>
 
       <!-- Quick Destinations Section -->
       <div class="mt-16 sm:mt-20 text-left">
-        <div class="flex items-center justify-between border-b border-white/10 pb-3 mb-6">
+        <div class="flex items-center justify-between border-b border-[var(--gm-border-subtle)] pb-3 mb-6">
           <div class="flex items-center gap-2">
-            <CompassIcon className="w-4 h-4 text-[#B88952]" />
-            <span class="text-[11px] sm:text-xs font-semibold tracking-[0.18em] uppercase text-[#F2F0EA]">
+            <CompassIcon className="w-4 h-4 text-[var(--gm-accent-primary)]" />
+            <span class="text-[11px] sm:text-xs font-semibold tracking-[0.18em] uppercase text-[var(--gm-text-primary)]">
               Quick Navigation
             </span>
           </div>
-          <span class="text-[10px] tracking-[0.16em] uppercase font-mono text-[#A7AAAD]/70">
+          <span class="text-[10px] tracking-[0.16em] uppercase font-mono text-[var(--gm-text-muted)]">
             SYSTEM_RECOVERY
           </span>
         </div>
@@ -148,29 +130,29 @@ const QUICK_DESTINATIONS = [
             return (
               <a
                 href={dest.href}
-                class="group relative flex flex-col justify-between p-5 rounded-xl border border-white/8 bg-[#111315]/80 hover:bg-[#181B1E] hover:border-[#B88952]/40 transition-all duration-300"
+                class="group relative flex flex-col justify-between p-5 rounded-xl border border-[var(--gm-border-subtle)] bg-[var(--gm-bg-card)] hover:bg-[var(--gm-bg-card-hover)] hover:border-[var(--gm-accent-border)] transition-all duration-300 shadow-sm"
               >
                 <div>
                   <div class="flex items-center justify-between mb-4">
-                    <span class="grid place-items-center w-9 h-9 rounded-lg border border-[#B88952]/20 bg-[#B88952]/10 text-[#B88952] group-hover:border-[#B88952]/50 group-hover:bg-[#B88952]/20 transition-colors">
+                    <span class="grid place-items-center w-9 h-9 rounded-lg border border-[var(--gm-accent-border)] bg-[var(--gm-accent-muted)] text-[var(--gm-accent-primary)] transition-colors">
                       <Icon className="w-4 h-4" />
                     </span>
-                    <span class="text-[9px] font-mono tracking-[0.16em] uppercase text-[#B88952]/80 bg-[#B88952]/10 px-2 py-0.5 rounded">
+                    <span class="text-[9px] font-mono tracking-[0.16em] uppercase text-[var(--gm-accent-primary)] bg-[var(--gm-accent-muted)] px-2 py-0.5 rounded">
                       {dest.tag}
                     </span>
                   </div>
 
-                  <h2 class="text-sm font-bold text-[#F2F0EA] group-hover:text-[#B88952] transition-colors">
+                  <h2 class="text-sm font-bold text-[var(--gm-text-primary)] group-hover:text-[var(--gm-accent-primary)] transition-colors">
                     {dest.title}
                   </h2>
-                  <p class="mt-1.5 text-xs text-[#A7AAAD] leading-relaxed">
+                  <p class="mt-1.5 text-xs text-[var(--gm-text-secondary)] leading-relaxed">
                     {dest.desc}
                   </p>
                 </div>
 
-                <div class="mt-4 pt-3 border-t border-white/5 flex items-center justify-between text-[11px] font-semibold tracking-[0.14em] uppercase text-[#A7AAAD] group-hover:text-[#F2F0EA]">
+                <div class="mt-4 pt-3 border-t border-[var(--gm-border-subtle)] flex items-center justify-between text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--gm-text-secondary)] group-hover:text-[var(--gm-text-primary)]">
                   <span>Navigate</span>
-                  <ArrowRightIcon className="w-3.5 h-3.5 text-[#B88952] transition-transform group-hover:translate-x-1" />
+                  <ArrowRightIcon className="w-3.5 h-3.5 text-[var(--gm-accent-primary)] transition-transform group-hover:translate-x-1" />
                 </div>
               </a>
             );
@@ -179,21 +161,21 @@ const QUICK_DESTINATIONS = [
       </div>
 
       <!-- Workshop Telemetry Bar -->
-      <div class="mt-12 sm:mt-16 p-4 rounded-xl border border-white/5 bg-black/40 backdrop-blur-sm flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#A7AAAD]">
+      <div class="mt-12 sm:mt-16 p-4 rounded-xl border border-[var(--gm-border-subtle)] bg-[var(--gm-bg-card)] backdrop-blur-sm flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[var(--gm-text-secondary)] shadow-sm">
         <div class="flex items-center gap-2">
-          <ShieldCheckIcon className="w-4 h-4 text-[#B88952]" />
+          <ShieldCheckIcon className="w-4 h-4 text-[var(--gm-accent-primary)]" />
           <span>Need direct roadside or workshop assistance?</span>
         </div>
         <div class="flex items-center gap-4">
           <a
             href={`tel:${PHONE_TEL}`}
-            class="text-[#F2F0EA] hover:text-[#B88952] font-semibold transition-colors flex items-center gap-1.5"
+            class="text-[var(--gm-text-primary)] hover:text-[var(--gm-accent-primary)] font-semibold transition-colors flex items-center gap-1.5"
           >
-            <PhoneIcon className="w-3.5 h-3.5 text-[#B88952]" />
+            <PhoneIcon className="w-3.5 h-3.5 text-[var(--gm-accent-primary)]" />
             <span>{PHONE_DISPLAY}</span>
           </a>
-          <span class="text-white/20 hidden sm:inline">|</span>
-          <span class="text-[11px] font-mono text-[#A7AAAD]/70">
+          <span class="text-[var(--gm-border-medium)] hidden sm:inline">|</span>
+          <span class="text-[11px] font-mono text-[var(--gm-text-muted)]">
             MOOSAPET, HYDERABAD
           </span>
         </div>

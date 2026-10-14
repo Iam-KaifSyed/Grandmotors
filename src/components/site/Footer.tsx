@@ -19,18 +19,18 @@ export function Footer({ services }: FooterProps = {}) {
   const serviceList = services && services.length > 0 ? services.slice(0, 6) : SERVICES.slice(0, 6);
 
   return (
-    <footer className="relative z-40 px-4 sm:px-8 md:px-12 lg:px-16 pt-8 sm:pt-10 pb-6 sm:pb-8 bg-[#0A0C0D] border-t border-white/8">
+    <footer className="relative z-40 px-4 sm:px-8 md:px-12 lg:px-16 pt-8 sm:pt-10 pb-6 sm:pb-8 bg-[var(--gm-bg-surface)] border-t border-[var(--gm-border-subtle)] transition-colors duration-200">
       <div className="max-w-7xl mx-auto">
         <div className="grid gap-8 sm:gap-10 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-1">
             <div className="flex items-center gap-2.5">
-              <span className="text-sm font-semibold tracking-[0.25em] text-[#F2F0EA] uppercase">
+              <span className="text-sm font-semibold tracking-[0.25em] text-[var(--gm-text-primary)] uppercase">
                 Grand Motors
               </span>
-              <span className="w-1.5 h-1.5 rounded-full bg-[#B88952] shadow-[0_0_6px_rgba(184,137,82,0.8)]" />
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--gm-accent-primary)] shadow-[0_0_6px_var(--gm-accent-glow)]" />
             </div>
-            <p className="mt-4 text-xs sm:text-[13px] leading-relaxed text-[#A7AAAD] max-w-sm">
+            <p className="mt-4 text-xs sm:text-[13px] leading-relaxed text-[var(--gm-text-secondary)] max-w-sm">
               Premium automotive workshop in Moosapet, Hyderabad. Precision service, honest advice
               and genuine-quality parts.
             </p>
@@ -38,7 +38,7 @@ export function Footer({ services }: FooterProps = {}) {
 
           {/* Navigation */}
           <nav aria-label="Footer">
-            <h3 className="text-[11px] font-semibold tracking-[0.22em] uppercase text-[#A7AAAD]/80">
+            <h3 className="text-[11px] font-semibold tracking-[0.22em] uppercase text-[var(--gm-text-muted)]">
               Navigate
             </h3>
             <ul className="mt-4 flex flex-col gap-2.5">
@@ -54,7 +54,7 @@ export function Footer({ services }: FooterProps = {}) {
                 <li key={link.label}>
                   <a
                     href={link.href}
-                    className="text-[13.5px] text-[#D8D6D0]/80 hover:text-[#B88952] transition-colors duration-200 cursor-pointer"
+                    className="text-[13.5px] text-[var(--gm-text-secondary)] hover:text-[var(--gm-accent-primary)] transition-colors duration-200 cursor-pointer"
                   >
                     {link.label}
                   </a>
@@ -65,7 +65,7 @@ export function Footer({ services }: FooterProps = {}) {
 
           {/* Services */}
           <div>
-            <h3 className="text-[11px] font-semibold tracking-[0.22em] uppercase text-[#A7AAAD]/80">
+            <h3 className="text-[11px] font-semibold tracking-[0.22em] uppercase text-[var(--gm-text-muted)]">
               Services
             </h3>
             <ul className="mt-4 flex flex-col gap-2.5">
@@ -73,7 +73,7 @@ export function Footer({ services }: FooterProps = {}) {
                 <li key={service.id}>
                   <a
                     href="/services"
-                    className="text-[13.5px] text-[#D8D6D0]/80 hover:text-[#B88952] transition-colors duration-200 cursor-pointer"
+                    className="text-[13.5px] text-[var(--gm-text-secondary)] hover:text-[var(--gm-accent-primary)] transition-colors duration-200 cursor-pointer"
                   >
                     {service.title}
                   </a>
@@ -84,18 +84,18 @@ export function Footer({ services }: FooterProps = {}) {
 
           {/* Contact */}
           <div>
-            <h3 className="text-[11px] font-semibold tracking-[0.22em] uppercase text-[#A7AAAD]/80">
+            <h3 className="text-[11px] font-semibold tracking-[0.22em] uppercase text-[var(--gm-text-muted)]">
               Reach Us
             </h3>
-            <ul className="mt-4 flex flex-col gap-3 text-[13.5px] text-[#D8D6D0]/80">
+            <ul className="mt-4 flex flex-col gap-3 text-[13.5px] text-[var(--gm-text-secondary)]">
               <li>
                 <a
                   href={MAPS_LINK}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-start gap-2.5 hover:text-[#B88952] transition-colors duration-200 cursor-pointer"
+                  className="flex items-start gap-2.5 hover:text-[var(--gm-accent-primary)] transition-colors duration-200 cursor-pointer"
                 >
-                  <PinIcon className="w-4 h-4 mt-0.5 shrink-0 text-[#B88952]" />
+                  <PinIcon className="w-4 h-4 mt-0.5 shrink-0 text-[var(--gm-accent-primary)]" />
                   <span>
                     {ADDRESS_LINE_1}
                     <br />
@@ -108,9 +108,9 @@ export function Footer({ services }: FooterProps = {}) {
               <li>
                 <a
                   href={`tel:${PHONE_TEL}`}
-                  className="flex items-center gap-2.5 hover:text-[#B88952] transition-colors duration-200 cursor-pointer"
+                  className="flex items-center gap-2.5 hover:text-[var(--gm-accent-primary)] transition-colors duration-200 cursor-pointer"
                 >
-                  <PhoneIcon className="w-4 h-4 shrink-0 text-[#B88952]" />
+                  <PhoneIcon className="w-4 h-4 shrink-0 text-[var(--gm-accent-primary)]" />
                   {PHONE_DISPLAY}
                 </a>
               </li>
@@ -119,7 +119,7 @@ export function Footer({ services }: FooterProps = {}) {
                   href={WHATSAPP_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2.5 hover:text-[#B88952] transition-colors duration-200 cursor-pointer"
+                  className="flex items-center gap-2.5 hover:text-[var(--gm-accent-primary)] transition-colors duration-200 cursor-pointer"
                 >
                   <WhatsAppIcon className="w-4 h-4 shrink-0 text-[#25D366]" />
                   WhatsApp
@@ -129,11 +129,11 @@ export function Footer({ services }: FooterProps = {}) {
           </div>
         </div>
 
-        <div className="mt-8 pt-5 border-t border-white/8 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-[12px] tracking-[0.08em] text-[#A7AAAD]/70">
+        <div className="mt-8 pt-5 border-t border-[var(--gm-border-subtle)] flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p className="text-[12px] tracking-[0.08em] text-[var(--gm-text-muted)]">
             © {new Date().getFullYear()} Grand Motors, Hyderabad. All rights reserved.
           </p>
-          <p className="text-[11px] tracking-[0.2em] uppercase text-[#A7AAAD]/50">
+          <p className="text-[11px] tracking-[0.2em] uppercase text-[var(--gm-text-muted)]">
             Engineered for the drive
           </p>
         </div>

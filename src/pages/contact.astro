@@ -49,15 +49,15 @@ const ADDRESS_LINE_3 = 'Moosapet, Hyderabad, Telangana 500072';
             const Icon = row.icon;
             const content = (
               <>
-                <span class="shrink-0 grid place-items-center w-10 h-10 sm:w-11 sm:h-11 rounded-lg border border-white/10 text-[#B88952] transition-colors duration-200 group-hover:border-[#B88952]/40 group-hover:bg-[#B88952]/10">
+                <span class="shrink-0 grid place-items-center w-10 h-10 sm:w-11 sm:h-11 rounded-lg border border-[var(--gm-border-subtle)] text-[var(--gm-accent-primary)] transition-colors duration-200 group-hover:border-[var(--gm-accent-border)] group-hover:bg-[var(--gm-accent-muted)] shadow-sm">
                   <Icon className="w-5 h-5" />
                 </span>
                 <div>
-                  <span class="block text-[10px] sm:text-[11px] font-semibold tracking-[0.2em] sm:tracking-[0.22em] uppercase text-[#A7AAAD]/80">
+                  <span class="block text-[10px] sm:text-[11px] font-semibold tracking-[0.2em] sm:tracking-[0.22em] uppercase text-[var(--gm-text-secondary)]">
                     {row.label}
                   </span>
                   {row.lines.map((line) => (
-                    <span class="block text-[13px] sm:text-[14px] md:text-[15px] text-[#F2F0EA] leading-snug mt-0.5">
+                    <span class="block text-[13px] sm:text-[14px] md:text-[15px] text-[var(--gm-text-primary)] leading-snug mt-0.5">
                       {line}
                     </span>
                   ))}
@@ -69,12 +69,12 @@ const ADDRESS_LINE_3 = 'Moosapet, Hyderabad, Telangana 500072';
                 href={row.href}
                 target={row.external ? '_blank' : undefined}
                 rel={row.external ? 'noopener noreferrer' : undefined}
-                class="group flex items-start gap-3.5 sm:gap-4 p-3.5 sm:p-4 rounded-xl bg-white/[0.02] border border-white/5 hover:border-[#B88952]/30 hover:bg-[#111315] transition-all cursor-pointer"
+                class="group flex items-start gap-3.5 sm:gap-4 p-3.5 sm:p-4 rounded-xl bg-[var(--gm-bg-card)] border border-[var(--gm-border-subtle)] hover:border-[var(--gm-accent-border)] hover:bg-[var(--gm-bg-card-hover)] transition-all cursor-pointer shadow-sm"
               >
                 {content}
               </a>
             ) : (
-              <div class="group flex items-start gap-3.5 sm:gap-4 p-3.5 sm:p-4 rounded-xl bg-white/[0.02] border border-white/5">
+              <div class="group flex items-start gap-3.5 sm:gap-4 p-3.5 sm:p-4 rounded-xl bg-[var(--gm-bg-card)] border border-[var(--gm-border-subtle)] shadow-sm">
                 {content}
               </div>
             );
@@ -83,13 +83,13 @@ const ADDRESS_LINE_3 = 'Moosapet, Hyderabad, Telangana 500072';
       </div>
 
       <Reveal delay={120} class="min-h-[300px] sm:min-h-[360px] lg:min-h-full mt-4 lg:mt-0">
-        <div class="relative h-full min-h-[300px] sm:min-h-[360px] rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
+        <div class="relative h-full min-h-[300px] sm:min-h-[360px] rounded-2xl overflow-hidden border border-[var(--gm-border-medium)] shadow-xl">
           <iframe
             title="Grand Motors location on Google Maps — Moosapet, Hyderabad"
             src={MAPS_EMBED}
             loading="lazy"
             referrerpolicy="no-referrer-when-downgrade"
-            class="absolute inset-0 w-full h-full grayscale-[0.3] contrast-[1.05]"
+            class="absolute inset-0 w-full h-full grayscale-[0.2] contrast-[1.05]"
             style="border: 0;"
             allowfullscreen
           ></iframe>

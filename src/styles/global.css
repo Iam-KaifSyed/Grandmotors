@@ -1,44 +1,268 @@
 @import "tailwindcss";
 
+/* ===================================================================== */
+/* GRAND MOTORS CENTRAL THEME SYSTEM & DESIGN TOKENS                    */
+/* ===================================================================== */
+
+:root {
+  /* Default Night Mode Tokens */
+  --gm-bg-page: #07090a;
+  --gm-bg-surface: #0a0c0d;
+  --gm-bg-card: #111315;
+  --gm-bg-card-hover: #181b1e;
+  --gm-bg-card-subtle: rgba(255, 255, 255, 0.025);
+  --gm-bg-nav: rgba(7, 9, 10, 0.88);
+  --gm-bg-nav-solid: #07090a;
+  --gm-bg-modal: #0e1013;
+  --gm-bg-input: #111315;
+  --gm-bg-input-focus: #181b1e;
+
+  --gm-text-primary: #f2f0ea;
+  --gm-text-secondary: #a7aaad;
+  --gm-text-nav: #d8d6d0;
+  --gm-text-muted: #6f7378;
+  --gm-text-inverse: #07090a;
+
+  --gm-border-subtle: rgba(255, 255, 255, 0.08);
+  --gm-border-medium: rgba(255, 255, 255, 0.14);
+  --gm-border-strong: rgba(255, 255, 255, 0.22);
+
+  --gm-shadow-card: 0 4px 20px rgba(0, 0, 0, 0.4);
+  --gm-shadow-elevated: 0 12px 32px rgba(0, 0, 0, 0.6);
+
+  /* Default Grand Amber Accent (Dark) */
+  --gm-accent-primary: #b88952;
+  --gm-accent-hover: #caa066;
+  --gm-accent-active: #a67943;
+  --gm-accent-muted: rgba(184, 137, 82, 0.16);
+  --gm-accent-subtle: rgba(184, 137, 82, 0.08);
+  --gm-accent-border: rgba(184, 137, 82, 0.35);
+  --gm-accent-border-hover: rgba(184, 137, 82, 0.65);
+  --gm-accent-glow: rgba(184, 137, 82, 0.5);
+  --gm-accent-foreground: #0a0c0d;
+  --gm-accent-rgb: 184, 137, 82;
+
+  color-scheme: dark;
+  background: var(--gm-bg-page);
+  color: var(--gm-text-primary);
+  font-family: "Inter", "Manrope", system-ui, -apple-system, sans-serif;
+}
+
+/* ===================================================================== */
+/* DAY / LIGHT MODE TOKENS                                              */
+/* ===================================================================== */
+html[data-theme-mode="light"],
+html.light {
+  --gm-bg-page: #f6f7f9;
+  --gm-bg-surface: #ffffff;
+  --gm-bg-card: #ffffff;
+  --gm-bg-card-hover: #f1f3f5;
+  --gm-bg-card-subtle: rgba(0, 0, 0, 0.025);
+  --gm-bg-nav: rgba(255, 255, 255, 0.90);
+  --gm-bg-nav-solid: #ffffff;
+  --gm-bg-modal: #ffffff;
+  --gm-bg-input: #f8f9fa;
+  --gm-bg-input-focus: #ffffff;
+
+  --gm-text-primary: #0f1419;
+  --gm-text-secondary: #4b5563;
+  --gm-text-nav: #1f2937;
+  --gm-text-muted: #6b7280;
+  --gm-text-inverse: #ffffff;
+
+  --gm-border-subtle: rgba(0, 0, 0, 0.08);
+  --gm-border-medium: rgba(0, 0, 0, 0.14);
+  --gm-border-strong: rgba(0, 0, 0, 0.22);
+
+  --gm-shadow-card: 0 4px 20px rgba(0, 0, 0, 0.06);
+  --gm-shadow-elevated: 0 12px 32px rgba(0, 0, 0, 0.10);
+
+  color-scheme: light;
+  background: var(--gm-bg-page);
+  color: var(--gm-text-primary);
+}
+
+/* ===================================================================== */
+/* ACCENT THEMES (5 SELECTABLE THEMES)                                  */
+/* ===================================================================== */
+
+/* 1. Grand Amber */
+html[data-theme-accent="amber"],
+html:not([data-theme-accent]) {
+  --gm-accent-primary: #b88952;
+  --gm-accent-hover: #caa066;
+  --gm-accent-active: #a67943;
+  --gm-accent-muted: rgba(184, 137, 82, 0.16);
+  --gm-accent-subtle: rgba(184, 137, 82, 0.08);
+  --gm-accent-border: rgba(184, 137, 82, 0.35);
+  --gm-accent-border-hover: rgba(184, 137, 82, 0.65);
+  --gm-accent-glow: rgba(184, 137, 82, 0.5);
+  --gm-accent-foreground: #0a0c0d;
+  --gm-accent-rgb: 184, 137, 82;
+}
+html[data-theme-mode="light"][data-theme-accent="amber"],
+html.light[data-theme-accent="amber"],
+html[data-theme-mode="light"]:not([data-theme-accent]),
+html.light:not([data-theme-accent]) {
+  --gm-accent-primary: #a87432;
+  --gm-accent-hover: #946328;
+  --gm-accent-active: #80531e;
+  --gm-accent-muted: rgba(168, 116, 50, 0.12);
+  --gm-accent-subtle: rgba(168, 116, 50, 0.06);
+  --gm-accent-border: rgba(168, 116, 50, 0.35);
+  --gm-accent-border-hover: rgba(168, 116, 50, 0.65);
+  --gm-accent-glow: rgba(168, 116, 50, 0.35);
+  --gm-accent-foreground: #ffffff;
+  --gm-accent-rgb: 168, 116, 50;
+}
+
+/* 2. Racing Red */
+html[data-theme-accent="red"] {
+  --gm-accent-primary: #ef4444;
+  --gm-accent-hover: #f87171;
+  --gm-accent-active: #dc2626;
+  --gm-accent-muted: rgba(239, 68, 68, 0.16);
+  --gm-accent-subtle: rgba(239, 68, 68, 0.08);
+  --gm-accent-border: rgba(239, 68, 68, 0.38);
+  --gm-accent-border-hover: rgba(239, 68, 68, 0.70);
+  --gm-accent-glow: rgba(239, 68, 68, 0.55);
+  --gm-accent-foreground: #ffffff;
+  --gm-accent-rgb: 239, 68, 68;
+}
+html[data-theme-mode="light"][data-theme-accent="red"],
+html.light[data-theme-accent="red"] {
+  --gm-accent-primary: #dc2626;
+  --gm-accent-hover: #b91c1c;
+  --gm-accent-active: #991b1b;
+  --gm-accent-muted: rgba(220, 38, 38, 0.12);
+  --gm-accent-subtle: rgba(220, 38, 38, 0.06);
+  --gm-accent-border: rgba(220, 38, 38, 0.35);
+  --gm-accent-border-hover: rgba(220, 38, 38, 0.65);
+  --gm-accent-glow: rgba(220, 38, 38, 0.35);
+  --gm-accent-foreground: #ffffff;
+  --gm-accent-rgb: 220, 38, 38;
+}
+
+/* 3. Electric Blue */
+html[data-theme-accent="blue"] {
+  --gm-accent-primary: #0ea5e9;
+  --gm-accent-hover: #38bdf8;
+  --gm-accent-active: #0284c7;
+  --gm-accent-muted: rgba(14, 165, 233, 0.16);
+  --gm-accent-subtle: rgba(14, 165, 233, 0.08);
+  --gm-accent-border: rgba(14, 165, 233, 0.38);
+  --gm-accent-border-hover: rgba(14, 165, 233, 0.70);
+  --gm-accent-glow: rgba(14, 165, 233, 0.55);
+  --gm-accent-foreground: #ffffff;
+  --gm-accent-rgb: 14, 165, 233;
+}
+html[data-theme-mode="light"][data-theme-accent="blue"],
+html.light[data-theme-accent="blue"] {
+  --gm-accent-primary: #0284c7;
+  --gm-accent-hover: #0369a1;
+  --gm-accent-active: #075985;
+  --gm-accent-muted: rgba(2, 132, 199, 0.12);
+  --gm-accent-subtle: rgba(2, 132, 199, 0.06);
+  --gm-accent-border: rgba(2, 132, 199, 0.35);
+  --gm-accent-border-hover: rgba(2, 132, 199, 0.65);
+  --gm-accent-glow: rgba(2, 132, 199, 0.35);
+  --gm-accent-foreground: #ffffff;
+  --gm-accent-rgb: 2, 132, 199;
+}
+
+/* 4. Emerald Green */
+html[data-theme-accent="green"] {
+  --gm-accent-primary: #10b981;
+  --gm-accent-hover: #34d399;
+  --gm-accent-active: #059669;
+  --gm-accent-muted: rgba(16, 185, 129, 0.16);
+  --gm-accent-subtle: rgba(16, 185, 129, 0.08);
+  --gm-accent-border: rgba(16, 185, 129, 0.38);
+  --gm-accent-border-hover: rgba(16, 185, 129, 0.70);
+  --gm-accent-glow: rgba(16, 185, 129, 0.55);
+  --gm-accent-foreground: #022c22;
+  --gm-accent-rgb: 16, 185, 129;
+}
+html[data-theme-mode="light"][data-theme-accent="green"],
+html.light[data-theme-accent="green"] {
+  --gm-accent-primary: #059669;
+  --gm-accent-hover: #047857;
+  --gm-accent-active: #065f46;
+  --gm-accent-muted: rgba(5, 150, 105, 0.12);
+  --gm-accent-subtle: rgba(5, 150, 105, 0.06);
+  --gm-accent-border: rgba(5, 150, 105, 0.35);
+  --gm-accent-border-hover: rgba(5, 150, 105, 0.65);
+  --gm-accent-glow: rgba(5, 150, 105, 0.35);
+  --gm-accent-foreground: #ffffff;
+  --gm-accent-rgb: 5, 150, 105;
+}
+
+/* 5. Royal Violet */
+html[data-theme-accent="violet"] {
+  --gm-accent-primary: #a855f7;
+  --gm-accent-hover: #c084fc;
+  --gm-accent-active: #9333ea;
+  --gm-accent-muted: rgba(168, 85, 247, 0.16);
+  --gm-accent-subtle: rgba(168, 85, 247, 0.08);
+  --gm-accent-border: rgba(168, 85, 247, 0.38);
+  --gm-accent-border-hover: rgba(168, 85, 247, 0.70);
+  --gm-accent-glow: rgba(168, 85, 247, 0.55);
+  --gm-accent-foreground: #ffffff;
+  --gm-accent-rgb: 168, 85, 247;
+}
+html[data-theme-mode="light"][data-theme-accent="violet"],
+html.light[data-theme-accent="violet"] {
+  --gm-accent-primary: #7e22ce;
+  --gm-accent-hover: #6b21a8;
+  --gm-accent-active: #581c87;
+  --gm-accent-muted: rgba(126, 34, 206, 0.12);
+  --gm-accent-subtle: rgba(126, 34, 206, 0.06);
+  --gm-accent-border: rgba(126, 34, 206, 0.35);
+  --gm-accent-border-hover: rgba(126, 34, 206, 0.65);
+  --gm-accent-glow: rgba(126, 34, 206, 0.35);
+  --gm-accent-foreground: #ffffff;
+  --gm-accent-rgb: 126, 34, 206;
+}
+
+/* ===================================================================== */
+/* TAILWIND V4 INLINE THEME MAPPINGS                                     */
+/* ===================================================================== */
 @theme inline {
-  --color-bg-darkest: #07090a;
-  --color-bg-main: #111315;
-  --color-bg-secondary: #181b1e;
-  --color-bg-highlight: #25282b;
+  --color-bg-darkest: var(--gm-bg-page);
+  --color-bg-main: var(--gm-bg-surface);
+  --color-bg-secondary: var(--gm-bg-card);
+  --color-bg-highlight: var(--gm-bg-card-hover);
 
-  --color-text-primary: #f2f0ea;
-  --color-text-secondary: #a7aaad;
-  --color-text-nav: #d8d6d0;
-  --color-accent: #b88952;
+  --color-text-primary: var(--gm-text-primary);
+  --color-text-secondary: var(--gm-text-secondary);
+  --color-text-nav: var(--gm-text-nav);
+  --color-accent: var(--gm-accent-primary);
 
-  --color-background: #07090a;
-  --color-foreground: #f2f0ea;
-  --color-border: rgba(255, 255, 255, 0.12);
-  --color-muted: #181b1e;
-  --color-primary: #b88952;
+  --color-background: var(--gm-bg-page);
+  --color-foreground: var(--gm-text-primary);
+  --color-border: var(--gm-border-subtle);
+  --color-muted: var(--gm-bg-card-hover);
+  --color-primary: var(--gm-accent-primary);
 
   --font-sans: "Inter", "Manrope", system-ui, -apple-system, sans-serif;
   --font-display: "Inter", "Space Grotesk", system-ui, sans-serif;
 }
 
-:root {
-  color-scheme: dark;
-  background: #07090a;
-  color: #f2f0ea;
-  font-family: var(--font-sans);
-}
-
+/* ===================================================================== */
+/* BASE HTML & BODY                                                     */
+/* ===================================================================== */
 html,
 body {
   margin: 0;
   padding: 0;
-  background: #07090a;
-  color: #f2f0ea;
+  background-color: var(--gm-bg-page);
+  color: var(--gm-text-primary);
   font-family: "Inter", "Manrope", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-tap-highlight-color: transparent;
   overflow-x: clip;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 /* Touch responsiveness */
@@ -58,31 +282,225 @@ html.lenis body {
   overflow: hidden;
 }
 
-/* Semantic Hero Classes for Future GSAP Animation */
-.hero-nav {
-  /* Minimal top navigation */
+/* ===================================================================== */
+/* 3D CANVAS ISOLATION                                                  */
+/* The 3D scene must always maintain its calibrated dark garage setup   */
+/* ===================================================================== */
+#experience-canvas-container,
+.experience-canvas-container {
+  background-color: #07090a !important;
 }
-.hero-eyebrow {
-  /* Small uppercase category header */
+
+/* ===================================================================== */
+/* DYNAMIC ACCENT & AMBER GLOW ANIMATION                                 */
+/* ===================================================================== */
+@keyframes accent-glow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 4px var(--gm-accent-glow), 0 0 10px var(--gm-accent-subtle);
+    border-color: var(--gm-accent-border);
+    opacity: 0.95;
+  }
+  50% {
+    box-shadow: 0 0 10px var(--gm-accent-glow), 0 0 20px var(--gm-accent-border);
+    border-color: var(--gm-accent-primary);
+    opacity: 1;
+  }
 }
-.hero-title {
-  /* Main editorial bold headline */
+
+.animate-amber-glow,
+.animate-accent-glow {
+  animation: accent-glow-pulse 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
-.hero-title-line {
-  /* Individual headline line container */
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-amber-glow,
+  .animate-accent-glow {
+    animation: none;
+    box-shadow: 0 0 6px var(--gm-accent-glow);
+    border-color: var(--gm-accent-border);
+  }
 }
-.hero-description {
-  /* Supporting editorial subtitle */
+
+/* ===================================================================== */
+/* THEME UTILITY & OVERRIDE BRIDGE                                       */
+/* Automatically maps components to the selected theme and mode          */
+/* ===================================================================== */
+
+/* Dynamic theme accent overrides */
+.text-\[\#B88952\],
+.text-\[\#b88952\] {
+  color: var(--gm-accent-primary) !important;
 }
-.hero-chapter {
-  /* Upper-right sequence indicator */
+.hover\:text-\[\#B88952\]:hover,
+.hover\:text-\[\#b88952\]:hover,
+.group:hover .group-hover\:text-\[\#B88952\] {
+  color: var(--gm-accent-primary) !important;
 }
-.hero-scroll {
-  /* Bottom telemetry & exploration cues */
+.bg-\[\#B88952\],
+.bg-\[\#b88952\] {
+  background-color: var(--gm-accent-primary) !important;
+  color: var(--gm-accent-foreground) !important;
+}
+.hover\:bg-\[\#caa066\]:hover,
+.hover\:bg-\[\#b88952\]:hover {
+  background-color: var(--gm-accent-hover) !important;
+}
+.active\:bg-\[\#a67943\]:active {
+  background-color: var(--gm-accent-active) !important;
+}
+.border-\[\#B88952\],
+.border-\[\#b88952\] {
+  border-color: var(--gm-accent-primary) !important;
+}
+.border-\[\#B88952\]\/20,
+.border-\[\#B88952\]\/30,
+.border-\[\#b88952\]\/30,
+.border-\[\#B88952\]\/40,
+.border-\[\#B88952\]\/50 {
+  border-color: var(--gm-accent-border) !important;
+}
+.hover\:border-\[\#B88952\]\/40:hover,
+.hover\:border-\[\#B88952\]\/50:hover,
+.hover\:border-\[\#B88952\]\/60:hover {
+  border-color: var(--gm-accent-border-hover) !important;
+}
+.bg-\[\#B88952\]\/10,
+.bg-\[\#b88952\]\/10,
+.bg-\[\#B88952\]\/15,
+.bg-\[\#b88952\]\/15,
+.bg-\[\#B88952\]\/20 {
+  background-color: var(--gm-accent-muted) !important;
+}
+
+/* Light Mode Overrides for Hardcoded Backgrounds & Texts */
+html[data-theme-mode="light"] #site-content {
+  background-color: var(--gm-bg-page) !important;
+  color: var(--gm-text-primary) !important;
+}
+
+html[data-theme-mode="light"] .bg-\[\#07090A\],
+html[data-theme-mode="light"] .bg-\[\#07090a\] {
+  background-color: var(--gm-bg-page) !important;
+}
+
+html[data-theme-mode="light"] .bg-\[\#0A0C0D\],
+html[data-theme-mode="light"] .bg-\[\#0a0c0d\],
+html[data-theme-mode="light"] .bg-\[\#0e1013\],
+html[data-theme-mode="light"] .bg-\[\#0E1012\] {
+  background-color: var(--gm-bg-surface) !important;
+}
+
+html[data-theme-mode="light"] .bg-\[\#111315\],
+html[data-theme-mode="light"] .bg-\[\#181B1E\],
+html[data-theme-mode="light"] .bg-\[\#181b1e\] {
+  background-color: var(--gm-bg-card) !important;
+}
+
+html[data-theme-mode="light"] .border-white\/5,
+html[data-theme-mode="light"] .border-white\/8,
+html[data-theme-mode="light"] .border-white\/10,
+html[data-theme-mode="light"] .border-white\/12,
+html[data-theme-mode="light"] .border-white\/15 {
+  border-color: var(--gm-border-subtle) !important;
+}
+
+html[data-theme-mode="light"] .bg-white\/5,
+html[data-theme-mode="light"] .bg-white\/\[0\.02\] {
+  background-color: var(--gm-bg-card-subtle) !important;
+}
+
+html[data-theme-mode="light"] .divide-white\/8 > :not([hidden]) ~ :not([hidden]) {
+  border-color: var(--gm-border-subtle) !important;
+}
+
+/* Light mode card shadows */
+html[data-theme-mode="light"] article,
+html[data-theme-mode="light"] form,
+html[data-theme-mode="light"] .theme-card {
+  box-shadow: var(--gm-shadow-card);
+}
+
+/* Light mode form controls */
+html[data-theme-mode="light"] input:not([type="checkbox"]):not([type="radio"]),
+html[data-theme-mode="light"] select,
+html[data-theme-mode="light"] textarea {
+  background-color: var(--gm-bg-input) !important;
+  color: var(--gm-text-primary) !important;
+  border-color: var(--gm-border-medium) !important;
+}
+
+html[data-theme-mode="light"] input::placeholder,
+html[data-theme-mode="light"] textarea::placeholder {
+  color: var(--gm-text-muted) !important;
+}
+
+html[data-theme-mode="light"] input:focus,
+html[data-theme-mode="light"] select:focus,
+html[data-theme-mode="light"] textarea:focus {
+  border-color: var(--gm-accent-primary) !important;
+  outline: none;
+}
+
+html[data-theme-mode="light"] .bg-black\/40,
+html[data-theme-mode="light"] .bg-black\/50,
+html[data-theme-mode="light"] .bg-black\/60 {
+  background-color: var(--gm-bg-surface) !important;
+}
+
+/* Focus styles for keyboard accessibility */
+:focus-visible {
+  outline: 2px solid var(--gm-accent-primary);
+  outline-offset: 2px;
 }
 
 /* ============================================================ */
-/* Site content (below the locked 3D hero) — scroll reveal      */
+/* Semantic Hero Classes for GSAP Animation                    */
+/* ============================================================ */
+.hero-nav {}
+.hero-eyebrow {}
+.hero-title {}
+.hero-title-line {}
+.hero-description {}
+.hero-chapter {}
+.hero-scroll {}
+
+/* ============================================================ */
+/* 3D INTRO TEXT - ALWAYS WHITE IN BOTH DAY & NIGHT MODES       */
+/* Headings, chapter text, descriptions, cues, indicator, and   */
+/* "Scroll to Explore" text & arrow must remain pure white      */
+/* across all theme modes and accent colours.                   */
+/* ============================================================ */
+#cinematic-intro h1,
+#cinematic-intro h1 span,
+#cinematic-intro .intro-title,
+#hud-container .hero-title,
+#hud-container .hero-title-line,
+.hero-chapter,
+.hero-chapter span,
+.btn-3d-card .btn-3d-text,
+.btn-3d-card .btn-3d-arrow {
+  color: #ffffff !important;
+}
+
+#cinematic-intro .intro-subtitle,
+#hud-container .hero-eyebrow span:not(.text-\[var\(--gm-accent-primary\)\]),
+#hud-container .hero-description,
+#hud-container li span.truncate,
+#hud-container .hero-scroll span:not(.bg-\[var\(--gm-accent-primary\)\]),
+.hero-chapter .text-white\/80 {
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+
+.hero-chapter .text-white\/40 {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+
+.hero-chapter .text-white\/60 {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* ============================================================ */
+/* Site content scroll reveal                                   */
 /* ============================================================ */
 .gm-reveal {
   opacity: 0;
@@ -105,14 +523,13 @@ html.lenis body {
   }
 }
 
-/* The 3D hero is position:fixed and the #scroll-container spacer drives it.
-   Site content follows in normal flow, scrolls up over the fixed canvas,
-   and carries its own opaque background so the hero never bleeds through. */
 #site-content {
   position: relative;
   z-index: 40;
   isolation: isolate;
   transform: translateZ(0);
+  background-color: var(--gm-bg-page);
+  color: var(--gm-text-primary);
 }
 
 /* ============================================================ */
@@ -142,7 +559,8 @@ html.lenis body {
 }
 
 .btn-3d-text {
-  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.9), 0 0 12px rgba(184, 137, 82, 0.3);
+  color: #ffffff !important;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.9), 0 0 12px var(--gm-accent-glow);
   transform-style: preserve-3d;
 }
 
@@ -162,6 +580,7 @@ html.lenis body {
 }
 
 .btn-3d-arrow {
+  color: #ffffff !important;
   animation: btn-arrow-3d-bounce 1.6s ease-in-out infinite;
   will-change: transform;
 }
@@ -178,32 +597,3 @@ html.lenis body {
     animation: none;
   }
 }
-
-/* ============================================================ */
-/* Navbar Doorstep "NEW" Amber Glow Badge                       */
-/* ============================================================ */
-@keyframes amber-glow-pulse {
-  0%, 100% {
-    box-shadow: 0 0 4px rgba(184, 137, 82, 0.4), 0 0 10px rgba(184, 137, 82, 0.2);
-    border-color: rgba(184, 137, 82, 0.5);
-    opacity: 0.95;
-  }
-  50% {
-    box-shadow: 0 0 10px rgba(184, 137, 82, 0.85), 0 0 20px rgba(184, 137, 82, 0.5);
-    border-color: rgba(184, 137, 82, 0.95);
-    opacity: 1;
-  }
-}
-
-.animate-amber-glow {
-  animation: amber-glow-pulse 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .animate-amber-glow {
-    animation: none;
-    box-shadow: 0 0 6px rgba(184, 137, 82, 0.5);
-    border-color: rgba(184, 137, 82, 0.6);
-  }
-}
-

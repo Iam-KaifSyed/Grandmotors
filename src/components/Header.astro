@@ -1,5 +1,6 @@
 ---
 import { NavBar } from './ui/tubelight-navbar';
+import { ThemeControls, ThemeModeToggle, MobileThemeControls } from './ui/ThemeControls';
 
 const pathname = new URL(Astro.request.url).pathname;
 const navItems = [
@@ -19,17 +20,14 @@ const links = [
 ];
 ---
 
-<header class="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 md:px-12 lg:px-16 py-3.5 sm:py-4 transition-all duration-300 pointer-events-none">
-  <!-- Backdrop Gradient -->
-  <div class="absolute inset-0 bg-gradient-to-b from-[#07090A]/90 via-[#07090A]/60 to-transparent pointer-events-none"></div>
-
+<header class="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 md:px-12 lg:px-16 py-3 sm:py-3.5 transition-all duration-300 pointer-events-none bg-[var(--gm-bg-nav)] backdrop-blur-md border-b border-[var(--gm-border-subtle)] shadow-sm">
   <div class="relative z-10 max-w-7xl mx-auto flex items-center justify-between">
     <!-- Brand Logo -->
-    <a href="/" class="flex items-center gap-2.5 pointer-events-auto group shrink-0 py-1">
-      <span class="text-xs sm:text-sm font-semibold tracking-[0.25em] text-[#F2F0EA] uppercase group-hover:text-[#B88952] transition-colors">
+    <a href="/" class="flex items-center gap-2.5 pointer-events-auto group shrink-0 py-1" aria-label="Grand Motors Home">
+      <span class="text-xs sm:text-sm font-semibold tracking-[0.25em] text-[var(--gm-text-primary)] uppercase group-hover:text-[var(--gm-accent-primary)] transition-colors">
         Grand Motors
       </span>
-      <span class="w-1.5 h-1.5 rounded-full bg-[#B88952] shadow-[0_0_8px_rgba(184,137,82,0.8)]"></span>
+      <span class="w-1.5 h-1.5 rounded-full bg-[var(--gm-accent-primary)] shadow-[0_0_8px_var(--gm-accent-glow)]"></span>
     </a>
 
     <!-- Desktop / Tablet Centered Tubelight Nav Pill -->
@@ -41,15 +39,21 @@ const links = [
     />
 
     <!-- Right Controls -->
-    <div class="flex items-center gap-2.5 sm:gap-3 pointer-events-auto">
+    <div class="flex items-center gap-2 sm:gap-2.5 pointer-events-auto">
+      <!-- Desktop Theme Controls (Mode Toggle + Accent Picker) -->
+      <ThemeControls client:load className="hidden sm:flex" />
+
+      <!-- Mobile Theme Mode Toggle (Sun/Moon direct tap) -->
+      <ThemeModeToggle client:load className="sm:hidden" />
+
       <!-- Desktop "Doorstep" Button Beside Book Service -->
       <a
         href="/book-service?location=doorstep#doorstep"
-        class="hidden lg:inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold tracking-[0.14em] uppercase text-[#F2F0EA] hover:text-[#B88952] bg-white/5 hover:bg-[#B88952]/10 border border-[#B88952]/30 hover:border-[#B88952]/60 rounded-full transition-all group shadow-sm shadow-[#B88952]/5"
+        class="hidden lg:inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold tracking-[0.14em] uppercase text-[var(--gm-text-primary)] hover:text-[var(--gm-accent-primary)] bg-[var(--gm-bg-card)] hover:bg-[var(--gm-accent-muted)] border border-[var(--gm-border-subtle)] hover:border-[var(--gm-accent-border)] rounded-full transition-all group shadow-sm"
       >
-        <span class="w-1.5 h-1.5 rounded-full bg-[#B88952] animate-amber-glow"></span>
+        <span class="w-1.5 h-1.5 rounded-full bg-[var(--gm-accent-primary)] animate-accent-glow"></span>
         <span>Doorstep</span>
-        <span class="inline-flex items-center px-1.5 py-0.5 text-[9px] font-extrabold tracking-wider uppercase rounded-full bg-[#B88952]/20 text-[#B88952] border border-[#B88952]/50 animate-amber-glow shadow-[0_0_8px_rgba(184,137,82,0.4)]">
+        <span class="inline-flex items-center px-1.5 py-0.5 text-[9px] font-extrabold tracking-wider uppercase rounded-full bg-[var(--gm-accent-muted)] text-[var(--gm-accent-primary)] border border-[var(--gm-accent-border)] animate-accent-glow shadow-[0_0_8px_var(--gm-accent-glow)]">
           NEW
         </span>
       </a>
@@ -57,7 +61,7 @@ const links = [
       <!-- Desktop "Book Service" Button -->
       <a
         href="/book-service"
-        class="hidden sm:inline-flex items-center justify-center px-4 sm:px-5 py-2 text-xs font-semibold tracking-[0.14em] uppercase text-[#0A0C0D] bg-[#B88952] hover:bg-[#caa066] active:bg-[#a67943] rounded-full transition-all shadow-md shadow-[#B88952]/10"
+        class="hidden sm:inline-flex items-center justify-center px-4 sm:px-4.5 py-1.5 sm:py-2 text-xs font-semibold tracking-[0.14em] uppercase text-[var(--gm-accent-foreground)] bg-[var(--gm-accent-primary)] hover:bg-[var(--gm-accent-hover)] active:bg-[var(--gm-accent-active)] rounded-full transition-all shadow-md shadow-[var(--gm-accent-primary)]/20"
       >
         Book Service
       </a>
@@ -69,7 +73,7 @@ const links = [
         aria-label="Toggle navigation menu"
         aria-expanded="false"
         aria-controls="mobile-nav-menu"
-        class="md:hidden flex items-center justify-center w-9 h-9 rounded-full bg-black/50 backdrop-blur-md border border-white/10 text-[#F2F0EA] hover:text-[#B88952] hover:border-[#B88952]/40 transition-all cursor-pointer"
+        class="md:hidden flex items-center justify-center w-8 h-8 rounded-full bg-[var(--gm-bg-card)]/80 backdrop-blur-md border border-[var(--gm-border-subtle)] text-[var(--gm-text-primary)] hover:text-[var(--gm-accent-primary)] hover:border-[var(--gm-accent-border)] transition-all cursor-pointer"
       >
         <svg id="hamburger-icon" class="w-4 h-4 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -84,9 +88,9 @@ const links = [
   <!-- Mobile Drawer Menu Overlay -->
   <div
     id="mobile-nav-menu"
-    class="md:hidden fixed inset-x-0 top-[60px] p-4 pointer-events-none transition-all duration-300 opacity-0 -translate-y-2 invisible"
+    class="md:hidden fixed inset-x-0 top-[56px] p-4 pointer-events-none transition-all duration-300 opacity-0 -translate-y-2 invisible"
   >
-    <div class="bg-[#0e1013]/95 backdrop-blur-xl border border-white/12 rounded-2xl p-5 shadow-2xl space-y-4 max-w-sm mx-auto pointer-events-auto">
+    <div class="bg-[var(--gm-bg-modal)]/95 backdrop-blur-xl border border-[var(--gm-border-medium)] rounded-2xl p-5 shadow-2xl space-y-4 max-w-sm mx-auto pointer-events-auto max-h-[calc(100dvh-72px)] overflow-y-auto">
       <nav class="flex flex-col gap-1">
         {links.map(link => {
           const isDoorstep = link.href.includes('doorstep');
@@ -99,30 +103,33 @@ const links = [
           return (
             <a 
               href={link.href} 
-              class={`flex items-center justify-between px-4 py-3 text-xs font-bold tracking-[0.14em] uppercase rounded-xl transition-all ${
+              class={`flex items-center justify-between px-4 py-2.5 text-xs font-bold tracking-[0.14em] uppercase rounded-xl transition-all ${
                 isActive 
-                  ? 'bg-[#B88952]/15 text-[#B88952] border border-[#B88952]/30' 
-                  : 'text-[#D8D6D0] hover:text-white hover:bg-white/5'
+                  ? 'bg-[var(--gm-accent-muted)] text-[var(--gm-accent-primary)] border border-[var(--gm-accent-border)]' 
+                  : 'text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)] hover:bg-[var(--gm-bg-card-hover)]'
               }`}
             >
               <div class="flex items-center gap-2">
                 <span>{link.label}</span>
                 {link.badge && (
-                  <span class="inline-flex items-center px-1.5 py-0.5 text-[9px] font-extrabold tracking-wider uppercase rounded-full bg-[#B88952]/20 text-[#B88952] border border-[#B88952]/50 animate-amber-glow shadow-[0_0_8px_rgba(184,137,82,0.4)]">
+                  <span class="inline-flex items-center px-1.5 py-0.5 text-[9px] font-extrabold tracking-wider uppercase rounded-full bg-[var(--gm-accent-muted)] text-[var(--gm-accent-primary)] border border-[var(--gm-accent-border)] animate-accent-glow shadow-[0_0_8px_var(--gm-accent-glow)]">
                     {link.badge}
                   </span>
                 )}
               </div>
-              {isActive && <span class="w-1.5 h-1.5 rounded-full bg-[#B88952]"></span>}
+              {isActive && <span class="w-1.5 h-1.5 rounded-full bg-[var(--gm-accent-primary)]"></span>}
             </a>
           )
         })}
       </nav>
 
-      <div class="pt-3 border-t border-white/8 space-y-2.5">
+      <!-- Mobile Theme & Appearance Section -->
+      <MobileThemeControls client:load />
+
+      <div class="pt-3 border-t border-[var(--gm-border-subtle)] space-y-2.5">
         <a
           href="/book-service"
-          class="flex items-center justify-center w-full px-5 py-3 text-xs font-bold tracking-[0.18em] uppercase text-[#0A0C0D] bg-[#B88952] hover:bg-[#caa066] active:bg-[#a67943] rounded-xl transition-colors shadow-lg shadow-[#B88952]/15 text-center"
+          class="flex items-center justify-center w-full px-5 py-3 text-xs font-bold tracking-[0.18em] uppercase text-[var(--gm-accent-foreground)] bg-[var(--gm-accent-primary)] hover:bg-[var(--gm-accent-hover)] active:bg-[var(--gm-accent-active)] rounded-xl transition-colors shadow-lg shadow-[var(--gm-accent-primary)]/20 text-center"
         >
           Book Service
         </a>
@@ -130,7 +137,7 @@ const links = [
         <div class="grid grid-cols-2 gap-2 pt-1">
           <a
             href="tel:+918623948898"
-            class="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[11px] font-semibold tracking-wider uppercase text-[#F2F0EA] bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-colors"
+            class="flex items-center justify-center gap-1.5 px-3 py-2 text-[11px] font-semibold tracking-wider uppercase text-[var(--gm-text-primary)] bg-[var(--gm-bg-card)] hover:bg-[var(--gm-bg-card-hover)] border border-[var(--gm-border-subtle)] rounded-xl transition-colors"
           >
             <span>Call</span>
           </a>
@@ -138,7 +145,7 @@ const links = [
             href="https://wa.me/918623948898"
             target="_blank"
             rel="noopener noreferrer"
-            class="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[11px] font-semibold tracking-wider uppercase text-[#25D366] bg-[#25D366]/10 hover:bg-[#25D366]/20 border border-[#25D366]/20 rounded-xl transition-colors"
+            class="flex items-center justify-center gap-1.5 px-3 py-2 text-[11px] font-semibold tracking-wider uppercase text-[#25D366] bg-[#25D366]/10 hover:bg-[#25D366]/20 border border-[#25D366]/20 rounded-xl transition-colors"
           >
             <span>WhatsApp</span>
           </a>

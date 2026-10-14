@@ -52,13 +52,13 @@ const WHY_POINTS = [
             <Fragment slot="title">A Premium Workshop<br class="hidden sm:block" /> In The Heart Of Hyderabad</Fragment>
           </SectionHeading>
           
-          <Reveal as="p" delay={120} class="mt-5 sm:mt-6 text-xs sm:text-sm md:text-[15px] leading-relaxed text-[#A7AAAD]">
+          <Reveal as="p" delay={120} class="mt-5 sm:mt-6 text-xs sm:text-sm md:text-[15px] leading-relaxed text-[var(--gm-text-secondary)]">
             Grand Motors is a premium automotive workshop in Moosapet, Hyderabad, built for drivers
             who refuse to compromise on how their car is cared for. We pair modern diagnostic
             equipment with genuinely experienced technicians to deliver service that is precise,
             transparent and dependable.
           </Reveal>
-          <Reveal as="p" delay={200} class="mt-3 sm:mt-4 text-xs sm:text-sm md:text-[15px] leading-relaxed text-[#A7AAAD]">
+          <Reveal as="p" delay={200} class="mt-3 sm:mt-4 text-xs sm:text-sm md:text-[15px] leading-relaxed text-[var(--gm-text-secondary)]">
             From routine maintenance to complex repairs and full detailing, every vehicle is treated
             with the same standard of craftsmanship. No shortcuts, no surprises — just the quality
             your car deserves.
@@ -71,10 +71,10 @@ const WHY_POINTS = [
               { k: 'Genuine', v: 'Grade Parts' },
             ].map((stat) => (
               <div>
-                <div class="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-[-0.02em] text-[#B88952]">
+                <div class="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-[-0.02em] text-[var(--gm-accent-primary)]">
                   {stat.k}
                 </div>
-                <div class="mt-1 text-[10px] sm:text-[11px] tracking-[0.12em] sm:tracking-[0.14em] uppercase text-[#A7AAAD]/80 leading-tight">
+                <div class="mt-1 text-[10px] sm:text-[11px] tracking-[0.12em] sm:tracking-[0.14em] uppercase text-[var(--gm-text-secondary)]/80 leading-tight">
                   {stat.v}
                 </div>
               </div>
@@ -83,19 +83,19 @@ const WHY_POINTS = [
         </div>
 
         <Reveal delay={120} class="relative">
-          <div class="relative rounded-2xl border border-white/8 bg-gradient-to-br from-[#181B1E] to-[#0E1012] p-6 sm:p-8 md:p-10 overflow-hidden">
+          <div class="relative rounded-2xl border border-[var(--gm-border-subtle)] bg-[var(--gm-bg-card)] p-6 sm:p-8 md:p-10 overflow-hidden shadow-lg">
             <div
               aria-hidden="true"
-              class="absolute -top-20 -right-20 w-56 h-56 rounded-full bg-[#B88952]/10 blur-3xl"
+              class="absolute -top-20 -right-20 w-56 h-56 rounded-full bg-[var(--gm-accent-primary)]/10 blur-3xl"
             ></div>
             <div class="relative">
-              <GaugeIcon className="w-8 h-8 sm:w-9 sm:h-9 text-[#B88952]" />
-              <blockquote class="mt-5 sm:mt-6 text-lg sm:text-xl md:text-2xl font-semibold leading-snug tracking-[-0.015em] text-[#F2F0EA]">
+              <GaugeIcon className="w-8 h-8 sm:w-9 sm:h-9 text-[var(--gm-accent-primary)]" />
+              <blockquote class="mt-5 sm:mt-6 text-lg sm:text-xl md:text-2xl font-semibold leading-snug tracking-[-0.015em] text-[var(--gm-text-primary)]">
                 “We treat every car as if the next drive depends on it — because it does.”
               </blockquote>
               <div class="mt-5 sm:mt-6 flex items-center gap-3">
-                <span class="w-6 sm:w-8 h-px bg-[#B88952]"></span>
-                <span class="text-[11px] sm:text-[12px] tracking-[0.16em] sm:tracking-[0.18em] uppercase text-[#A7AAAD]">
+                <span class="w-6 sm:w-8 h-px bg-[var(--gm-accent-primary)]"></span>
+                <span class="text-[11px] sm:text-[12px] tracking-[0.16em] sm:tracking-[0.18em] uppercase text-[var(--gm-text-secondary)]">
                   The Grand Motors Standard
                 </span>
               </div>
@@ -106,7 +106,7 @@ const WHY_POINTS = [
     </section>
 
     <!-- WHY GRAND MOTORS -->
-    <section class="mt-20 md:mt-24 px-4 sm:px-8 md:px-12 lg:px-16 py-16 md:py-28 bg-[#0A0C0D] border-y border-white/5">
+    <section class="mt-20 md:mt-24 px-4 sm:px-8 md:px-12 lg:px-16 py-16 md:py-28 bg-[var(--gm-bg-surface)] border-y border-[var(--gm-border-subtle)] transition-colors duration-200">
       <div class="max-w-7xl mx-auto">
         <SectionHeading
           eyebrow="Why Grand Motors"
@@ -121,13 +121,13 @@ const WHY_POINTS = [
             return (
               <Reveal
                 delay={(i % 3) * 70}
-                class="group relative rounded-xl border border-white/8 bg-[#111315] p-6 sm:p-7 transition-colors duration-200 hover:border-[#B88952]/30"
+                class="group relative rounded-xl border border-[var(--gm-border-subtle)] bg-[var(--gm-bg-card)] p-6 sm:p-7 transition-all duration-200 hover:border-[var(--gm-accent-border)] hover:bg-[var(--gm-bg-card-hover)] shadow-sm"
               >
-                <span class="grid place-items-center w-10 h-10 sm:w-11 sm:h-11 rounded-lg border border-[#B88952]/30 bg-[#B88952]/10 text-[#B88952]">
+                <span class="grid place-items-center w-10 h-10 sm:w-11 sm:h-11 rounded-lg border border-[var(--gm-accent-border)] bg-[var(--gm-accent-muted)] text-[var(--gm-accent-primary)] shadow-sm">
                   <Icon className="w-5 h-5" />
                 </span>
-                <h3 class="mt-4 sm:mt-5 text-base font-semibold text-[#F2F0EA]">{point.title}</h3>
-                <p class="mt-2 text-xs sm:text-[13.5px] leading-relaxed text-[#A7AAAD]">{point.body}</p>
+                <h3 class="mt-4 sm:mt-5 text-base font-semibold text-[var(--gm-text-primary)]">{point.title}</h3>
+                <p class="mt-2 text-xs sm:text-[13.5px] leading-relaxed text-[var(--gm-text-secondary)]">{point.body}</p>
               </Reveal>
             );
           })}
@@ -136,16 +136,14 @@ const WHY_POINTS = [
     </section>
 
     <!-- 1. WORKSHOP APPROACH -->
-    <section class="px-4 sm:px-8 md:px-12 lg:px-16 py-16 md:py-28 relative overflow-hidden">
-      <!-- Background elements for cinematic feel -->
-      <div class="absolute inset-0 bg-gradient-to-b from-[#0A0C0D] to-[#121417]"></div>
-      <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#B88952]/30 to-transparent"></div>
+    <section class="px-4 sm:px-8 md:px-12 lg:px-16 py-16 md:py-28 relative overflow-hidden bg-[var(--gm-bg-page)] transition-colors duration-200">
+      <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[var(--gm-accent-primary)]/30 to-transparent"></div>
 
       <div class="max-w-7xl mx-auto relative z-10">
         <Reveal>
-          <div class="text-[10px] sm:text-[11px] tracking-[0.2em] uppercase text-[#B88952] text-center mb-4 sm:mb-6">Workshop Approach</div>
-          <h2 class="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-[-0.03em] text-[#F2F0EA] text-center uppercase">
-            Built Around <span class="text-[#B88952]">Your Drive</span>
+          <div class="text-[10px] sm:text-[11px] tracking-[0.2em] uppercase text-[var(--gm-accent-primary)] text-center mb-4 sm:mb-6">Workshop Approach</div>
+          <h2 class="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-[-0.03em] text-[var(--gm-text-primary)] text-center uppercase">
+            Built Around <span class="text-[var(--gm-accent-primary)]">Your Drive</span>
           </h2>
         </Reveal>
 
@@ -158,15 +156,15 @@ const WHY_POINTS = [
           ].map((step, i) => (
             <Reveal delay={i * 100} class="relative group">
               {i !== 3 && (
-                <div class="hidden lg:block absolute top-[44px] left-[70%] w-full h-[1px] bg-gradient-to-r from-[#B88952]/20 to-transparent"></div>
+                <div class="hidden lg:block absolute top-[44px] left-[70%] w-full h-[1px] bg-gradient-to-r from-[var(--gm-accent-primary)]/20 to-transparent"></div>
               )}
 
-              <div class="text-5xl sm:text-6xl md:text-[72px] font-bold text-[#181B1E] group-hover:text-[#B88952]/20 transition-colors duration-500 leading-none select-none">
+              <div class="text-5xl sm:text-6xl md:text-[72px] font-bold text-[var(--gm-border-strong)] group-hover:text-[var(--gm-accent-primary)]/25 transition-colors duration-500 leading-none select-none">
                 {step.num}
               </div>
-              <div class="mt-4 sm:mt-6 border-l-2 border-[#B88952]/30 pl-4 sm:pl-5 group-hover:border-[#B88952] transition-colors duration-300">
-                <h3 class="text-base sm:text-lg md:text-xl font-bold text-[#F2F0EA] tracking-widest">{step.title}</h3>
-                <p class="mt-2 sm:mt-3 text-xs sm:text-[13px] md:text-sm text-[#A7AAAD] leading-relaxed max-w-[250px]">
+              <div class="mt-4 sm:mt-6 border-l-2 border-[var(--gm-accent-border)] pl-4 sm:pl-5 group-hover:border-[var(--gm-accent-primary)] transition-colors duration-300">
+                <h3 class="text-base sm:text-lg md:text-xl font-bold text-[var(--gm-text-primary)] tracking-widest">{step.title}</h3>
+                <p class="mt-2 sm:mt-3 text-xs sm:text-[13px] md:text-sm text-[var(--gm-text-secondary)] leading-relaxed max-w-[250px]">
                   {step.desc}
                 </p>
               </div>
@@ -177,15 +175,15 @@ const WHY_POINTS = [
     </section>
 
     <!-- 2. GRAND MOTOR STANDARD -->
-    <section class="px-4 sm:px-8 md:px-12 lg:px-16 py-16 md:py-28 bg-[#0A0C0D] border-y border-white/5 relative overflow-hidden">
+    <section class="px-4 sm:px-8 md:px-12 lg:px-16 py-16 md:py-28 bg-[var(--gm-bg-surface)] border-y border-[var(--gm-border-subtle)] relative overflow-hidden transition-colors duration-200">
       <!-- subtle background radial glow -->
-      <div class="absolute top-1/2 left-0 -translate-y-1/2 w-96 h-96 bg-[#B88952]/5 rounded-full blur-[120px] pointer-events-none"></div>
+      <div class="absolute top-1/2 left-0 -translate-y-1/2 w-96 h-96 bg-[var(--gm-accent-primary)]/5 rounded-full blur-[120px] pointer-events-none"></div>
 
       <div class="max-w-7xl mx-auto relative z-10 flex flex-col lg:flex-row gap-10 sm:gap-14 lg:gap-24">
         <div class="lg:w-1/3">
           <Reveal>
-            <div class="text-[10px] sm:text-[11px] tracking-[0.2em] uppercase text-[#B88952] mb-4 sm:mb-6">The Grand Motor Standard</div>
-            <h2 class="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-[-0.03em] text-[#F2F0EA] uppercase leading-[1.1]">
+            <div class="text-[10px] sm:text-[11px] tracking-[0.2em] uppercase text-[var(--gm-accent-primary)] mb-4 sm:mb-6">The Grand Motor Standard</div>
+            <h2 class="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-[-0.03em] text-[var(--gm-text-primary)] uppercase leading-[1.1]">
               No Compromise.<br/>
               Just Precision.
             </h2>
@@ -194,41 +192,41 @@ const WHY_POINTS = [
 
         <div class="lg:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-x-8 sm:gap-x-12 gap-y-8 sm:gap-y-12">
           <Reveal delay={0}>
-            <h3 class="text-lg sm:text-xl md:text-2xl font-bold text-[#F2F0EA] flex items-baseline gap-3 sm:gap-4">
-              <span class="text-[#B88952] text-xl sm:text-2xl hidden sm:inline-block">/</span>
+            <h3 class="text-lg sm:text-xl md:text-2xl font-bold text-[var(--gm-text-primary)] flex items-baseline gap-3 sm:gap-4">
+              <span class="text-[var(--gm-accent-primary)] text-xl sm:text-2xl hidden sm:inline-block">/</span>
               Precision-focused service
             </h3>
-            <p class="mt-3 sm:mt-4 text-xs sm:text-[14px] md:text-[15px] text-[#A7AAAD] leading-relaxed">
+            <p class="mt-3 sm:mt-4 text-xs sm:text-[14px] md:text-[15px] text-[var(--gm-text-secondary)] leading-relaxed">
               Every job is measured, torqued and tested to exact specifications. We work to the numbers, ensuring flawless operation before keys are handed back.
             </p>
           </Reveal>
 
           <Reveal delay={100}>
-            <h3 class="text-lg sm:text-xl md:text-2xl font-bold text-[#F2F0EA] flex items-baseline gap-3 sm:gap-4">
-              <span class="text-[#B88952] text-xl sm:text-2xl hidden sm:inline-block">/</span>
+            <h3 class="text-lg sm:text-xl md:text-2xl font-bold text-[var(--gm-text-primary)] flex items-baseline gap-3 sm:gap-4">
+              <span class="text-[var(--gm-accent-primary)] text-xl sm:text-2xl hidden sm:inline-block">/</span>
               Advanced diagnostics
             </h3>
-            <p class="mt-3 sm:mt-4 text-xs sm:text-[14px] md:text-[15px] text-[#A7AAAD] leading-relaxed">
+            <p class="mt-3 sm:mt-4 text-xs sm:text-[14px] md:text-[15px] text-[var(--gm-text-secondary)] leading-relaxed">
               Computerised fault scanning and telemetry pinpoint the issue first. Accurate problem solving eliminates guesswork and unnecessary costs.
             </p>
           </Reveal>
 
           <Reveal delay={200}>
-            <h3 class="text-lg sm:text-xl md:text-2xl font-bold text-[#F2F0EA] flex items-baseline gap-3 sm:gap-4">
-              <span class="text-[#B88952] text-xl sm:text-2xl hidden sm:inline-block">/</span>
+            <h3 class="text-lg sm:text-xl md:text-2xl font-bold text-[var(--gm-text-primary)] flex items-baseline gap-3 sm:gap-4">
+              <span class="text-[var(--gm-accent-primary)] text-xl sm:text-2xl hidden sm:inline-block">/</span>
               Genuine-quality parts
             </h3>
-            <p class="mt-3 sm:mt-4 text-xs sm:text-[14px] md:text-[15px] text-[#A7AAAD] leading-relaxed">
+            <p class="mt-3 sm:mt-4 text-xs sm:text-[14px] md:text-[15px] text-[var(--gm-text-secondary)] leading-relaxed">
               We exclusively use OEM and OEM-grade components. The right part, correctly fitted, provides longevity and preserves your vehicle's integrity.
             </p>
           </Reveal>
 
           <Reveal delay={300}>
-            <h3 class="text-lg sm:text-xl md:text-2xl font-bold text-[#F2F0EA] flex items-baseline gap-3 sm:gap-4">
-              <span class="text-[#B88952] text-xl sm:text-2xl hidden sm:inline-block">/</span>
+            <h3 class="text-lg sm:text-xl md:text-2xl font-bold text-[var(--gm-text-primary)] flex items-baseline gap-3 sm:gap-4">
+              <span class="text-[var(--gm-accent-primary)] text-xl sm:text-2xl hidden sm:inline-block">/</span>
               Transparent service
             </h3>
-            <p class="mt-3 sm:mt-4 text-xs sm:text-[14px] md:text-[15px] text-[#A7AAAD] leading-relaxed">
+            <p class="mt-3 sm:mt-4 text-xs sm:text-[14px] md:text-[15px] text-[var(--gm-text-secondary)] leading-relaxed">
               Clear estimates, honest timelines, and straightforward communication. You maintain full oversight and approve all work before we proceed.
             </p>
           </Reveal>
@@ -237,17 +235,13 @@ const WHY_POINTS = [
     </section>
 
     <!-- 3. FINAL CTA -->
-    <section class="px-4 sm:px-8 md:px-12 lg:px-16 py-20 sm:py-28 md:py-36 relative flex items-center justify-center text-center">
-      <!-- Glow & Effects -->
-      <div class="absolute inset-0 bg-[#0A0C0D]"></div>
-      <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#B88952]/10 via-[#0A0C0D]/80 to-[#0A0C0D]"></div>
-
+    <section class="px-4 sm:px-8 md:px-12 lg:px-16 py-20 sm:py-28 md:py-36 relative flex items-center justify-center text-center bg-[var(--gm-bg-page)] transition-colors duration-200">
       <div class="relative z-10 max-w-4xl mx-auto flex flex-col items-center">
         <Reveal>
-          <h2 class="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-[-0.04em] text-[#F2F0EA] uppercase">
+          <h2 class="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-[-0.04em] text-[var(--gm-text-primary)] uppercase">
             Your Car <br class="sm:hidden" />Deserves Better.
           </h2>
-          <p class="mt-4 sm:mt-6 text-sm sm:text-lg md:text-xl text-[#A7AAAD] max-w-2xl mx-auto">
+          <p class="mt-4 sm:mt-6 text-sm sm:text-lg md:text-xl text-[var(--gm-text-secondary)] max-w-2xl mx-auto">
             Precision service. Transparent work. Built for the road ahead.
           </p>
         </Reveal>
@@ -255,14 +249,14 @@ const WHY_POINTS = [
         <Reveal delay={200} class="mt-8 sm:mt-12 flex flex-col sm:flex-row items-center gap-3 sm:gap-4 justify-center w-full max-w-md mx-auto sm:max-w-none">
           <a
             href="/book-service"
-            class="group relative inline-flex items-center justify-center gap-3 w-full sm:w-auto px-7 sm:px-8 py-3.5 sm:py-4 bg-[#B88952] text-[#0A0C0D] font-bold text-xs sm:text-[13px] tracking-[0.16em] uppercase rounded-full sm:rounded-none overflow-hidden transition-all hover:bg-[#c99a63] text-center"
+            class="group relative inline-flex items-center justify-center gap-3 w-full sm:w-auto px-7 sm:px-8 py-3.5 sm:py-4 bg-[var(--gm-accent-primary)] text-[var(--gm-accent-foreground)] font-bold text-xs sm:text-[13px] tracking-[0.16em] uppercase rounded-full overflow-hidden transition-all hover:bg-[var(--gm-accent-hover)] text-center shadow-lg shadow-[var(--gm-accent-primary)]/20"
           >
             <span>Book A Service</span>
           </a>
 
           <a
             href="/contact"
-            class="group inline-flex items-center justify-center gap-3 w-full sm:w-auto px-7 sm:px-8 py-3.5 sm:py-4 bg-transparent text-[#F2F0EA] font-bold text-xs sm:text-[13px] tracking-[0.16em] uppercase border border-[#B88952]/40 rounded-full sm:rounded-none transition-all hover:border-[#B88952] hover:bg-[#B88952]/5 text-center"
+            class="group inline-flex items-center justify-center gap-3 w-full sm:w-auto px-7 sm:px-8 py-3.5 sm:py-4 bg-transparent text-[var(--gm-text-primary)] font-bold text-xs sm:text-[13px] tracking-[0.16em] uppercase border border-[var(--gm-border-medium)] rounded-full transition-all hover:border-[var(--gm-accent-border)] hover:bg-[var(--gm-accent-muted)] text-center shadow-sm"
           >
             <span>Contact Workshop</span>
           </a>

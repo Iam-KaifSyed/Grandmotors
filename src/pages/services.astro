@@ -116,31 +116,31 @@ const PROMISES = [
           decoding="async"
           class="h-full w-full object-cover object-center"
         />
-        <div class="absolute inset-0 bg-[#07090A]/82"></div>
+        <div class="absolute inset-0 bg-[var(--gm-bg-page)]/85"></div>
         <div
-          class="absolute inset-0 bg-gradient-to-t from-[#07090A] via-[#07090A]/60 to-[#07090A]/30"
+          class="absolute inset-0 bg-gradient-to-t from-[var(--gm-bg-page)] via-[var(--gm-bg-page)]/60 to-[var(--gm-bg-page)]/30"
         ></div>
       </div>
 
       <div class="px-4 sm:px-8 md:px-12 lg:px-16 pt-32 pb-16 md:pt-44 md:pb-28">
         <div class="max-w-7xl mx-auto">
           <Reveal class="flex items-center gap-2.5 mb-5 sm:mb-6">
-            <span class="w-5 sm:w-6 h-px bg-[#B88952]"></span>
-            <span class="text-[10px] sm:text-[11px] font-semibold tracking-[0.25em] sm:tracking-[0.3em] text-[#B88952] uppercase">
+            <span class="w-5 sm:w-6 h-px bg-[var(--gm-accent-primary)]"></span>
+            <span class="text-[10px] sm:text-[11px] font-semibold tracking-[0.25em] sm:tracking-[0.3em] text-[var(--gm-accent-primary)] uppercase">
               What We Do
             </span>
           </Reveal>
           <Reveal
             as="h1"
             delay={80}
-            class="max-w-3xl text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-[-0.035em] text-[#F2F0EA] leading-[1.0] sm:leading-[0.98] uppercase"
+            class="max-w-3xl text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-[-0.035em] text-[var(--gm-text-primary)] leading-[1.0] sm:leading-[0.98] uppercase"
           >
             Services, Engineered<br class="hidden sm:block" /> Around Your Car
           </Reveal>
           <Reveal
             as="p"
             delay={160}
-            class="mt-4 sm:mt-6 max-w-xl text-xs sm:text-sm md:text-base leading-relaxed text-[#D8D6D0]/90"
+            class="mt-4 sm:mt-6 max-w-xl text-xs sm:text-sm md:text-base leading-relaxed text-[var(--gm-text-secondary)]"
           >
             A complete workshop under one roof. From diagnostics to detailing, every service is
             delivered with the same precision you expect from a premium garage.
@@ -149,14 +149,14 @@ const PROMISES = [
           <Reveal delay={240} class="mt-8 sm:mt-9 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-3.5">
             <a
               href="/book-service"
-              class="group inline-flex items-center justify-center gap-2.5 px-6 sm:px-7 py-3.5 rounded-full bg-[#B88952] text-[#0A0C0D] font-semibold tracking-[0.02em] transition-colors duration-200 hover:bg-[#caa066] cursor-pointer text-center"
+              class="group inline-flex items-center justify-center gap-2.5 px-6 sm:px-7 py-3.5 rounded-full bg-[var(--gm-accent-primary)] text-[var(--gm-accent-foreground)] font-semibold tracking-[0.02em] transition-colors duration-200 hover:bg-[var(--gm-accent-hover)] cursor-pointer text-center shadow-lg shadow-[var(--gm-accent-primary)]/20"
             >
               Book a Service
               <ArrowRightIcon className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </a>
             <a
               href="#catalogue"
-              class="group inline-flex items-center justify-center gap-2.5 px-6 sm:px-7 py-3.5 rounded-full border border-white/15 text-[#F2F0EA] font-semibold tracking-[0.02em] transition-colors duration-200 hover:border-[#B88952]/50 hover:bg-[#B88952]/10 cursor-pointer text-center"
+              class="group inline-flex items-center justify-center gap-2.5 px-6 sm:px-7 py-3.5 rounded-full border border-[var(--gm-border-medium)] text-[var(--gm-text-primary)] font-semibold tracking-[0.02em] transition-colors duration-200 hover:border-[var(--gm-accent-border)] hover:bg-[var(--gm-accent-muted)] cursor-pointer text-center shadow-sm"
             >
               Browse Services
             </a>
@@ -165,18 +165,18 @@ const PROMISES = [
       </div>
 
       <!-- Stats band -->
-      <div class="relative border-t border-white/5 bg-[#0A0C0D]/80 backdrop-blur-sm">
+      <div class="relative border-t border-[var(--gm-border-subtle)] bg-[var(--gm-bg-surface)]/90 backdrop-blur-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-8 md:px-12 lg:px-16">
-          <dl class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-0 lg:divide-x divide-white/8 py-4 lg:py-0">
+          <dl class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-0 lg:divide-x divide-[var(--gm-border-subtle)] py-4 lg:py-0">
             {STATS.map((s, i) => (
               <Reveal
                 delay={i * 80}
-                class="py-4 sm:py-6 lg:py-7 px-3 sm:px-4 lg:first:pl-0 text-center lg:text-left bg-white/[0.02] lg:bg-transparent rounded-xl lg:rounded-none border border-white/5 lg:border-none"
+                class="py-4 sm:py-6 lg:py-7 px-3 sm:px-4 lg:first:pl-0 text-center lg:text-left bg-[var(--gm-bg-card-subtle)] lg:bg-transparent rounded-xl lg:rounded-none border border-[var(--gm-border-subtle)] lg:border-none"
               >
-                <dt class="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-[-0.02em] text-[#F2F0EA]">
+                <dt class="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-[-0.02em] text-[var(--gm-text-primary)]">
                   {s.value}
                 </dt>
-                <dd class="mt-1 text-[11px] sm:text-[12px] md:text-[13px] tracking-[0.06em] sm:tracking-[0.08em] uppercase text-[#A7AAAD]">
+                <dd class="mt-1 text-[11px] sm:text-[12px] md:text-[13px] tracking-[0.06em] sm:tracking-[0.08em] uppercase text-[var(--gm-text-secondary)]">
                   {s.label}
                 </dd>
               </Reveal>
@@ -205,7 +205,7 @@ const PROMISES = [
               <Reveal
                 delay={(i % 3) * 70}
                 as="article"
-                class="group relative flex flex-col overflow-hidden rounded-2xl border border-white/8 bg-[#111315] transition-colors duration-200 hover:border-[#B88952]/35"
+                class="group relative flex flex-col overflow-hidden rounded-2xl border border-[var(--gm-border-subtle)] bg-[var(--gm-bg-card)] transition-all duration-200 hover:border-[var(--gm-accent-border)] hover:bg-[var(--gm-bg-card-hover)] shadow-sm"
               >
                 {/* Image */}
                 <div class="relative aspect-[16/10] overflow-hidden">
@@ -218,26 +218,26 @@ const PROMISES = [
                   />
                   <div
                     aria-hidden="true"
-                    class="absolute inset-0 bg-gradient-to-t from-[#111315] via-[#111315]/35 to-transparent"
+                    class="absolute inset-0 bg-gradient-to-t from-[var(--gm-bg-card)] via-[var(--gm-bg-card)]/35 to-transparent"
                   ></div>
-                  <span class="absolute left-4 top-4 grid place-items-center w-11 h-11 rounded-xl border border-white/15 bg-[#0A0C0D]/70 text-[#B88952] backdrop-blur-sm">
+                  <span class="absolute left-4 top-4 grid place-items-center w-11 h-11 rounded-xl border border-[var(--gm-border-medium)] bg-[var(--gm-bg-surface)]/80 text-[var(--gm-accent-primary)] backdrop-blur-sm shadow-sm">
                     <Icon className="w-5 h-5" />
                   </span>
                 </div>
 
                 {/* Body */}
                 <div class="flex flex-1 flex-col p-6 md:p-7">
-                  <h3 class="text-lg font-semibold tracking-[-0.01em] text-[#F2F0EA]">
+                  <h3 class="text-lg font-semibold tracking-[-0.01em] text-[var(--gm-text-primary)]">
                     {service.title}
                   </h3>
-                  <p class="mt-1.5 text-[13.5px] leading-relaxed text-[#A7AAAD]">
+                  <p class="mt-1.5 text-[13.5px] leading-relaxed text-[var(--gm-text-secondary)]">
                     {service.summary}
                   </p>
 
-                  <ul class="mt-5 grid gap-2.5 border-t border-white/5 pt-5">
+                  <ul class="mt-5 grid gap-2.5 border-t border-[var(--gm-border-subtle)] pt-5">
                     {service.items.map((item) => (
-                      <li class="flex items-start gap-2.5 text-[13px] text-[#A7AAAD]">
-                        <CheckIcon className="w-4 h-4 mt-0.5 shrink-0 text-[#B88952]" />
+                      <li class="flex items-start gap-2.5 text-[13px] text-[var(--gm-text-secondary)]">
+                        <CheckIcon className="w-4 h-4 mt-0.5 shrink-0 text-[var(--gm-accent-primary)]" />
                         <span>{item}</span>
                       </li>
                     ))}
@@ -245,7 +245,7 @@ const PROMISES = [
 
                   <a
                     href={`/book-service?service=${encodeURIComponent(service.id)}`}
-                    class="mt-6 inline-flex items-center gap-2 self-start text-[13px] font-semibold tracking-[0.02em] text-[#B88952] transition-colors duration-200 hover:text-[#caa066] cursor-pointer"
+                    class="mt-6 inline-flex items-center gap-2 self-start text-[13px] font-semibold tracking-[0.02em] text-[var(--gm-accent-primary)] transition-colors duration-200 hover:text-[var(--gm-accent-hover)] cursor-pointer"
                   >
                     Book this service
                     <ArrowRightIcon className="w-4 h-4 transition-transform group-hover:translate-x-1" />
@@ -261,7 +261,7 @@ const PROMISES = [
     <!-- ============================================================ -->
     <!-- OUR PROCESS                                                  -->
     <!-- ============================================================ -->
-    <section class="mt-20 md:mt-24 px-4 sm:px-8 md:px-12 lg:px-16 py-16 md:py-28 bg-[#0A0C0D] border-y border-white/5">
+    <section class="mt-20 md:mt-24 px-4 sm:px-8 md:px-12 lg:px-16 py-16 md:py-28 bg-[var(--gm-bg-surface)] border-y border-[var(--gm-border-subtle)] transition-colors duration-200">
       <div class="max-w-7xl mx-auto">
         <SectionHeading
           eyebrow="Our Process"
@@ -273,7 +273,7 @@ const PROMISES = [
         <div class="mt-12 sm:mt-16 relative">
           <div
             aria-hidden="true"
-            class="hidden lg:block absolute top-6 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#B88952]/30 to-transparent"
+            class="hidden lg:block absolute top-6 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[var(--gm-accent-primary)]/30 to-transparent"
           ></div>
           <ol class="grid gap-8 sm:gap-10 grid-cols-1 sm:grid-cols-2 lg:grid-cols-5">
             {PROCESS_STEPS.map((step, i) => {
@@ -281,17 +281,17 @@ const PROMISES = [
               return (
                 <Reveal delay={i * 90} as="li" class={`relative ${i === 4 ? 'sm:col-span-2 lg:col-span-1' : ''}`}>
                   <div class="flex items-center gap-3 lg:flex-col lg:items-start">
-                    <span class="relative z-10 grid place-items-center w-11 h-11 sm:w-12 sm:h-12 rounded-full border border-[#B88952]/40 bg-[#0A0C0D] text-[#B88952] shrink-0">
+                    <span class="relative z-10 grid place-items-center w-11 h-11 sm:w-12 sm:h-12 rounded-full border border-[var(--gm-accent-border)] bg-[var(--gm-bg-card)] text-[var(--gm-accent-primary)] shrink-0 shadow-sm">
                       <Icon className="w-5 h-5" />
                     </span>
-                    <span class="font-mono text-[11px] tracking-[0.3em] text-[#A7AAAD]/70">
+                    <span class="font-mono text-[11px] tracking-[0.3em] text-[var(--gm-text-secondary)]/70">
                       {step.n}
                     </span>
                   </div>
-                  <h3 class="mt-3 sm:mt-5 text-base sm:text-lg font-semibold tracking-[-0.01em] text-[#F2F0EA]">
+                  <h3 class="mt-3 sm:mt-5 text-base sm:text-lg font-semibold tracking-[-0.01em] text-[var(--gm-text-primary)]">
                     {step.title}
                   </h3>
-                  <p class="mt-1.5 sm:mt-2 text-xs sm:text-[13.5px] leading-relaxed text-[#A7AAAD]">{step.body}</p>
+                  <p class="mt-1.5 sm:mt-2 text-xs sm:text-[13.5px] leading-relaxed text-[var(--gm-text-secondary)]">{step.body}</p>
                 </Reveal>
               );
             })}
@@ -318,15 +318,15 @@ const PROMISES = [
             return (
               <Reveal
                 delay={(i % 4) * 70}
-                class="group rounded-2xl border border-white/8 bg-[#111315] p-6 sm:p-7 transition-colors duration-200 hover:border-[#B88952]/30 hover:bg-[#181B1E]"
+                class="group rounded-2xl border border-[var(--gm-border-subtle)] bg-[var(--gm-bg-card)] p-6 sm:p-7 transition-all duration-200 hover:border-[var(--gm-accent-border)] hover:bg-[var(--gm-bg-card-hover)] shadow-sm"
               >
-                <span class="grid place-items-center w-11 h-11 sm:w-12 sm:h-12 rounded-xl border border-white/10 text-[#B88952] transition-colors duration-200 group-hover:border-[#B88952]/40 group-hover:bg-[#B88952]/10">
+                <span class="grid place-items-center w-11 h-11 sm:w-12 sm:h-12 rounded-xl border border-[var(--gm-border-subtle)] text-[var(--gm-accent-primary)] transition-colors duration-200 group-hover:border-[var(--gm-accent-border)] group-hover:bg-[var(--gm-accent-muted)] shadow-sm">
                   <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
                 </span>
-                <h3 class="mt-4 sm:mt-5 text-base font-semibold tracking-[-0.01em] text-[#F2F0EA]">
+                <h3 class="mt-4 sm:mt-5 text-base font-semibold tracking-[-0.01em] text-[var(--gm-text-primary)]">
                   {p.title}
                 </h3>
-                <p class="mt-2 text-xs sm:text-[13.5px] leading-relaxed text-[#A7AAAD]">{p.body}</p>
+                <p class="mt-2 text-xs sm:text-[13.5px] leading-relaxed text-[var(--gm-text-secondary)]">{p.body}</p>
               </Reveal>
             );
           })}
@@ -339,7 +339,7 @@ const PROMISES = [
     <!-- ============================================================ -->
     <section class="px-4 sm:px-8 md:px-12 lg:px-16 pt-16 md:pt-28">
       <div class="max-w-7xl mx-auto">
-        <Reveal class="relative isolate overflow-hidden rounded-2xl sm:rounded-3xl border border-white/8">
+        <Reveal class="relative isolate overflow-hidden rounded-2xl sm:rounded-3xl border border-[var(--gm-border-subtle)] shadow-xl">
           <div aria-hidden="true" class="absolute inset-0 -z-10">
             <img
               src={CTA_IMAGE}
@@ -348,17 +348,17 @@ const PROMISES = [
               decoding="async"
               class="h-full w-full object-cover object-center"
             />
-            <div class="absolute inset-0 bg-[#07090A]/85 sm:bg-[#07090A]/80"></div>
+            <div class="absolute inset-0 bg-[var(--gm-bg-page)]/85 sm:bg-[var(--gm-bg-page)]/80"></div>
             <div
-              class="absolute inset-0 bg-gradient-to-r from-[#07090A] via-[#07090A]/80 to-transparent"
+              class="absolute inset-0 bg-gradient-to-r from-[var(--gm-bg-page)] via-[var(--gm-bg-page)]/80 to-transparent"
             ></div>
           </div>
 
           <div class="px-6 py-10 sm:px-10 sm:py-14 md:px-14 md:py-20">
-            <h2 class="max-w-xl text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-[-0.03em] text-[#F2F0EA] leading-[1.05] uppercase">
+            <h2 class="max-w-xl text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-[-0.03em] text-[var(--gm-text-primary)] leading-[1.05] uppercase">
               Ready when<br /> your car is
             </h2>
-            <p class="mt-4 sm:mt-5 max-w-md text-xs sm:text-sm md:text-[15px] leading-relaxed text-[#D8D6D0]/90">
+            <p class="mt-4 sm:mt-5 max-w-md text-xs sm:text-sm md:text-[15px] leading-relaxed text-[var(--gm-text-secondary)]">
               Book online in under a minute, or call the workshop and speak to a technician directly.
               Doorstep service & pickup within Hyderabad available on request.
             </p>
@@ -366,22 +366,22 @@ const PROMISES = [
             <div class="mt-7 sm:mt-9 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-3.5">
               <a
                 href="/book-service"
-                class="group inline-flex items-center justify-center gap-2.5 px-6 sm:px-7 py-3.5 rounded-full bg-[#B88952] text-[#0A0C0D] font-semibold tracking-[0.02em] transition-colors duration-200 hover:bg-[#caa066] cursor-pointer text-center"
+                class="group inline-flex items-center justify-center gap-2.5 px-6 sm:px-7 py-3.5 rounded-full bg-[var(--gm-accent-primary)] text-[var(--gm-accent-foreground)] font-semibold tracking-[0.02em] transition-colors duration-200 hover:bg-[var(--gm-accent-hover)] cursor-pointer text-center shadow-lg shadow-[var(--gm-accent-primary)]/20"
               >
                 Book a Service
                 <ArrowRightIcon className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </a>
               <a
                 href="tel:+918623948898"
-                class="group inline-flex items-center justify-center gap-2.5 px-6 sm:px-7 py-3.5 rounded-full border border-white/15 text-[#F2F0EA] font-semibold tracking-[0.02em] transition-colors duration-200 hover:border-[#B88952]/50 hover:bg-[#B88952]/10 cursor-pointer text-center"
+                class="group inline-flex items-center justify-center gap-2.5 px-6 sm:px-7 py-3.5 rounded-full border border-[var(--gm-border-medium)] text-[var(--gm-text-primary)] font-semibold tracking-[0.02em] transition-colors duration-200 hover:border-[var(--gm-accent-border)] hover:bg-[var(--gm-accent-muted)] cursor-pointer text-center shadow-sm"
               >
-                <PhoneIcon className="w-4 h-4 text-[#B88952]" />
+                <PhoneIcon className="w-4 h-4 text-[var(--gm-accent-primary)]" />
                 Call the Workshop
               </a>
             </div>
 
-            <p class="mt-6 sm:mt-7 inline-flex items-center gap-2 text-[11px] sm:text-[12.5px] tracking-[0.06em] text-[#A7AAAD]">
-              <ClockIcon className="w-4 h-4 text-[#B88952]" />
+            <p class="mt-6 sm:mt-7 inline-flex items-center gap-2 text-[11px] sm:text-[12.5px] tracking-[0.06em] text-[var(--gm-text-secondary)]">
+              <ClockIcon className="w-4 h-4 text-[var(--gm-accent-primary)]" />
               Open Mon–Sat, 9:00 AM – 8:00 PM
             </p>
           </div>

@@ -52,7 +52,8 @@ export function HUD({ hideBottomCues = false }: HUDProps) {
   return (
     <div
       ref={containerRef}
-      className="fixed inset-0 z-20 pointer-events-none flex flex-col justify-between select-none overflow-hidden"
+      id="hud-container"
+      className="fixed inset-0 z-20 pointer-events-none flex flex-col justify-between select-none overflow-hidden cinematic-hud text-white"
     >
       {/* Spacer where Navbar sits at top */}
       <div className="w-full h-20 pointer-events-none" />
@@ -79,17 +80,17 @@ export function HUD({ hideBottomCues = false }: HUDProps) {
               >
                 {/* Eyebrow */}
                 <div className="hero-eyebrow flex items-center gap-2 mb-3 sm:mb-4 md:mb-6">
-                  <span className="text-[10px] sm:text-xs font-semibold tracking-[0.24em] sm:tracking-[0.28em] text-[#A7AAAD] uppercase">
+                  <span className="text-[10px] sm:text-xs font-semibold tracking-[0.24em] sm:tracking-[0.28em] text-white/70 uppercase">
                     {chapter.eyebrowCategory}
                   </span>
-                  <span className="text-[#B88952] text-[10px] sm:text-xs font-medium">/</span>
-                  <span className="text-[10px] sm:text-xs font-medium tracking-[0.2em] sm:tracking-[0.24em] text-[#A7AAAD]/90 uppercase">
+                  <span className="text-[var(--gm-accent-primary)] text-[10px] sm:text-xs font-medium">/</span>
+                  <span className="text-[10px] sm:text-xs font-medium tracking-[0.2em] sm:tracking-[0.24em] text-white/80 uppercase">
                     {chapter.eyebrowName}
                   </span>
                 </div>
 
                 {/* Main Headline */}
-                <h1 className="hero-title text-3xl sm:text-4xl md:text-5xl lg:text-[4.5rem] font-extrabold tracking-[-0.035em] text-[#F2F0EA] leading-[0.96] sm:leading-[0.92] uppercase mb-3 sm:mb-5 md:mb-7">
+                <h1 className="hero-title text-3xl sm:text-4xl md:text-5xl lg:text-[4.5rem] font-extrabold tracking-[-0.035em] text-white leading-[0.96] sm:leading-[0.92] uppercase mb-3 sm:mb-5 md:mb-7">
                   {chapter.titleLines.map((line, lineIdx) => (
                     <div
                       key={lineIdx}
@@ -101,19 +102,19 @@ export function HUD({ hideBottomCues = false }: HUDProps) {
                 </h1>
 
                 {/* Supporting Description */}
-                <p className="hero-description text-xs sm:text-sm md:text-[15px] font-normal tracking-[0.02em] text-[#A7AAAD] leading-relaxed max-w-sm sm:max-w-md mb-3 sm:mb-6 line-clamp-3 sm:line-clamp-none">
+                <p className="hero-description text-xs sm:text-sm md:text-[15px] font-normal tracking-[0.02em] text-white/80 leading-relaxed max-w-sm sm:max-w-md mb-3 sm:mb-6 line-clamp-3 sm:line-clamp-none">
                   {chapter.description}
                 </p>
 
                 {/* Services List (for chapters 02-09) */}
                 {chapter.services && chapter.services.length > 0 && (
-                  <ul className="flex flex-col gap-1.5 sm:gap-2 mt-1 sm:mt-2 border-l border-[#B88952]/40 pl-3 sm:pl-4 py-0.5 sm:py-1">
+                  <ul className="flex flex-col gap-1.5 sm:gap-2 mt-1 sm:mt-2 border-l border-[var(--gm-accent-border)] pl-3 sm:pl-4 py-0.5 sm:py-1">
                     {chapter.services.map((service, sIdx) => (
                       <li
                         key={sIdx}
-                        className="text-[10px] sm:text-[11px] md:text-xs font-medium tracking-[0.12em] sm:tracking-[0.15em] text-[#A7AAAD]/90 uppercase flex items-center gap-2"
+                        className="text-[10px] sm:text-[11px] md:text-xs font-medium tracking-[0.12em] sm:tracking-[0.15em] text-white/85 uppercase flex items-center gap-2"
                       >
-                        <span className="w-1 h-1 rounded-full bg-[#B88952]/60 shrink-0"></span>
+                        <span className="w-1 h-1 rounded-full bg-[var(--gm-accent-primary)] shrink-0"></span>
                         <span className="truncate">{service}</span>
                       </li>
                     ))}
@@ -137,10 +138,10 @@ export function HUD({ hideBottomCues = false }: HUDProps) {
         <CinematicProgressBar />
 
         {/* Cues & Attribution */}
-        <div className="w-full flex items-center justify-between text-[10px] md:text-[11px] font-medium tracking-[0.2em] sm:tracking-[0.22em] text-[#A7AAAD]/80 uppercase">
+        <div className="w-full flex items-center justify-between text-[10px] md:text-[11px] font-medium tracking-[0.2em] sm:tracking-[0.22em] text-white/80 uppercase">
           {/* Bottom Left Cue */}
           <div className="hidden sm:flex items-center gap-2">
-            <span className="w-1.5 h-1.5 bg-[#B88952]/80 rounded-full" />
+            <span className="w-1.5 h-1.5 bg-[var(--gm-accent-primary)] rounded-full" />
             <span>ENGINEERED FOR THE DRIVE</span>
           </div>
 

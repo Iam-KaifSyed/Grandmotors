@@ -85,6 +85,7 @@ export function CinematicIntro({ onComplete }: CinematicIntroProps) {
   return (
     <div
       ref={containerRef}
+      id="cinematic-intro"
       className="fixed inset-0 flex items-center justify-center w-full h-full pointer-events-auto"
       style={{
         zIndex: 9000,
@@ -104,13 +105,13 @@ export function CinematicIntro({ onComplete }: CinematicIntroProps) {
       >
         <div className="flex items-center gap-3 mb-3 md:mb-4">
           <span className="h-px w-6 md:w-10 bg-gradient-to-r from-transparent to-[#B88952]/80" />
-          <span className="text-[10px] sm:text-[11px] md:text-xs font-bold tracking-[0.35em] text-[#D8D6D0]/90 uppercase font-mono">
+          <span className="text-[10px] sm:text-[11px] md:text-xs font-bold tracking-[0.35em] text-white/90 uppercase font-mono intro-subtitle">
             HIGH PERFORMANCE AUTOMOTIVE
           </span>
           <span className="h-px w-6 md:w-10 bg-gradient-to-l from-transparent to-[#B88952]/80" />
         </div>
 
-        <h1 className="flex flex-col items-center uppercase text-[#F2F0EA] drop-shadow-2xl font-extrabold m-0">
+        <h1 className="flex flex-col items-center uppercase text-white drop-shadow-2xl font-extrabold m-0 intro-title">
           <span className="text-[11vw] sm:text-[10vw] md:text-[9vw] lg:text-[8vw] leading-[0.92]">
             GRAND
           </span>
