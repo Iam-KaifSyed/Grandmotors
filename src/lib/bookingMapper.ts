@@ -51,6 +51,8 @@ export function mapBookingRowForAdmin(row: any) {
     doorstepLongitude,
     doorstepMapUrl,
     source: row.source ? row.source : 'Unknown',
+    isArchived: Boolean(row.isArchived && row.isArchived !== '0' && row.isArchived !== 0),
+    archivedAt: row.archivedAt || null,
     createdAt: row.createdAt,
   };
 }

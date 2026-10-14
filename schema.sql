@@ -22,5 +22,7 @@ CREATE TABLE IF NOT EXISTS bookings (
   doorstepLongitude REAL,
   doorstepMapUrl TEXT,
   source TEXT,
+  isArchived INTEGER DEFAULT 0,
+  archivedAt DATETIME,
   createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
 );

@@ -32,6 +32,8 @@ interface AdminBooking {
   doorstepLongitude?: number | null;
   doorstepMapUrl?: string;
   source?: string;
+  isArchived?: boolean;
+  archivedAt?: string | null;
   createdAt: string;
 }
 
@@ -158,11 +160,26 @@ export function AdminDashboard() {
   const [statusFilter, setStatusFilter] = useState<'All' | Status>('All');
   const [dateFilter, setDateFilter] = useState('');
   const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
+  const [viewTab, setViewTab] = useState<'active' | 'archived'>('active');
 
   const [selected, setSelected] = useState<AdminBooking | null>(null);
   const [statusDraft, setStatusDraft] = useState<Status | ''>('');
   const [statusSaving, setStatusSaving] = useState(false);
   const [statusFeedback, setStatusFeedback] = useState<{ ok: boolean; msg: string } | null>(null);
+
+  const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
+  const [toast, setToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [deletingBooking, setDeletingBooking] = useState<AdminBooking | null>(null);
+  const [deleteConfirmInput, setDeleteConfirmInput] = useState('');
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const showToast = (type: 'success' | 'error', message: string) => {
+    setToast({ type, message });
+    setTimeout(() => {
+      setToast((curr) => (curr?.message === message ? null : curr));
+    }, 4500);
+  };
 
   const loadBookings = async () => {
     setIsLoading(true);
@@ -191,14 +208,27 @@ export function AdminDashboard() {
     loadBookings();
   }, []);
 
+  const overallCounts = useMemo(() => {
+    let active = 0;
+    let archived = 0;
+    (bookings || []).forEach((b) => {
+      if (b.isArchived) archived += 1;
+      else active += 1;
+    });
+    return { active, archived };
+  }, [bookings]);
+
   const counts = useMemo(() => {
+    const isArchivedTab = viewTab === 'archived';
     const base = { total: 0, Pending: 0, Confirmed: 0, 'In Progress': 0, Completed: 0, Cancelled: 0 } as Record<string, number>;
     (bookings || []).forEach((b) => {
-      base.total += 1;
-      if (base[b.status] !== undefined) base[b.status] += 1;
+      if (Boolean(b.isArchived) === isArchivedTab) {
+        base.total += 1;
+        if (base[b.status] !== undefined) base[b.status] += 1;
+      }
     });
     return base;
-  }, [bookings]);
+  }, [bookings, viewTab]);
 
   const repeatCustomerMap = useMemo(() => {
     return calculateRepeatCustomers(bookings || []);
@@ -206,6 +236,12 @@ export function AdminDashboard() {
 
   const filtered = useMemo(() => {
     let list = [...(bookings || [])];
+    if (viewTab === 'active') {
+      list = list.filter((b) => !b.isArchived);
+    } else {
+      list = list.filter((b) => Boolean(b.isArchived));
+    }
+
     const q = query.trim().toLowerCase();
     if (q) {
       list = list.filter((b) =>
@@ -239,12 +275,115 @@ export function AdminDashboard() {
       return sortOrder === 'newest' ? tb - ta : ta - tb;
     });
     return list;
-  }, [bookings, query, statusFilter, dateFilter, sortOrder]);
+  }, [bookings, viewTab, query, statusFilter, dateFilter, sortOrder]);
 
   const openDetails = (b: AdminBooking) => {
     setSelected(b);
     setStatusDraft(b.status);
     setStatusFeedback(null);
+  };
+
+  const handleArchive = async (booking: AdminBooking) => {
+    setActionLoadingId(booking.id);
+    try {
+      const resp = await fetch(`/api/admin/bookings/${encodeURIComponent(booking.id)}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isArchived: true }),
+      });
+      if (resp.status === 401) {
+        window.location.href = '/admin/login';
+        return;
+      }
+      const data = await resp.json().catch(() => ({}));
+      if (!resp.ok) {
+        throw new Error(data.error || 'Failed to archive booking.');
+      }
+      const now = new Date().toISOString();
+      setBookings((prev) =>
+        (prev || []).map((b) =>
+          b.id === booking.id ? { ...b, isArchived: true, archivedAt: now } : b
+        )
+      );
+      setSelected((prev) =>
+        prev && prev.id === booking.id ? { ...prev, isArchived: true, archivedAt: now } : prev
+      );
+      showToast('success', `Booking ${booking.id} archived. Accessible under Archived Bookings tab.`);
+    } catch (err: any) {
+      showToast('error', err?.message || 'Failed to archive booking.');
+    } finally {
+      setActionLoadingId(null);
+    }
+  };
+
+  const handleRestore = async (booking: AdminBooking) => {
+    setActionLoadingId(booking.id);
+    try {
+      const resp = await fetch(`/api/admin/bookings/${encodeURIComponent(booking.id)}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isArchived: false }),
+      });
+      if (resp.status === 401) {
+        window.location.href = '/admin/login';
+        return;
+      }
+      const data = await resp.json().catch(() => ({}));
+      if (!resp.ok) {
+        throw new Error(data.error || 'Failed to restore booking.');
+      }
+      setBookings((prev) =>
+        (prev || []).map((b) =>
+          b.id === booking.id ? { ...b, isArchived: false, archivedAt: null } : b
+        )
+      );
+      setSelected((prev) =>
+        prev && prev.id === booking.id ? { ...prev, isArchived: false, archivedAt: null } : prev
+      );
+      showToast('success', `Booking ${booking.id} restored to Active Bookings.`);
+    } catch (err: any) {
+      showToast('error', err?.message || 'Failed to restore booking.');
+    } finally {
+      setActionLoadingId(null);
+    }
+  };
+
+  const openDeleteConfirm = (booking: AdminBooking) => {
+    setDeletingBooking(booking);
+    setDeleteConfirmInput('');
+    setDeleteError(null);
+  };
+
+  const handleDelete = async () => {
+    if (!deletingBooking) return;
+    setIsDeleting(true);
+    setDeleteError(null);
+    try {
+      const resp = await fetch(`/api/admin/bookings/${encodeURIComponent(deletingBooking.id)}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      if (resp.status === 401) {
+        window.location.href = '/admin/login';
+        return;
+      }
+      const data = await resp.json().catch(() => ({}));
+      if (!resp.ok) {
+        throw new Error(data.error || 'Failed to delete booking.');
+      }
+      const targetId = deletingBooking.id;
+      setBookings((prev) => (prev || []).filter((b) => b.id !== targetId));
+      if (selected?.id === targetId) {
+        setSelected(null);
+      }
+      setDeletingBooking(null);
+      setDeleteConfirmInput('');
+      showToast('success', `Booking ${targetId} permanently deleted.`);
+    } catch (err: any) {
+      setDeleteError(err?.message || 'Failed to delete booking.');
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   const saveStatus = async () => {
@@ -299,6 +438,87 @@ export function AdminDashboard() {
           Refresh
         </button>
       </div>
+
+      {/* Toast alert */}
+      {toast && (
+        <div
+          role="status"
+          className={`fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3 rounded-xl shadow-2xl border text-xs font-semibold backdrop-blur-md transition-all ${
+            toast.type === 'success'
+              ? 'bg-[#15803d]/90 text-white border-[#25D366]/40'
+              : 'bg-red-900/90 text-white border-red-500/40'
+          }`}
+        >
+          <span>{toast.type === 'success' ? '✓' : '✕'}</span>
+          <span>{toast.message}</span>
+          <button
+            type="button"
+            onClick={() => setToast(null)}
+            className="ml-2 text-white/80 hover:text-white cursor-pointer"
+          >
+            ✕
+          </button>
+        </div>
+      )}
+
+      {/* View Tabs */}
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[var(--gm-border-subtle)] pb-3">
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => { setViewTab('active'); }}
+            className={`inline-flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold tracking-[0.12em] uppercase rounded-lg transition-all cursor-pointer ${
+              viewTab === 'active'
+                ? 'bg-[var(--gm-accent-primary)] text-[var(--gm-accent-foreground)] shadow-sm'
+                : 'text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)] hover:bg-[var(--gm-bg-card)] border border-transparent hover:border-[var(--gm-border-subtle)]'
+            }`}
+          >
+            <span>Active Bookings</span>
+            <span className={`px-2 py-0.5 text-[10px] rounded-full font-mono font-semibold ${
+              viewTab === 'active'
+                ? 'bg-black/25 text-white'
+                : 'bg-[var(--gm-bg-card)] text-[var(--gm-text-muted)] border border-[var(--gm-border-subtle)]'
+            }`}>
+              {isLoading ? '…' : overallCounts.active}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => { setViewTab('archived'); }}
+            className={`inline-flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold tracking-[0.12em] uppercase rounded-lg transition-all cursor-pointer ${
+              viewTab === 'archived'
+                ? 'bg-[var(--gm-accent-primary)] text-[var(--gm-accent-foreground)] shadow-sm'
+                : 'text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)] hover:bg-[var(--gm-bg-card)] border border-transparent hover:border-[var(--gm-border-subtle)]'
+            }`}
+          >
+            <span>Archived Bookings</span>
+            <span className={`px-2 py-0.5 text-[10px] rounded-full font-mono font-semibold ${
+              viewTab === 'archived'
+                ? 'bg-black/25 text-white'
+                : 'bg-[var(--gm-bg-card)] text-[var(--gm-text-muted)] border border-[var(--gm-border-subtle)]'
+            }`}>
+              {isLoading ? '…' : overallCounts.archived}
+            </span>
+          </button>
+        </div>
+
+        {viewTab === 'archived' && (
+          <span className="text-xs text-[var(--gm-text-muted)] italic">
+            Customer tracking & service statuses remain active for archived bookings.
+          </span>
+        )}
+      </div>
+
+      {viewTab === 'archived' && (
+        <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-start gap-3 text-xs leading-relaxed text-amber-700 dark:text-amber-300">
+          <span className="text-base shrink-0">📁</span>
+          <div>
+            <strong className="font-semibold block uppercase tracking-wider text-[11px] mb-0.5">Archived Bookings Archive</strong>
+            Archived bookings are removed from the active workshop workflow. They remain fully intact with customer details, vehicle data, and lead sources. Customers can still track them using their Booking ID. You can restore bookings back to the active list or permanently delete them when authorized.
+          </div>
+        </div>
+      )}
 
       {/* Stat cards */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
@@ -406,15 +626,15 @@ export function AdminDashboard() {
               <table className="w-full table-fixed text-left text-sm divide-y divide-[var(--gm-border-subtle)]">
                 <thead className="bg-[var(--gm-bg-surface)]">
                   <tr className="text-[10px] uppercase tracking-[0.14em] text-[var(--gm-text-secondary)]">
-                    <th className="w-[12%] px-4 py-3.5 font-semibold">Booking ID</th>
+                    <th className="w-[11%] px-4 py-3.5 font-semibold">Booking ID</th>
                     <th className="w-[13%] px-4 py-3.5 font-semibold">Customer</th>
                     <th className="w-[10%] px-4 py-3.5 font-semibold">Phone</th>
                     <th className="w-[13%] px-4 py-3.5 font-semibold">Vehicle</th>
                     <th className="w-[13%] px-4 py-3.5 font-semibold">Service</th>
-                    <th className="w-[11%] px-4 py-3.5 font-semibold">Requested</th>
+                    <th className="w-[10%] px-4 py-3.5 font-semibold">Requested</th>
                     <th className="w-[9%] px-4 py-3.5 font-semibold">Status</th>
-                    <th className="w-[12%] px-4 py-3.5 font-semibold text-[var(--gm-text-primary)]">Source</th>
-                    <th className="w-[7%] px-4 py-3.5 font-semibold text-right">Action</th>
+                    <th className="w-[9%] px-4 py-3.5 font-semibold text-[var(--gm-text-primary)]">Source</th>
+                    <th className="w-[12%] px-4 py-3.5 font-semibold text-right">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[var(--gm-border-subtle)]">
@@ -595,13 +815,47 @@ export function AdminDashboard() {
 
                         {/* Action */}
                         <td className="px-4 py-3.5 align-middle text-right whitespace-nowrap">
-                          <button
-                            type="button"
-                            onClick={() => openDetails(b)}
-                            className="inline-flex items-center px-3 py-1.5 text-[11px] font-semibold tracking-[0.1em] uppercase text-[var(--gm-text-primary)] bg-[var(--gm-bg-surface)] hover:bg-[var(--gm-accent-primary)] hover:text-[var(--gm-accent-foreground)] border border-[var(--gm-border-subtle)] hover:border-[var(--gm-accent-primary)] rounded-lg transition-all cursor-pointer whitespace-nowrap"
-                          >
-                            View
-                          </button>
+                          <div className="inline-flex items-center gap-1.5 justify-end">
+                            <button
+                              type="button"
+                              onClick={() => openDetails(b)}
+                              className="inline-flex items-center px-2.5 py-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[var(--gm-text-primary)] bg-[var(--gm-bg-surface)] hover:bg-[var(--gm-accent-primary)] hover:text-[var(--gm-accent-foreground)] border border-[var(--gm-border-subtle)] hover:border-[var(--gm-accent-primary)] rounded-md transition-all cursor-pointer whitespace-nowrap"
+                              title="View full booking details"
+                            >
+                              View
+                            </button>
+                            {viewTab === 'active' ? (
+                              <button
+                                type="button"
+                                onClick={() => handleArchive(b)}
+                                disabled={actionLoadingId === b.id}
+                                className="inline-flex items-center px-2.5 py-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)] bg-[var(--gm-bg-surface)] hover:bg-[var(--gm-bg-card-hover)] border border-[var(--gm-border-subtle)] rounded-md transition-colors cursor-pointer whitespace-nowrap disabled:opacity-50"
+                                title="Archive booking (removes from active view, keeps tracking)"
+                              >
+                                {actionLoadingId === b.id ? '…' : 'Archive'}
+                              </button>
+                            ) : (
+                              <>
+                                <button
+                                  type="button"
+                                  onClick={() => handleRestore(b)}
+                                  disabled={actionLoadingId === b.id}
+                                  className="inline-flex items-center px-2.5 py-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[#15803d] dark:text-[#25D366] bg-[#25D366]/10 hover:bg-[#25D366]/20 border border-[#25D366]/30 rounded-md transition-colors cursor-pointer whitespace-nowrap disabled:opacity-50"
+                                  title="Restore booking to active list"
+                                >
+                                  {actionLoadingId === b.id ? '…' : 'Restore'}
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => openDeleteConfirm(b)}
+                                  className="inline-flex items-center px-2 py-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-red-600 dark:text-red-400 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 rounded-md transition-colors cursor-pointer whitespace-nowrap"
+                                  title="Permanently delete booking"
+                                >
+                                  Delete
+                                </button>
+                              </>
+                            )}
+                          </div>
                         </td>
                       </tr>
                     );
@@ -781,15 +1035,43 @@ export function AdminDashboard() {
                       </div>
                     </div>
 
-                    {/* Card Footer: View Action */}
-                    <div className="flex justify-end pt-1">
+                    {/* Card Footer: View & Lifecycle Actions */}
+                    <div className="flex flex-wrap items-center justify-end gap-2 pt-2 border-t border-[var(--gm-border-subtle)]">
                       <button
                         type="button"
                         onClick={() => openDetails(b)}
-                        className="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 text-[11px] font-semibold tracking-[0.12em] uppercase text-[var(--gm-text-primary)] bg-[var(--gm-bg-surface)] hover:bg-[var(--gm-accent-primary)] hover:text-[var(--gm-accent-foreground)] border border-[var(--gm-border-subtle)] hover:border-[var(--gm-accent-primary)] rounded-lg transition-all cursor-pointer"
+                        className="inline-flex items-center justify-center px-3 py-1.5 text-[11px] font-semibold tracking-[0.1em] uppercase text-[var(--gm-text-primary)] bg-[var(--gm-bg-surface)] hover:bg-[var(--gm-accent-primary)] hover:text-[var(--gm-accent-foreground)] border border-[var(--gm-border-subtle)] hover:border-[var(--gm-accent-primary)] rounded-lg transition-all cursor-pointer"
                       >
-                        View Full Details
+                        View Details
                       </button>
+                      {viewTab === 'active' ? (
+                        <button
+                          type="button"
+                          onClick={() => handleArchive(b)}
+                          disabled={actionLoadingId === b.id}
+                          className="inline-flex items-center justify-center px-3 py-1.5 text-[11px] font-semibold tracking-[0.1em] uppercase text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)] bg-[var(--gm-bg-surface)] hover:bg-[var(--gm-bg-card-hover)] border border-[var(--gm-border-subtle)] rounded-lg transition-colors cursor-pointer disabled:opacity-50"
+                        >
+                          {actionLoadingId === b.id ? 'Archiving…' : 'Archive'}
+                        </button>
+                      ) : (
+                        <>
+                          <button
+                            type="button"
+                            onClick={() => handleRestore(b)}
+                            disabled={actionLoadingId === b.id}
+                            className="inline-flex items-center justify-center px-3 py-1.5 text-[11px] font-semibold tracking-[0.1em] uppercase text-[#15803d] dark:text-[#25D366] bg-[#25D366]/10 hover:bg-[#25D366]/20 border border-[#25D366]/30 rounded-lg transition-colors cursor-pointer disabled:opacity-50"
+                          >
+                            {actionLoadingId === b.id ? 'Restoring…' : 'Restore'}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => openDeleteConfirm(b)}
+                            className="inline-flex items-center justify-center px-3 py-1.5 text-[11px] font-semibold tracking-[0.1em] uppercase text-red-600 dark:text-red-400 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 rounded-lg transition-colors cursor-pointer"
+                          >
+                            Delete
+                          </button>
+                        </>
+                      )}
                     </div>
                   </div>
                 );
@@ -816,8 +1098,14 @@ export function AdminDashboard() {
                 <span className="text-[10px] font-semibold tracking-[0.22em] text-[var(--gm-accent-primary)] uppercase block mb-1">Booking Details</span>
                 <h2 className="text-2xl font-mono font-bold text-[var(--gm-text-primary)] break-all">{selected.id}</h2>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2.5 flex-wrap">
                 <StatusBadge status={selected.status} />
+                {selected.isArchived && (
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-semibold tracking-[0.14em] uppercase rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                    Archived
+                  </span>
+                )}
                 <button
                   type="button"
                   onClick={() => setSelected(null)}
@@ -830,6 +1118,24 @@ export function AdminDashboard() {
             </div>
 
             <div className="px-6 sm:px-8 py-6 space-y-6">
+              {selected.isArchived && (
+                <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-start justify-between gap-3 text-xs text-amber-700 dark:text-amber-300">
+                  <div className="space-y-0.5">
+                    <span className="font-bold uppercase tracking-wider text-[10px] block">Archived Booking</span>
+                    <p className="text-[11px] opacity-90">
+                      This booking was archived on {formatDateTime(selected.archivedAt || selected.createdAt)}. Customer tracking remains active with all service details preserved.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleRestore(selected)}
+                    disabled={actionLoadingId === selected.id}
+                    className="shrink-0 px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-[var(--gm-accent-foreground)] bg-[var(--gm-accent-primary)] hover:bg-[var(--gm-accent-primary-hover)] rounded-lg transition-colors cursor-pointer disabled:opacity-50"
+                  >
+                    {actionLoadingId === selected.id ? 'Restoring…' : 'Restore'}
+                  </button>
+                </div>
+              )}
               {(() => {
                 const selectedRepeatInfo = repeatCustomerMap.get(selected.id);
                 if (!selectedRepeatInfo?.isRepeatCustomer) return null;
@@ -988,6 +1294,146 @@ export function AdminDashboard() {
                   </p>
                 )}
               </div>
+
+              {/* Lifecycle Actions: Archive, Restore & Permanent Delete */}
+              <div className="pt-5 border-t border-[var(--gm-border-subtle)] space-y-3">
+                <span className="block text-[10px] font-bold tracking-[0.18em] text-[var(--gm-text-muted)] uppercase">
+                  Lifecycle & Safety Management
+                </span>
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  {selected.isArchived ? (
+                    <button
+                      type="button"
+                      onClick={() => handleRestore(selected)}
+                      disabled={actionLoadingId === selected.id}
+                      className="inline-flex items-center gap-2 px-4 py-2 text-[11px] font-semibold tracking-[0.12em] uppercase text-[#15803d] dark:text-[#25D366] bg-[#25D366]/10 hover:bg-[#25D366]/20 border border-[#25D366]/30 rounded-lg transition-colors cursor-pointer disabled:opacity-50"
+                    >
+                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                      <span>{actionLoadingId === selected.id ? 'Restoring…' : 'Restore to Active'}</span>
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => handleArchive(selected)}
+                      disabled={actionLoadingId === selected.id}
+                      className="inline-flex items-center gap-2 px-4 py-2 text-[11px] font-semibold tracking-[0.12em] uppercase text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)] bg-[var(--gm-bg-surface)] hover:bg-[var(--gm-bg-card-hover)] border border-[var(--gm-border-subtle)] rounded-lg transition-colors cursor-pointer disabled:opacity-50"
+                    >
+                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                      </svg>
+                      <span>{actionLoadingId === selected.id ? 'Archiving…' : 'Archive Booking'}</span>
+                    </button>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={() => openDeleteConfirm(selected)}
+                    className="inline-flex items-center gap-2 px-4 py-2 text-[11px] font-semibold tracking-[0.12em] uppercase text-red-600 dark:text-red-400 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 rounded-lg transition-colors cursor-pointer"
+                  >
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                    <span>Permanently Delete</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Permanent Delete Confirmation Dialog */}
+      {deletingBooking && (
+        <div
+          role="alertdialog"
+          aria-modal="true"
+          className="fixed inset-0 z-[60] flex items-center justify-center p-4 sm:p-6 bg-black/75 backdrop-blur-md"
+          onClick={() => { if (!isDeleting) setDeletingBooking(null); }}
+        >
+          <div
+            className="bg-[var(--gm-bg-card)] border border-red-500/40 rounded-2xl max-w-lg w-full relative shadow-2xl p-6 sm:p-8 space-y-6 text-[var(--gm-text-primary)]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-full bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-500 shrink-0">
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+              </div>
+              <div className="space-y-1">
+                <h3 className="text-xl font-extrabold uppercase tracking-tight text-red-500 dark:text-red-400">
+                  Confirm Permanent Deletion
+                </h3>
+                <p className="text-xs text-[var(--gm-text-secondary)] leading-relaxed">
+                  This action cannot be undone. This record will be permanently deleted from the database.
+                </p>
+              </div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-[var(--gm-bg-surface)] border border-[var(--gm-border-subtle)] space-y-2 text-xs">
+              <div className="flex justify-between">
+                <span className="text-[var(--gm-text-muted)] font-semibold uppercase tracking-wider">Booking ID:</span>
+                <span className="font-mono font-bold text-[var(--gm-text-primary)]">{deletingBooking.id}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-[var(--gm-text-muted)] font-semibold uppercase tracking-wider">Customer:</span>
+                <span className="font-medium text-[var(--gm-text-primary)]">{deletingBooking.customerName}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-[var(--gm-text-muted)] font-semibold uppercase tracking-wider">Vehicle:</span>
+                <span className="font-medium text-[var(--gm-text-primary)]">{deletingBooking.vehicle || `${deletingBooking.vehicleMake} ${deletingBooking.vehicleModel}`}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-[var(--gm-text-muted)] font-semibold uppercase tracking-wider">Status:</span>
+                <StatusBadge status={deletingBooking.status} />
+              </div>
+            </div>
+
+            <div className="p-3.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-400 text-xs leading-relaxed">
+              <strong>Tip:</strong> If you only wish to hide this booking from active views, use <strong>Archive</strong> instead to preserve customer tracking and audit trails.
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="delete-confirm-id" className="block text-xs font-semibold text-[var(--gm-text-primary)]">
+                To confirm deletion, type <span className="font-mono font-bold text-red-500">{deletingBooking.id}</span> below:
+              </label>
+              <input
+                id="delete-confirm-id"
+                type="text"
+                value={deleteConfirmInput}
+                onChange={(e) => setDeleteConfirmInput(e.target.value)}
+                placeholder={`Type ${deletingBooking.id} to confirm`}
+                disabled={isDeleting}
+                className="w-full bg-[var(--gm-bg-surface)] border border-[var(--gm-border-subtle)] rounded-lg px-4 py-2.5 text-sm font-mono text-[var(--gm-text-primary)] focus:border-red-500 focus:outline-none transition-colors"
+                autoFocus
+              />
+            </div>
+
+            {deleteError && (
+              <p className="text-xs text-red-500 dark:text-red-400 font-medium">
+                {deleteError}
+              </p>
+            )}
+
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => { if (!isDeleting) setDeletingBooking(null); }}
+                disabled={isDeleting}
+                className="px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)] bg-[var(--gm-bg-surface)] hover:bg-[var(--gm-bg-card-hover)] border border-[var(--gm-border-subtle)] rounded-lg transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleDelete}
+                disabled={isDeleting || deleteConfirmInput.trim().toUpperCase() !== deletingBooking.id.toUpperCase()}
+                className="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-white bg-red-600 hover:bg-red-700 disabled:opacity-40 disabled:cursor-not-allowed rounded-lg transition-colors cursor-pointer shadow-md shadow-red-600/20"
+              >
+                {isDeleting ? 'Deleting...' : 'Permanently Delete'}
+              </button>
             </div>
           </div>
         </div>

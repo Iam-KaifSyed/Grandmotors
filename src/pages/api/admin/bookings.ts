@@ -43,7 +43,20 @@ export const GET: APIRoute = async ({ request, locals, session }) => {
 
   try {
     const { results } = await db.prepare('SELECT * FROM bookings ORDER BY createdAt DESC').all();
-    const mapped = (results || []).map(mapBookingRowForAdmin);
+    let mapped = (results || []).map(mapBookingRowForAdmin);
+
+    try {
+      const url = new URL(request.url);
+      const archivedParam = url.searchParams.get('archived');
+      if (archivedParam === 'true') {
+        mapped = mapped.filter((b) => b.isArchived);
+      } else if (archivedParam === 'false') {
+        mapped = mapped.filter((b) => !b.isArchived);
+      }
+    } catch {
+      // Ignore URL parsing errors
+    }
+
     return new Response(JSON.stringify({ bookings: mapped }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },

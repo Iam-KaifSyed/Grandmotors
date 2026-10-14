@@ -42,6 +42,8 @@ export interface BookingRecord {
   doorstepLongitude?: number | null;
   doorstepMapUrl?: string;
   source?: string;
+  isArchived?: boolean;
+  archivedAt?: string | null;
   createdAt: string;
 }
 
@@ -136,6 +138,8 @@ export function normalizeBooking(
     doorstepLongitude,
     doorstepMapUrl,
     source: (raw.source !== undefined ? raw.source : existing?.source) || '',
+    isArchived: raw.isArchived !== undefined ? Boolean(raw.isArchived) : (existing?.isArchived !== undefined ? Boolean(existing.isArchived) : false),
+    archivedAt: raw.archivedAt !== undefined ? (raw.archivedAt || null) : (existing?.archivedAt || null),
     createdAt: raw.createdAt || existing?.createdAt || new Date().toISOString(),
   };
 }

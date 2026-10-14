@@ -395,6 +395,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
           `ALTER TABLE bookings ADD COLUMN doorstepLongitude REAL`,
           `ALTER TABLE bookings ADD COLUMN doorstepMapUrl TEXT`,
           `ALTER TABLE bookings ADD COLUMN source TEXT`,
+          `ALTER TABLE bookings ADD COLUMN isArchived INTEGER DEFAULT 0`,
+          `ALTER TABLE bookings ADD COLUMN archivedAt DATETIME`,
         ];
 
         for (const sql of alterStatements) {
