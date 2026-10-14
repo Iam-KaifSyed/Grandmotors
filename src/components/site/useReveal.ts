@@ -1,12 +1,39 @@
 import { useEffect, useRef, useState } from 'react';
 
+type RevealOptions = { threshold?: number; rootMargin?: string; once?: boolean };
+
+// Shared IntersectionObserver singleton to prevent creating dozens of observers
+let sharedObserver: IntersectionObserver | null = null;
+const targetCallbacks = new WeakMap<Element, (isIntersecting: boolean) => void>();
+
+function getSharedObserver(): IntersectionObserver | null {
+  if (typeof window === 'undefined' || !('IntersectionObserver' in window)) return null;
+  if (!sharedObserver) {
+    sharedObserver = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const cb = targetCallbacks.get(entry.target);
+          if (cb) {
+            cb(entry.isIntersecting);
+          }
+        }
+      },
+      {
+        threshold: 0.05,
+        rootMargin: '0px 0px 50px 0px',
+      }
+    );
+  }
+  return sharedObserver;
+}
+
 /**
- * Lightweight scroll-reveal hook. Adds a `revealed` flag when the element
- * first enters the viewport. Respects prefers-reduced-motion by revealing
- * immediately. Includes a safety timeout fallback so content is never stuck invisible.
+ * Lightweight, high-performance scroll-reveal hook.
+ * Uses a single shared IntersectionObserver to avoid creating duplicate observers,
+ * removes unneeded timeout loops, and prevents unnecessary layout thrashing.
  */
 export function useReveal<T extends HTMLElement = HTMLDivElement>(
-  options?: { threshold?: number; rootMargin?: string; once?: boolean }
+  options?: RevealOptions
 ) {
   const ref = useRef<T>(null);
   const [revealed, setRevealed] = useState(false);
@@ -20,38 +47,49 @@ export function useReveal<T extends HTMLElement = HTMLDivElement>(
       window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
     if (reduce) {
+      el.classList.add('is-visible');
       setRevealed(true);
       return;
     }
 
-    // Safety fallback: reveal after a short timeout so content is never stuck invisible
-    const fallbackTimer = setTimeout(() => {
+    // Check if element is already within viewport on mount
+    const rect = el.getBoundingClientRect();
+    if (rect.top <= window.innerHeight + 50 && rect.bottom >= 0) {
+      el.classList.add('is-visible');
       setRevealed(true);
-    }, 1200);
+      if (options?.once !== false) return;
+    }
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            setRevealed(true);
-            if (options?.once !== false) observer.unobserve(entry.target);
-          } else if (options?.once === false) {
-            setRevealed(false);
-          }
+    const observer = getSharedObserver();
+    if (!observer) {
+      el.classList.add('is-visible');
+      setRevealed(true);
+      return;
+    }
+
+    const onIntersect = (isIntersecting: boolean) => {
+      if (isIntersecting) {
+        el.classList.add('is-visible');
+        setRevealed(true);
+        if (options?.once !== false) {
+          observer.unobserve(el);
+          targetCallbacks.delete(el);
         }
-      },
-      {
-        threshold: options?.threshold ?? 0.02,
-        rootMargin: options?.rootMargin ?? '0px 0px 150px 0px',
+      } else if (options?.once === false) {
+        el.classList.remove('is-visible');
+        setRevealed(false);
       }
-    );
+    };
 
+    targetCallbacks.set(el, onIntersect);
     observer.observe(el);
+
     return () => {
-      clearTimeout(fallbackTimer);
-      observer.disconnect();
+      observer.unobserve(el);
+      targetCallbacks.delete(el);
     };
   }, [options?.threshold, options?.rootMargin, options?.once]);
 
   return { ref, revealed };
 }
+

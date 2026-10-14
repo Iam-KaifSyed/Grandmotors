@@ -27,9 +27,9 @@ const { title, description, showHeader = true, showFooter = true } = Astro.props
       rel="stylesheet"
     />
   </head>
-  <body class="bg-[#07090A] text-[#F2F0EA] overflow-x-hidden selection:bg-[#B88952]/30 selection:text-[#F2F0EA]">
+  <body class="bg-[#07090A] text-[#F2F0EA] overflow-x-clip selection:bg-[#B88952]/30 selection:text-[#F2F0EA]">
     {showHeader && <Header />}
     <slot />
-    {showFooter && <Footer client:idle />}
+    {showFooter && <Footer />}
   </body>
 </html>

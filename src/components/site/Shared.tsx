@@ -12,13 +12,13 @@ export function Reveal({
   className?: string;
   as?: keyof React.JSX.IntrinsicElements;
 }) {
-  const { ref, revealed } = useReveal<HTMLElement>();
+  const { ref } = useReveal<HTMLElement>();
   return createElement(
     as,
     {
       ref,
-      className: `gm-reveal ${revealed ? 'is-visible' : ''} ${className}`,
-      style: { transitionDelay: `${delay}ms` },
+      className: `gm-reveal ${className}`,
+      style: delay ? { transitionDelay: `${delay}ms` } : undefined,
     },
     children
   );

@@ -60,7 +60,7 @@ export function SiteContent() {
   return (
     <div
       id="site-content"
-      className="relative z-40 bg-[#07090A] text-[#F2F0EA] shadow-[0_-20px_50px_rgba(0,0,0,0.9)]"
+      className="relative z-40 bg-[#07090A] text-[#F2F0EA]"
     >
       {/* Seamless Transition Seam */}
       <div className="relative pt-6 pb-2 sm:pt-8 sm:pb-3 flex flex-col items-center gap-2 sm:gap-2.5 text-center">
@@ -122,7 +122,14 @@ export function SiteContent() {
       {/* ============================================================ */}
       <section className="relative px-4 sm:px-8 md:px-12 lg:px-16 py-10 sm:py-12 md:py-14 bg-[#07090A] border-t border-white/5 overflow-hidden">
         <div aria-hidden="true" className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="w-[50rem] max-w-full h-56 rounded-full bg-[#B88952]/10 blur-[100px]" />
+          <div
+            className="w-[50rem] max-w-full h-56 rounded-full pointer-events-none"
+            style={{
+              background:
+                'radial-gradient(ellipse 60% 60% at 50% 50%, rgba(184, 137, 82, 0.12) 0%, rgba(184, 137, 82, 0.04) 45%, transparent 70%)',
+              transform: 'translateZ(0)',
+            }}
+          />
         </div>
         <div className="relative max-w-3xl mx-auto text-center">
           <Reveal
