@@ -12,6 +12,7 @@ const navItems = [
 const links = [
   { href: '/', label: 'Home' },
   { href: '/services', label: 'Services' },
+  { href: '/book-service?location=doorstep#doorstep', label: 'Doorstep Service', badge: 'NEW' },
   { href: '/my-bookings', label: 'My Bookings' },
   { href: '/about', label: 'About' },
   { href: '/contact', label: 'Contact' },
@@ -49,6 +50,18 @@ const links = [
 
     <!-- Right Controls -->
     <div class="flex items-center gap-2.5 sm:gap-3 pointer-events-auto">
+      <!-- Desktop "Doorstep" Button Beside Book Service -->
+      <a
+        href="/book-service?location=doorstep#doorstep"
+        class="hidden lg:inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold tracking-[0.14em] uppercase text-[#F2F0EA] hover:text-[#B88952] bg-white/5 hover:bg-[#B88952]/10 border border-[#B88952]/30 hover:border-[#B88952]/60 rounded-full transition-all group shadow-sm shadow-[#B88952]/5"
+      >
+        <span class="w-1.5 h-1.5 rounded-full bg-[#B88952] animate-amber-glow"></span>
+        <span>Doorstep</span>
+        <span class="inline-flex items-center px-1.5 py-0.5 text-[9px] font-extrabold tracking-wider uppercase rounded-full bg-[#B88952]/20 text-[#B88952] border border-[#B88952]/50 animate-amber-glow shadow-[0_0_8px_rgba(184,137,82,0.4)]">
+          NEW
+        </span>
+      </a>
+
       <!-- Desktop "Book Service" Button -->
       <a
         href="/book-service"
@@ -84,7 +97,13 @@ const links = [
     <div class="bg-[#0e1013]/95 backdrop-blur-xl border border-white/12 rounded-2xl p-5 shadow-2xl space-y-4 max-w-sm mx-auto pointer-events-auto">
       <nav class="flex flex-col gap-1">
         {links.map(link => {
-          const isActive = link.href === '/' ? pathname === '/' : pathname.startsWith(link.href);
+          const isDoorstep = link.href.includes('doorstep');
+          const isCurrentDoorstep = pathname === '/book-service' && Astro.url.searchParams.get('location') === 'doorstep';
+          const isActive = isDoorstep
+            ? isCurrentDoorstep
+            : link.href === '/'
+            ? pathname === '/'
+            : pathname.startsWith(link.href) && !isCurrentDoorstep;
           return (
             <a 
               href={link.href} 
@@ -94,7 +113,14 @@ const links = [
                   : 'text-[#D8D6D0] hover:text-white hover:bg-white/5'
               }`}
             >
-              <span>{link.label}</span>
+              <div class="flex items-center gap-2">
+                <span>{link.label}</span>
+                {link.badge && (
+                  <span class="inline-flex items-center px-1.5 py-0.5 text-[9px] font-extrabold tracking-wider uppercase rounded-full bg-[#B88952]/20 text-[#B88952] border border-[#B88952]/50 animate-amber-glow shadow-[0_0_8px_rgba(184,137,82,0.4)]">
+                    {link.badge}
+                  </span>
+                )}
+              </div>
               {isActive && <span class="w-1.5 h-1.5 rounded-full bg-[#B88952]"></span>}
             </a>
           )

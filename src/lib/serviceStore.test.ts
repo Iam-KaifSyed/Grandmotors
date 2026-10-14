@@ -21,20 +21,31 @@ describe('serviceStore CRUD & Ordering', () => {
 
   it('lists seeded services initially', async () => {
     const list = await listAllServices(db);
-    expect(list.length).toBe(8);
+    expect(list.length).toBe(9);
     expect(list[0].id).toBe('engine-diagnostics');
     expect(list[0].displayOrder).toBe(1);
+
+    const jumpStart = list.find((s) => s.id === 'car-battery-jump-start');
+    expect(jumpStart).toBeDefined();
+    expect(jumpStart?.title).toBe('Car Battery Jump Start');
+    expect(jumpStart?.summary).toContain('discharged');
+    expect(jumpStart?.items.length).toBeGreaterThan(0);
+    expect(jumpStart?.active).toBe(true);
+    expect(jumpStart?.visibleInCatalogue).toBe(true);
+    expect(jumpStart?.selectableInBooking).toBe(true);
+    expect(jumpStart?.displayOrder).toBe(9);
   });
 
   it('filters public catalogue and booking options based on flags', async () => {
     const catalogue = await getPublicCatalogue(db);
-    expect(catalogue.length).toBe(8);
+    expect(catalogue.length).toBe(9);
+    expect(catalogue.some((s) => s.id === 'car-battery-jump-start')).toBe(true);
 
     // Deactivate a service
     await updateService(db, 'brakes', { active: false }, 'admin');
 
     const catAfterDeactivate = await getPublicCatalogue(db);
-    expect(catAfterDeactivate.length).toBe(7);
+    expect(catAfterDeactivate.length).toBe(8);
     expect(catAfterDeactivate.some((s) => s.id === 'brakes')).toBe(false);
 
     // Hide from booking only
@@ -43,6 +54,7 @@ describe('serviceStore CRUD & Ordering', () => {
     const bookingOpts = await getBookingOptions(db);
     expect(bookingOpts.some((s) => s.id === 'engine-diagnostics')).toBe(false);
     expect(bookingOpts.some((s) => s.id === 'tyres-alignment')).toBe(true);
+    expect(bookingOpts.some((s) => s.id === 'car-battery-jump-start')).toBe(true);
   });
 
   it('creates new service with trailing display order', async () => {
@@ -57,7 +69,7 @@ describe('serviceStore CRUD & Ordering', () => {
     );
 
     expect(newSvc.id).toBe('custom-exhaust-fabrication');
-    expect(newSvc.displayOrder).toBe(9);
+    expect(newSvc.displayOrder).toBe(10);
     expect(newSvc.items).toEqual(['Mandrel bending', 'TIG welding']);
   });
 
@@ -149,5 +161,45 @@ describe('serviceStore CRUD & Ordering', () => {
     );
     expect(updated.name).toBe('Custom Builds');
     expect(updated.active).toBe(false);
+  });
+
+  it('manages Car Battery Jump Start like other services with configurable properties', async () => {
+    // 1. Verify Car Battery Jump Start exists in public catalogue & booking options
+    const bookingOpts = await getBookingOptions(db);
+    const jumpStartBooking = bookingOpts.find((s) => s.id === 'car-battery-jump-start');
+    expect(jumpStartBooking).toBeDefined();
+    expect(jumpStartBooking?.title).toBe('Car Battery Jump Start');
+    expect(jumpStartBooking?.summary.toLowerCase()).toContain('discharged');
+    expect(jumpStartBooking?.items.length).toBeGreaterThanOrEqual(4);
+
+    // 2. Admin can update its summary and checklist items without pricing constraints
+    const updated = await updateService(
+      db,
+      'car-battery-jump-start',
+      {
+        summary: 'Emergency roadside technician dispatched to jump start vehicle with a flat battery.',
+        items: ['Mobile booster pack jump start', 'Alternator health check'],
+      },
+      'admin'
+    );
+    expect(updated.summary).toBe('Emergency roadside technician dispatched to jump start vehicle with a flat battery.');
+    expect(updated.items).toEqual(['Mobile booster pack jump start', 'Alternator health check']);
+
+    // 3. Admin can toggle selectableInBooking flag
+    await updateService(db, 'car-battery-jump-start', { selectableInBooking: false }, 'admin');
+    const bookingAfterToggle = await getBookingOptions(db);
+    expect(bookingAfterToggle.some((s) => s.id === 'car-battery-jump-start')).toBe(false);
+
+    // Re-enable booking
+    await updateService(db, 'car-battery-jump-start', { selectableInBooking: true }, 'admin');
+    const bookingReenabled = await getBookingOptions(db);
+    expect(bookingReenabled.some((s) => s.id === 'car-battery-jump-start')).toBe(true);
+
+    // 4. Admin can deactivate and reactivate
+    await updateService(db, 'car-battery-jump-start', { active: false }, 'admin');
+    const catalogueInactive = await getPublicCatalogue(db);
+    expect(catalogueInactive.some((s) => s.id === 'car-battery-jump-start')).toBe(false);
+    const bookingInactive = await getBookingOptions(db);
+    expect(bookingInactive.some((s) => s.id === 'car-battery-jump-start')).toBe(false);
   });
 });

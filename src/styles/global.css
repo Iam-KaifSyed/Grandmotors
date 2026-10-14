@@ -175,3 +175,32 @@ html.lenis body {
     animation: none;
   }
 }
+
+/* ============================================================ */
+/* Navbar Doorstep "NEW" Amber Glow Badge                       */
+/* ============================================================ */
+@keyframes amber-glow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 4px rgba(184, 137, 82, 0.4), 0 0 10px rgba(184, 137, 82, 0.2);
+    border-color: rgba(184, 137, 82, 0.5);
+    opacity: 0.95;
+  }
+  50% {
+    box-shadow: 0 0 10px rgba(184, 137, 82, 0.85), 0 0 20px rgba(184, 137, 82, 0.5);
+    border-color: rgba(184, 137, 82, 0.95);
+    opacity: 1;
+  }
+}
+
+.animate-amber-glow {
+  animation: amber-glow-pulse 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-amber-glow {
+    animation: none;
+    box-shadow: 0 0 6px rgba(184, 137, 82, 0.5);
+    border-color: rgba(184, 137, 82, 0.6);
+  }
+}
+

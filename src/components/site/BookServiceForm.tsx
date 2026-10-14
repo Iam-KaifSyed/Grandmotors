@@ -1,4 +1,4 @@
-import { useState, useId, useMemo } from 'react';
+import { useState, useId, useMemo, useEffect } from 'react';
 import { SERVICES } from './servicesData';
 import { saveBookingRecord, FUEL_TYPES, type BookingRecord, type FuelType } from '../../lib/bookingStore';
 import {
@@ -85,6 +85,50 @@ export const BookServiceForm = ({
   const [submittedData, setSubmittedData] = useState<BookingFormData | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
+
+  // Pre-select service category if passed in URL query param (?service=... or ?category=...)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    const serviceParam = params.get('service') || params.get('category');
+    if (serviceParam) {
+      const match = services.find(
+        (s) =>
+          s.id.toLowerCase() === serviceParam.toLowerCase() ||
+          s.title.toLowerCase() === serviceParam.toLowerCase()
+      );
+      if (match) {
+        setFormState((prev) => {
+          if (prev.serviceCategory) return prev;
+          return {
+            ...prev,
+            serviceCategory: match.id,
+            specificService: match.items?.[0] || '',
+          };
+        });
+      }
+    }
+
+    const isDoorstep =
+      params.get('location')?.toLowerCase() === 'doorstep' ||
+      params.get('doorstep') === 'true' ||
+      params.has('doorstep') ||
+      window.location.hash === '#doorstep' ||
+      window.location.hash === '#doorstep-service';
+
+    if (isDoorstep) {
+      setFormState((prev) => ({
+        ...prev,
+        serviceLocation: 'Doorstep Service',
+      }));
+      setTimeout(() => {
+        const el = document.getElementById('doorstep') || document.getElementById('doorstep-service');
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 200);
+    }
+  }, [services]);
 
   // Car Brand & Model selection state
   const [selectedBrand, setSelectedBrand] = useState<string>('');
@@ -1091,7 +1135,7 @@ export const BookServiceForm = ({
       </div>
 
       {/* 4. Service Location */}
-      <div className="pt-6 border-t border-white/5">
+      <div id="doorstep" className="pt-6 border-t border-white/5 scroll-mt-28">
         <div className="flex items-center gap-2.5 mb-6">
           <span className="w-5 h-px bg-[#B88952]"></span>
           <h3 className="text-xs font-semibold tracking-[0.25em] text-[#B88952] uppercase">

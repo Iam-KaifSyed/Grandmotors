@@ -55,6 +55,16 @@ export function BoltIcon(props: IconProps) {
   );
 }
 
+export function BatteryBoltIcon(props: IconProps) {
+  return (
+    <svg {...base} aria-hidden="true" {...props}>
+      <rect x="2" y="6" width="16" height="12" rx="2" />
+      <path d="M22 10v4" />
+      <path d="m11 9-3 3.5h3L10 15" />
+    </svg>
+  );
+}
+
 export function SuspensionIcon(props: IconProps) {
   return (
     <svg {...base} aria-hidden="true" {...props}>

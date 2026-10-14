@@ -47,7 +47,7 @@ describe('CMS Property-Based Tests (fast-check)', () => {
         async (title) => {
           const db = createTestD1Database();
           const svc = await createService(db, { title }, 'admin');
-          expect(svc.displayOrder).toBe(9); // Initial 8 + 1
+          expect(svc.displayOrder).toBe(10); // Initial 9 + 1
         }
       ),
       { numRuns: 100 }
@@ -68,8 +68,9 @@ describe('CMS Property-Based Tests (fast-check)', () => {
             'general-service',
             'body-paint',
             'detailing-interior',
+            'car-battery-jump-start',
           ],
-          { minLength: 2, maxLength: 8 }
+          { minLength: 2, maxLength: 9 }
         ),
         async (shuffled) => {
           const db = createTestD1Database();

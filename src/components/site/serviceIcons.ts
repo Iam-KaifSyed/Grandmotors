@@ -8,6 +8,7 @@ import {
   WrenchIcon,
   PaintIcon,
   SparkleIcon,
+  BatteryBoltIcon,
 } from './Icons';
 
 export type IconType = ComponentType<SVGProps<SVGSVGElement>>;
@@ -21,6 +22,8 @@ export const SERVICE_ICONS: Record<string, IconType> = {
   'general-service': WrenchIcon,
   'body-paint': PaintIcon,
   'detailing-interior': SparkleIcon,
+  'car-battery-jump-start': BatteryBoltIcon,
+  'jump-start': BatteryBoltIcon,
 };
 
 export const DEFAULT_SERVICE_ICON: IconType = WrenchIcon;

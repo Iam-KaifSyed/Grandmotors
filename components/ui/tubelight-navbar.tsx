@@ -12,6 +12,7 @@ import {
   Briefcase,
   FileText,
   User,
+  Truck,
   type LucideIcon,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -20,6 +21,8 @@ const DEFAULT_ICON_MAP: Record<string, LucideIcon> = {
   home: Home,
   services: Wrench,
   service: Wrench,
+  "doorstep service": Truck,
+  doorstep: Truck,
   bookings: Calendar,
   booking: Calendar,
   "my bookings": Calendar,
@@ -34,6 +37,7 @@ export interface NavItem {
   name: string
   url: string
   icon?: LucideIcon | string
+  badge?: string
 }
 
 export interface NavBarProps {
@@ -60,11 +64,21 @@ function resolveIcon(item: NavItem): LucideIcon {
 
 function resolveActiveTab(items: NavItem[], currentPath?: string): string {
   const path = currentPath || (typeof window !== "undefined" ? window.location.pathname : "")
+  const search = typeof window !== "undefined" ? window.location.search : ""
+  const hash = typeof window !== "undefined" ? window.location.hash : ""
+
+  if (search.includes("location=doorstep") || hash.includes("doorstep")) {
+    const doorstepItem = items.find((item) => item.name.toLowerCase().includes("doorstep"))
+    if (doorstepItem) return doorstepItem.name
+  }
+
   if (path) {
-    const match = items.find(
-      (item) => item.url === path || (item.url !== "/" && path.startsWith(item.url))
-    )
+    const match = items.find((item) => {
+      const itemPath = item.url.split(/[?#]/)[0]
+      return itemPath === path || (itemPath !== "/" && path.startsWith(itemPath))
+    })
     if (match) return match.name
+    return ""
   }
   return items[0]?.name || ""
 }
@@ -115,14 +129,24 @@ export function NavBar({ items, className, currentPath }: NavBarProps) {
               href={item.url}
               onClick={() => setActiveTab(item.name)}
               className={cn(
-                "relative cursor-pointer text-xs md:text-sm font-semibold tracking-wide px-3 sm:px-6 py-2 rounded-full transition-colors",
+                "relative cursor-pointer text-xs md:text-sm font-semibold tracking-wide px-3 sm:px-5 py-2 rounded-full transition-colors flex items-center gap-1.5",
                 "text-foreground/80 hover:text-primary",
                 isActive && "bg-white/5 text-primary",
               )}
             >
-              <span className="hidden md:inline">{item.name}</span>
-              <span className="md:hidden">
+              <span className="hidden md:inline-flex items-center gap-1.5">
+                <span>{item.name}</span>
+                {item.badge && (
+                  <span className="inline-flex items-center px-1.5 py-0.5 text-[9px] font-extrabold tracking-wider uppercase rounded-full bg-[#B88952]/20 text-[#B88952] border border-[#B88952]/50 animate-amber-glow shadow-[0_0_8px_rgba(184,137,82,0.4)]">
+                    {item.badge}
+                  </span>
+                )}
+              </span>
+              <span className="md:hidden relative flex items-center justify-center">
                 <Icon size={18} strokeWidth={2.5} />
+                {item.badge && (
+                  <span className="absolute -top-1 -right-1.5 w-2 h-2 rounded-full bg-[#B88952] animate-amber-glow shadow-[0_0_6px_rgba(184,137,82,0.8)]" />
+                )}
               </span>
               {isActive && (
                 <motion.div

@@ -8,6 +8,7 @@ import {
   WrenchIcon,
   PaintIcon,
   SparkleIcon,
+  BatteryBoltIcon,
 } from './Icons';
 
 export type IconType = ComponentType<SVGProps<SVGSVGElement>>;
@@ -168,6 +169,23 @@ export const SERVICES: ServiceCategory[] = [
       'Headlight restoration',
       'Upholstery & leather care',
       'Engine bay cleaning',
+    ],
+  },
+  {
+    id: 'car-battery-jump-start',
+    title: 'Car Battery Jump Start',
+    icon: BatteryBoltIcon,
+    summary:
+      'Professional jump start assistance to safely start your car when its battery is discharged or flat.',
+    image: IMG('photo-1619642751034-765dfdf7c58e'),
+    imageAlt: 'Technician jump-starting a vehicle with booster cables connected to a discharged car battery',
+    items: [
+      'Safe battery jump start with surge & reverse-polarity protection',
+      'Discharged battery testing & state-of-health diagnostics',
+      'Alternator charging output & starter motor check',
+      'Terminal cleaning & secure connection inspection',
+      'Parasitic electrical leakage & drain check',
+      'Doorstep & emergency roadside assistance',
     ],
   },
 ];

@@ -17,6 +17,7 @@ const navItems: NavItem[] = [
 const navLinks = [
   { href: '/', label: 'HOME' },
   { href: '/services', label: 'SERVICES' },
+  { href: '/book-service?location=doorstep#doorstep', label: 'DOORSTEP SERVICE', badge: 'NEW' },
   { href: '/my-bookings', label: 'MY BOOKINGS' },
   { href: '/about', label: 'ABOUT' },
   { href: '/contact', label: 'CONTACT' },
@@ -108,7 +109,21 @@ export function Navbar({ heroComplete = false, isScrolled = false }: NavbarProps
         />
 
         {/* Right Side Controls */}
-        <div className="flex items-center gap-3 sm:gap-5 md:gap-7 pointer-events-auto">
+        <div className="flex items-center gap-3 sm:gap-4 md:gap-5 pointer-events-auto">
+          {/* Doorstep Service Button Beside Book Service */}
+          <div className="hidden lg:block">
+            <a
+              href="/book-service?location=doorstep#doorstep"
+              className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold tracking-[0.14em] uppercase text-[#F2F0EA] hover:text-[#B88952] bg-white/5 hover:bg-[#B88952]/10 border border-[#B88952]/30 hover:border-[#B88952]/60 rounded-full transition-all group pointer-events-auto cursor-pointer shadow-sm shadow-[#B88952]/5"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-[#B88952] animate-amber-glow" />
+              <span>Doorstep</span>
+              <span className="inline-flex items-center px-1.5 py-0.5 text-[9px] font-extrabold tracking-wider uppercase rounded-full bg-[#B88952]/20 text-[#B88952] border border-[#B88952]/50 animate-amber-glow shadow-[0_0_8px_rgba(184,137,82,0.4)]">
+                NEW
+              </span>
+            </a>
+          </div>
+
           {/* Book Service Button */}
           <div className="hidden sm:block">
             <a
@@ -173,7 +188,14 @@ export function Navbar({ heroComplete = false, isScrolled = false }: NavbarProps
                   onClick={() => setMobileMenuOpen(false)}
                   className="flex items-center justify-between px-4 py-2.5 text-xs font-bold tracking-[0.14em] uppercase text-[#D8D6D0] hover:text-[#B88952] hover:bg-white/5 rounded-xl transition-all"
                 >
-                  <span>{link.label}</span>
+                  <div className="flex items-center gap-2">
+                    <span>{link.label}</span>
+                    {(link as any).badge && (
+                      <span className="inline-flex items-center px-1.5 py-0.5 text-[9px] font-extrabold tracking-wider uppercase rounded-full bg-[#B88952]/20 text-[#B88952] border border-[#B88952]/50 animate-amber-glow shadow-[0_0_8px_rgba(184,137,82,0.4)]">
+                        {(link as any).badge}
+                      </span>
+                    )}
+                  </div>
                   <span className="text-[#B88952] text-xs">&rarr;</span>
                 </a>
               ))}

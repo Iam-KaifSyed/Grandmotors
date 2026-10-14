@@ -66,6 +66,12 @@ export const USAGE_LOCATIONS: UsageLocationDef[] = [
     description: 'Card image for Detailing & Interior',
     recommendedDimensions: '1200x800',
   },
+  {
+    key: 'service-car-battery-jump-start',
+    name: 'Car Battery Jump Start Service Card',
+    description: 'Card image for Car Battery Jump Start',
+    recommendedDimensions: '1200x800',
+  },
 ];
 
 export const VALID_USAGE_LOCATION_KEYS = new Set(USAGE_LOCATIONS.map((u) => u.key));
