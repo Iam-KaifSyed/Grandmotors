@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import { AdminThemeControls } from '../components/ui/ThemeControls';
 
 interface Props {
   title: string;
@@ -7,6 +8,7 @@ interface Props {
   chrome?: boolean;
 }
 const { title, chrome = true } = Astro.props;
+const pathname = Astro.url.pathname;
 ---
 
 <!doctype html>
@@ -52,52 +54,117 @@ const { title, chrome = true } = Astro.props;
   <body class="min-h-screen selection:bg-[var(--gm-accent-muted)] selection:text-[var(--gm-text-primary)]">
     {chrome && (
       <header class="sticky top-0 z-30 border-b border-[var(--gm-border-subtle)] bg-[var(--gm-bg-surface)]/90 backdrop-blur-md">
-        <div class="max-w-7xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between">
-          <div class="flex items-center gap-8">
-            <a href="/admin" class="flex items-center gap-2.5 cursor-pointer group">
-              <span class="text-sm font-semibold tracking-[0.25em] text-[var(--gm-text-primary)] uppercase group-hover:text-[var(--gm-accent-primary)] transition-colors">
+        <div class="max-w-7xl mx-auto px-4 sm:px-8 h-16 flex items-center justify-between gap-3 sm:gap-4">
+          <div class="flex items-center gap-6 lg:gap-8 min-w-0">
+            <a href="/admin" class="flex items-center gap-2 cursor-pointer group shrink-0">
+              <span class="text-xs sm:text-sm font-semibold tracking-[0.25em] text-[var(--gm-text-primary)] uppercase group-hover:text-[var(--gm-accent-primary)] transition-colors">
                 Grand Motors
               </span>
               <span class="w-1.5 h-1.5 rounded-full bg-[var(--gm-accent-primary)]"></span>
-              <span class="ml-2 text-[10px] font-semibold tracking-[0.22em] uppercase text-[var(--gm-text-secondary)]/70 border border-[var(--gm-border-subtle)] rounded-full px-2.5 py-0.5">
+              <span class="ml-1 sm:ml-2 text-[10px] font-semibold tracking-[0.22em] uppercase text-[var(--gm-text-secondary)]/70 border border-[var(--gm-border-subtle)] rounded-full px-2 py-0.5">
                 Admin
               </span>
             </a>
 
-            <nav class="hidden md:flex items-center gap-1.5">
+            <nav class="hidden md:flex items-center gap-1">
               <a
                 href="/admin"
-                class="px-3 py-1.5 text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)] hover:bg-[var(--gm-bg-card-hover)] rounded-lg transition-colors"
+                class={`px-3 py-1.5 text-[11px] font-semibold tracking-[0.14em] uppercase rounded-lg transition-colors ${
+                  pathname === '/admin' || pathname === '/admin/'
+                    ? 'text-[var(--gm-accent-primary)] bg-[var(--gm-accent-muted)] border border-[var(--gm-accent-border)]'
+                    : 'text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)] hover:bg-[var(--gm-bg-card-hover)]'
+                }`}
               >
                 Bookings
               </a>
               <a
                 href="/admin/media"
-                class="px-3 py-1.5 text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)] hover:bg-[var(--gm-bg-card-hover)] rounded-lg transition-colors"
+                class={`px-3 py-1.5 text-[11px] font-semibold tracking-[0.14em] uppercase rounded-lg transition-colors ${
+                  pathname.startsWith('/admin/media')
+                    ? 'text-[var(--gm-accent-primary)] bg-[var(--gm-accent-muted)] border border-[var(--gm-accent-border)]'
+                    : 'text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)] hover:bg-[var(--gm-bg-card-hover)]'
+                }`}
               >
                 Media
               </a>
               <a
                 href="/admin/services"
-                class="px-3 py-1.5 text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)] hover:bg-[var(--gm-bg-card-hover)] rounded-lg transition-colors"
+                class={`px-3 py-1.5 text-[11px] font-semibold tracking-[0.14em] uppercase rounded-lg transition-colors ${
+                  pathname.startsWith('/admin/services')
+                    ? 'text-[var(--gm-accent-primary)] bg-[var(--gm-accent-muted)] border border-[var(--gm-accent-border)]'
+                    : 'text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)] hover:bg-[var(--gm-bg-card-hover)]'
+                }`}
               >
                 Services
               </a>
               <a
                 href="/admin/booking-form"
-                class="px-3 py-1.5 text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)] hover:bg-[var(--gm-bg-card-hover)] rounded-lg transition-colors"
+                class={`px-3 py-1.5 text-[11px] font-semibold tracking-[0.14em] uppercase rounded-lg transition-colors ${
+                  pathname.startsWith('/admin/booking-form')
+                    ? 'text-[var(--gm-accent-primary)] bg-[var(--gm-accent-muted)] border border-[var(--gm-accent-border)]'
+                    : 'text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)] hover:bg-[var(--gm-bg-card-hover)]'
+                }`}
               >
                 Booking Form
               </a>
             </nav>
           </div>
-          <button
-            type="button"
-            id="admin-logout"
-            class="inline-flex items-center gap-2 px-4 py-2 text-[11px] font-semibold tracking-[0.16em] uppercase text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)] bg-[var(--gm-bg-card)] hover:bg-[var(--gm-bg-card-hover)] border border-[var(--gm-border-subtle)] rounded-lg transition-colors cursor-pointer"
+
+          <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+            <AdminThemeControls client:load />
+
+            <button
+              type="button"
+              id="admin-logout"
+              class="inline-flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 text-[10px] sm:text-[11px] font-semibold tracking-[0.16em] uppercase text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)] bg-[var(--gm-bg-card)] hover:bg-[var(--gm-bg-card-hover)] border border-[var(--gm-border-subtle)] rounded-lg transition-colors cursor-pointer"
+            >
+              Log out
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile secondary bar for admin tabs */}
+        <div class="md:hidden border-t border-[var(--gm-border-subtle)] bg-[var(--gm-bg-surface)] px-4 py-2 flex items-center gap-1 overflow-x-auto">
+          <a
+            href="/admin"
+            class={`px-2.5 py-1 text-[10px] font-semibold tracking-[0.12em] uppercase rounded-md shrink-0 transition-colors ${
+              pathname === '/admin' || pathname === '/admin/'
+                ? 'text-[var(--gm-accent-primary)] bg-[var(--gm-accent-muted)] border border-[var(--gm-accent-border)]'
+                : 'text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)]'
+            }`}
           >
-            Log out
-          </button>
+            Bookings
+          </a>
+          <a
+            href="/admin/media"
+            class={`px-2.5 py-1 text-[10px] font-semibold tracking-[0.12em] uppercase rounded-md shrink-0 transition-colors ${
+              pathname.startsWith('/admin/media')
+                ? 'text-[var(--gm-accent-primary)] bg-[var(--gm-accent-muted)] border border-[var(--gm-accent-border)]'
+                : 'text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)]'
+            }`}
+          >
+            Media
+          </a>
+          <a
+            href="/admin/services"
+            class={`px-2.5 py-1 text-[10px] font-semibold tracking-[0.12em] uppercase rounded-md shrink-0 transition-colors ${
+              pathname.startsWith('/admin/services')
+                ? 'text-[var(--gm-accent-primary)] bg-[var(--gm-accent-muted)] border border-[var(--gm-accent-border)]'
+                : 'text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)]'
+            }`}
+          >
+            Services
+          </a>
+          <a
+            href="/admin/booking-form"
+            class={`px-2.5 py-1 text-[10px] font-semibold tracking-[0.12em] uppercase rounded-md shrink-0 transition-colors ${
+              pathname.startsWith('/admin/booking-form')
+                ? 'text-[var(--gm-accent-primary)] bg-[var(--gm-accent-muted)] border border-[var(--gm-accent-border)]'
+                : 'text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)]'
+            }`}
+          >
+            Booking Form
+          </a>
         </div>
       </header>
     )}

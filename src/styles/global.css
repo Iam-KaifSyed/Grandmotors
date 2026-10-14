@@ -385,32 +385,96 @@ html[data-theme-mode="light"] .bg-\[\#07090a\] {
 
 html[data-theme-mode="light"] .bg-\[\#0A0C0D\],
 html[data-theme-mode="light"] .bg-\[\#0a0c0d\],
+html[data-theme-mode="light"] .bg-\[\#0a0c0e\],
 html[data-theme-mode="light"] .bg-\[\#0e1013\],
-html[data-theme-mode="light"] .bg-\[\#0E1012\] {
+html[data-theme-mode="light"] .bg-\[\#0E1012\],
+html[data-theme-mode="light"] .bg-\[\#0D0F12\],
+html[data-theme-mode="light"] .bg-\[\#0d0f12\] {
   background-color: var(--gm-bg-surface) !important;
 }
 
 html[data-theme-mode="light"] .bg-\[\#111315\],
+html[data-theme-mode="light"] .bg-\[\#141619\],
+html[data-theme-mode="light"] .bg-\[\#15171a\],
 html[data-theme-mode="light"] .bg-\[\#181B1E\],
 html[data-theme-mode="light"] .bg-\[\#181b1e\] {
   background-color: var(--gm-bg-card) !important;
+}
+
+html[data-theme-mode="light"] .bg-\[\#040404\]\/85,
+html[data-theme-mode="light"] .bg-black\/80,
+html[data-theme-mode="light"] .bg-black\/85 {
+  background-color: rgba(15, 20, 25, 0.45) !important;
 }
 
 html[data-theme-mode="light"] .border-white\/5,
 html[data-theme-mode="light"] .border-white\/8,
 html[data-theme-mode="light"] .border-white\/10,
 html[data-theme-mode="light"] .border-white\/12,
-html[data-theme-mode="light"] .border-white\/15 {
+html[data-theme-mode="light"] .border-white\/15,
+html[data-theme-mode="light"] .border-white\/20,
+html[data-theme-mode="light"] .border-white\/25,
+html[data-theme-mode="light"] .border-white\/30,
+html[data-theme-mode="light"] .border-white\/40 {
   border-color: var(--gm-border-subtle) !important;
 }
 
 html[data-theme-mode="light"] .bg-white\/5,
-html[data-theme-mode="light"] .bg-white\/\[0\.02\] {
+html[data-theme-mode="light"] .bg-white\/\[0\.02\],
+html[data-theme-mode="light"] .bg-white\/\[0\.03\] {
   background-color: var(--gm-bg-card-subtle) !important;
 }
 
-html[data-theme-mode="light"] .divide-white\/8 > :not([hidden]) ~ :not([hidden]) {
+html[data-theme-mode="light"] .bg-white\/10,
+html[data-theme-mode="light"] .bg-white\/15,
+html[data-theme-mode="light"] .bg-white\/20 {
+  background-color: var(--gm-bg-card-hover) !important;
+}
+
+html[data-theme-mode="light"] .divide-white\/5 > :not([hidden]) ~ :not([hidden]),
+html[data-theme-mode="light"] .divide-white\/8 > :not([hidden]) ~ :not([hidden]),
+html[data-theme-mode="light"] .divide-white\/10 > :not([hidden]) ~ :not([hidden]) {
   border-color: var(--gm-border-subtle) !important;
+}
+
+/* Day Mode Text Overrides (Ensuring readable dark text on light backgrounds) */
+html[data-theme-mode="light"] .text-\[\#F2F0EA\],
+html[data-theme-mode="light"] .text-\[\#f2f0ea\],
+html[data-theme-mode="light"] .text-\[\#D8D6D0\],
+html[data-theme-mode="light"] .text-\[\#d8d6d0\] {
+  color: var(--gm-text-primary) !important;
+}
+
+html[data-theme-mode="light"] .text-\[\#F2F0EA\]\/90,
+html[data-theme-mode="light"] .text-\[\#f2f0ea\]\/90 {
+  color: var(--gm-text-primary) !important;
+}
+
+html[data-theme-mode="light"] .text-\[\#A7AAAD\],
+html[data-theme-mode="light"] .text-\[\#a7aaad\] {
+  color: var(--gm-text-secondary) !important;
+}
+
+html[data-theme-mode="light"] .text-\[\#A7AAAD\]\/80,
+html[data-theme-mode="light"] .text-\[\#A7AAAD\]\/70,
+html[data-theme-mode="light"] .text-\[\#A7AAAD\]\/60,
+html[data-theme-mode="light"] .text-\[\#A7AAAD\]\/50,
+html[data-theme-mode="light"] .text-\[\#A7AAAD\]\/40,
+html[data-theme-mode="light"] .text-\[\#a7aaad\]\/80,
+html[data-theme-mode="light"] .text-\[\#a7aaad\]\/70,
+html[data-theme-mode="light"] .text-\[\#a7aaad\]\/60,
+html[data-theme-mode="light"] .text-\[\#a7aaad\]\/50,
+html[data-theme-mode="light"] .text-\[\#a7aaad\]\/40 {
+  color: var(--gm-text-muted) !important;
+}
+
+html[data-theme-mode="light"] .text-\[\#eaddc1\],
+html[data-theme-mode="light"] .text-\[\#b8a082\] {
+  color: var(--gm-accent-primary) !important;
+}
+
+html[data-theme-mode="light"] .hover\:text-\[\#F2F0EA\]:hover {
+  color: var(--gm-text-primary) !important;
 }
 
 /* Light mode card shadows */
@@ -441,10 +505,23 @@ html[data-theme-mode="light"] textarea:focus {
   outline: none;
 }
 
+html[data-theme-mode="light"] .bg-black\/20,
+html[data-theme-mode="light"] .bg-black\/30,
 html[data-theme-mode="light"] .bg-black\/40,
 html[data-theme-mode="light"] .bg-black\/50,
 html[data-theme-mode="light"] .bg-black\/60 {
   background-color: var(--gm-bg-surface) !important;
+}
+
+/* Light mode table headers and rows */
+html[data-theme-mode="light"] thead {
+  background-color: var(--gm-bg-page) !important;
+}
+html[data-theme-mode="light"] thead th {
+  color: var(--gm-text-secondary) !important;
+}
+html[data-theme-mode="light"] tbody tr:hover {
+  background-color: var(--gm-bg-card-hover) !important;
 }
 
 /* Focus styles for keyboard accessibility */

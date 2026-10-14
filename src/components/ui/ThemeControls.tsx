@@ -252,6 +252,75 @@ export function ThemeControls({ className = '' }: { className?: string }) {
 }
 
 /**
+ * Compact theme controls for the Admin Navbar (Day/Night/System selector + Accent picker)
+ */
+export function AdminThemeControls({ className = '' }: { className?: string }) {
+  const { mode, setMode } = useTheme();
+
+  return (
+    <div className={`flex items-center gap-1.5 sm:gap-2 ${className}`}>
+      {/* Day / Night / System Mode Selector */}
+      <div
+        role="group"
+        aria-label="Appearance Mode"
+        className="inline-flex items-center gap-0.5 p-0.5 rounded-lg bg-[var(--gm-bg-card)] border border-[var(--gm-border-subtle)]"
+      >
+        <button
+          type="button"
+          onClick={() => setMode('light')}
+          aria-label="Day Mode"
+          title="Day Mode (Light)"
+          aria-pressed={mode === 'light'}
+          className={`flex items-center gap-1 sm:gap-1.5 px-2 py-1 rounded-md text-[10px] font-semibold tracking-wider uppercase transition-all cursor-pointer ${
+            mode === 'light'
+              ? 'bg-[var(--gm-accent-muted)] text-[var(--gm-accent-primary)] border border-[var(--gm-accent-border)] shadow-xs'
+              : 'text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)] border border-transparent'
+          }`}
+        >
+          <Sun className="w-3.5 h-3.5" />
+          <span className="hidden sm:inline">Day</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setMode('dark')}
+          aria-label="Night Mode"
+          title="Night Mode (Dark)"
+          aria-pressed={mode === 'dark'}
+          className={`flex items-center gap-1 sm:gap-1.5 px-2 py-1 rounded-md text-[10px] font-semibold tracking-wider uppercase transition-all cursor-pointer ${
+            mode === 'dark'
+              ? 'bg-[var(--gm-accent-muted)] text-[var(--gm-accent-primary)] border border-[var(--gm-accent-border)] shadow-xs'
+              : 'text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)] border border-transparent'
+          }`}
+        >
+          <Moon className="w-3.5 h-3.5" />
+          <span className="hidden sm:inline">Night</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setMode('system')}
+          aria-label="System Mode"
+          title="System Mode (Auto)"
+          aria-pressed={mode === 'system'}
+          className={`flex items-center gap-1 sm:gap-1.5 px-2 py-1 rounded-md text-[10px] font-semibold tracking-wider uppercase transition-all cursor-pointer ${
+            mode === 'system'
+              ? 'bg-[var(--gm-accent-muted)] text-[var(--gm-accent-primary)] border border-[var(--gm-accent-border)] shadow-xs'
+              : 'text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)] border border-transparent'
+          }`}
+        >
+          <Monitor className="w-3.5 h-3.5" />
+          <span className="hidden sm:inline">System</span>
+        </button>
+      </div>
+
+      {/* Accent Colour Selector */}
+      <ThemeAccentPicker />
+    </div>
+  );
+}
+
+/**
  * Mobile Drawer Menu Theme Controls (Subtle, Nav-Aligned & Collapsible)
  */
 export function MobileThemeControls() {

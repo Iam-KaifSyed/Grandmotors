@@ -371,13 +371,13 @@ export function ServiceManager() {
     <div className="space-y-8">
       {/* Toast Notification Banner */}
       {toastMessage && (
-        <div className="fixed top-4 right-4 z-50 flex items-center gap-3 px-4 py-3 rounded-xl bg-[#111315] border border-[#B88952]/40 text-[#F2F0EA] shadow-2xl animate-fade-in">
-          <span className="w-2 h-2 rounded-full bg-[#25D366]" />
+        <div className="fixed top-4 right-4 z-50 flex items-center gap-3 px-4 py-3 rounded-xl bg-[var(--gm-bg-card)] border border-[var(--gm-accent-border)] text-[var(--gm-text-primary)] shadow-2xl animate-fade-in">
+          <span className="w-2 h-2 rounded-full bg-[#15803d] dark:bg-[#25D366]" />
           <span className="text-xs font-semibold">{toastMessage}</span>
           <button
             type="button"
             onClick={() => setToastMessage(null)}
-            className="text-[#A7AAAD] hover:text-[#F2F0EA] text-xs ml-2 cursor-pointer"
+            className="text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)] text-xs ml-2 cursor-pointer"
           >
             ✕
           </button>
@@ -388,12 +388,12 @@ export function ServiceManager() {
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <span className="w-4 h-px bg-[#B88952]" />
-            <span className="text-[10px] font-semibold tracking-[0.25em] text-[#B88952] uppercase">
+            <span className="w-4 h-px bg-[var(--gm-accent-primary)]" />
+            <span className="text-[10px] font-semibold tracking-[0.25em] text-[var(--gm-accent-primary)] uppercase">
               Catalogue Management
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-[-0.02em] text-[#F2F0EA] uppercase">
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-[-0.02em] text-[var(--gm-text-primary)] uppercase">
             Service Manager
           </h1>
         </div>
@@ -401,28 +401,28 @@ export function ServiceManager() {
         <button
           type="button"
           onClick={openNew}
-          className="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-semibold tracking-[0.14em] uppercase text-[#0A0C0D] bg-[#B88952] hover:bg-[#caa066] rounded-lg transition-colors cursor-pointer self-start sm:self-auto"
+          className="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-semibold tracking-[0.14em] uppercase text-[var(--gm-accent-foreground)] bg-[var(--gm-accent-primary)] hover:bg-[var(--gm-accent-primary-hover)] rounded-lg transition-colors cursor-pointer self-start sm:self-auto shadow-sm"
         >
           + Add New Service
         </button>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="rounded-xl border border-white/8 bg-[#111315] p-4 flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
+      <div className="rounded-xl border border-[var(--gm-border-subtle)] bg-[var(--gm-bg-card)] p-4 flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between shadow-sm">
         <div className="relative flex-1">
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search services by title, summary, or checklist items…"
-            className="w-full bg-[#0A0C0D] border border-white/10 rounded-lg pl-9 pr-8 py-2 text-xs text-[#F2F0EA] placeholder-[#A7AAAD]/60 focus:border-[#B88952] focus:outline-none"
+            className="w-full bg-[var(--gm-bg-surface)] border border-[var(--gm-border-subtle)] rounded-lg pl-9 pr-8 py-2 text-xs text-[var(--gm-text-primary)] placeholder-[var(--gm-text-muted)] focus:border-[var(--gm-accent-primary)] focus:outline-none"
           />
-          <span className="absolute left-3 top-2.5 text-xs text-[#A7AAAD]/60">🔍</span>
+          <span className="absolute left-3 top-2.5 text-xs text-[var(--gm-text-muted)]">🔍</span>
           {searchQuery && (
             <button
               type="button"
               onClick={() => setSearchQuery('')}
-              className="absolute right-3 top-2.5 text-xs text-[#A7AAAD] hover:text-[#F2F0EA] cursor-pointer"
+              className="absolute right-3 top-2.5 text-xs text-[var(--gm-text-muted)] hover:text-[var(--gm-text-primary)] cursor-pointer"
             >
               ✕
             </button>
@@ -434,7 +434,7 @@ export function ServiceManager() {
           <select
             value={statusFilter}
             onChange={(e: any) => setStatusFilter(e.target.value)}
-            className="bg-[#0A0C0D] border border-white/10 rounded-lg px-3 py-2 text-xs text-[#F2F0EA] focus:border-[#B88952] focus:outline-none cursor-pointer"
+            className="bg-[var(--gm-bg-surface)] border border-[var(--gm-border-subtle)] rounded-lg px-3 py-2 text-xs text-[var(--gm-text-primary)] focus:border-[var(--gm-accent-primary)] focus:outline-none cursor-pointer"
           >
             <option value="all">All Statuses</option>
             <option value="active">Active Only</option>
@@ -450,7 +450,7 @@ export function ServiceManager() {
                 setSearchQuery('');
                 setStatusFilter('all');
               }}
-              className="px-3 py-2 text-xs text-[#A7AAAD] hover:text-[#F2F0EA] border border-white/10 rounded-lg cursor-pointer transition-colors"
+              className="px-3 py-2 text-xs text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)] border border-[var(--gm-border-subtle)] rounded-lg cursor-pointer transition-colors"
             >
               Reset
             </button>
@@ -459,33 +459,33 @@ export function ServiceManager() {
       </div>
 
       {/* Services List */}
-      <div className="rounded-xl border border-white/8 bg-[#111315] p-6 space-y-4">
+      <div className="rounded-xl border border-[var(--gm-border-subtle)] bg-[var(--gm-bg-card)] p-6 space-y-4 shadow-sm">
         <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold tracking-wider uppercase text-[#F2F0EA]">
+          <h2 className="text-sm font-semibold tracking-wider uppercase text-[var(--gm-text-primary)]">
             Service Offerings ({filteredServices.length}{services ? ` of ${services.length}` : ''})
           </h2>
           {searchQuery || statusFilter !== 'all' ? (
-            <span className="text-[11px] text-[#B88952]">Filtered View (Reordering disabled in filtered view)</span>
+            <span className="text-[11px] text-[var(--gm-accent-primary)]">Filtered View (Reordering disabled in filtered view)</span>
           ) : null}
         </div>
 
         {isLoading ? (
           <div className="py-16 flex items-center justify-center">
-            <div className="w-8 h-8 rounded-full border-2 border-[#B88952]/20 border-t-[#B88952] animate-spin" />
+            <div className="w-8 h-8 rounded-full border-2 border-[var(--gm-accent-primary)]/20 border-t-[var(--gm-accent-primary)] animate-spin" />
           </div>
         ) : error ? (
           <div className="py-12 px-6 text-center">
-            <p className="text-sm text-red-300">{error}</p>
+            <p className="text-sm text-red-500 dark:text-red-300">{error}</p>
             <button
               type="button"
               onClick={loadData}
-              className="mt-4 inline-flex items-center px-5 py-2 text-xs font-semibold tracking-wider uppercase text-[#0A0C0D] bg-[#B88952] rounded-lg cursor-pointer"
+              className="mt-4 inline-flex items-center px-5 py-2 text-xs font-semibold tracking-wider uppercase text-[var(--gm-accent-foreground)] bg-[var(--gm-accent-primary)] rounded-lg cursor-pointer"
             >
               Retry
             </button>
           </div>
         ) : filteredServices.length === 0 ? (
-          <div className="py-12 text-center text-sm text-[#A7AAAD]">
+          <div className="py-12 text-center text-sm text-[var(--gm-text-secondary)]">
             {searchQuery || statusFilter !== 'all'
               ? 'No services matched your filter criteria.'
               : 'No services found. Add your first service above.'}
@@ -499,8 +499,8 @@ export function ServiceManager() {
                 <div
                   key={svc.id}
                   className={`flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-4 rounded-xl border ${
-                    svc.active ? 'border-white/8 bg-[#0A0C0D]' : 'border-white/5 bg-[#0A0C0D]/50 opacity-60'
-                  } hover:border-[#B88952]/30 transition-colors`}
+                    svc.active ? 'border-[var(--gm-border-subtle)] bg-[var(--gm-bg-surface)]' : 'border-[var(--gm-border-subtle)] bg-[var(--gm-bg-surface)]/50 opacity-60'
+                  } hover:border-[var(--gm-accent-primary)]/40 transition-colors`}
                 >
                   {/* Left info */}
                   <div className="flex items-start sm:items-center gap-4">
@@ -512,7 +512,7 @@ export function ServiceManager() {
                         onClick={() => handleMove(index, 'up')}
                         aria-label={`Move ${svc.title} up`}
                         title={isFiltered ? 'Reordering is disabled when filters are active' : 'Move up'}
-                        className="p-1 rounded bg-white/5 hover:bg-white/10 disabled:opacity-20 text-[#A7AAAD] hover:text-[#F2F0EA] cursor-pointer"
+                        className="p-1 rounded bg-[var(--gm-bg-card)] hover:bg-[var(--gm-bg-card-hover)] disabled:opacity-20 text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)] cursor-pointer"
                       >
                         ▲
                       </button>
@@ -522,14 +522,14 @@ export function ServiceManager() {
                         onClick={() => handleMove(index, 'down')}
                         aria-label={`Move ${svc.title} down`}
                         title={isFiltered ? 'Reordering is disabled when filters are active' : 'Move down'}
-                        className="p-1 rounded bg-white/5 hover:bg-white/10 disabled:opacity-20 text-[#A7AAAD] hover:text-[#F2F0EA] cursor-pointer"
+                        className="p-1 rounded bg-[var(--gm-bg-card)] hover:bg-[var(--gm-bg-card-hover)] disabled:opacity-20 text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)] cursor-pointer"
                       >
                         ▼
                       </button>
                     </div>
 
                     {/* Thumbnail */}
-                    <div className="w-16 h-12 rounded-lg bg-[#111315] overflow-hidden shrink-0 border border-white/10 flex items-center justify-center">
+                    <div className="w-16 h-12 rounded-lg bg-[var(--gm-bg-card)] overflow-hidden shrink-0 border border-[var(--gm-border-subtle)] flex items-center justify-center">
                       <img
                         src={svc.imageUrl || '/images/placeholder.jpg'}
                         alt={svc.title}
@@ -542,20 +542,20 @@ export function ServiceManager() {
 
                     <div>
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className="text-xs font-bold text-[#F2F0EA]">{svc.title}</span>
-                        <span className="text-[10px] font-mono text-[#A7AAAD]/60">#{svc.displayOrder}</span>
+                        <span className="text-xs font-bold text-[var(--gm-text-primary)]">{svc.title}</span>
+                        <span className="text-[10px] font-mono text-[var(--gm-text-muted)]">#{svc.displayOrder}</span>
                       </div>
-                      <p className="text-xs text-[#A7AAAD] line-clamp-1 max-w-md mt-0.5">
+                      <p className="text-xs text-[var(--gm-text-secondary)] line-clamp-1 max-w-md mt-0.5">
                         {svc.summary || 'No summary provided.'}
                       </p>
-                      <div className="text-[10px] text-[#A7AAAD]/70 mt-1">
+                      <div className="text-[10px] text-[var(--gm-text-muted)] mt-1">
                         {svc.items?.length || 0} checklist items
                       </div>
                     </div>
                   </div>
 
                   {/* Right controls & Toggles */}
-                  <div className="flex flex-wrap items-center gap-2.5 pt-3 lg:pt-0 border-t lg:border-t-0 border-white/5">
+                  <div className="flex flex-wrap items-center gap-2.5 pt-3 lg:pt-0 border-t lg:border-t-0 border-[var(--gm-border-subtle)]">
                     {/* Active Toggle */}
                     <button
                       type="button"
@@ -563,8 +563,8 @@ export function ServiceManager() {
                       title="Toggle active status"
                       className={`px-3 py-1 text-[10px] font-semibold tracking-wider uppercase rounded-full border cursor-pointer transition-colors ${
                         svc.active
-                          ? 'bg-[#25D366]/10 text-[#25D366] border-[#25D366]/30'
-                          : 'bg-white/5 text-[#A7AAAD] border-white/10'
+                          ? 'bg-[#15803d]/10 dark:bg-[#25D366]/10 text-[#15803d] dark:text-[#25D366] border-[#15803d]/30 dark:border-[#25D366]/30'
+                          : 'bg-[var(--gm-bg-card-subtle)] text-[var(--gm-text-secondary)] border-[var(--gm-border-subtle)]'
                       }`}
                     >
                       {svc.active ? '● Active' : '○ Deactivated'}
@@ -577,8 +577,8 @@ export function ServiceManager() {
                       title="Toggle visibility on public Services page"
                       className={`px-3 py-1 text-[10px] font-semibold tracking-wider uppercase rounded-full border cursor-pointer transition-colors ${
                         svc.visibleInCatalogue
-                          ? 'bg-[#B88952]/10 text-[#B88952] border-[#B88952]/30'
-                          : 'bg-white/5 text-[#A7AAAD]/50 border-white/10 line-through'
+                          ? 'bg-[var(--gm-accent-muted)] text-[var(--gm-accent-primary)] border-[var(--gm-accent-border)]'
+                          : 'bg-[var(--gm-bg-card-subtle)] text-[var(--gm-text-muted)] border-[var(--gm-border-subtle)] line-through'
                       }`}
                     >
                       Catalogue
@@ -591,8 +591,8 @@ export function ServiceManager() {
                       title="Toggle selectability in booking form"
                       className={`px-3 py-1 text-[10px] font-semibold tracking-wider uppercase rounded-full border cursor-pointer transition-colors ${
                         svc.selectableInBooking
-                          ? 'bg-[#60A5FA]/10 text-[#60A5FA] border-[#60A5FA]/30'
-                          : 'bg-white/5 text-[#A7AAAD]/50 border-white/10 line-through'
+                          ? 'bg-[#2563eb]/10 dark:bg-[#60A5FA]/10 text-[#2563eb] dark:text-[#60A5FA] border-[#2563eb]/30 dark:border-[#60A5FA]/30'
+                          : 'bg-[var(--gm-bg-card-subtle)] text-[var(--gm-text-muted)] border-[var(--gm-border-subtle)] line-through'
                       }`}
                     >
                       Booking
@@ -602,7 +602,7 @@ export function ServiceManager() {
                     <button
                       type="button"
                       onClick={() => openEdit(svc)}
-                      className="px-3 py-1 text-xs font-semibold uppercase tracking-wider text-[#F2F0EA] bg-white/5 hover:bg-[#B88952] hover:text-[#0A0C0D] border border-white/10 rounded-lg cursor-pointer transition-colors"
+                      className="px-3 py-1 text-xs font-semibold uppercase tracking-wider text-[var(--gm-text-primary)] bg-[var(--gm-bg-card)] hover:bg-[var(--gm-accent-primary)] hover:text-[var(--gm-accent-foreground)] border border-[var(--gm-border-subtle)] hover:border-[var(--gm-accent-primary)] rounded-lg cursor-pointer transition-colors"
                     >
                       Edit
                     </button>
@@ -613,7 +613,7 @@ export function ServiceManager() {
                       onClick={() => promptDeleteService(svc)}
                       aria-label={`Delete ${svc.title}`}
                       title="Delete service"
-                      className="p-1.5 text-xs text-red-400 hover:text-white bg-red-500/10 hover:bg-red-600 border border-red-500/20 rounded-lg cursor-pointer transition-colors"
+                      className="p-1.5 text-xs text-red-500 hover:text-white bg-red-500/10 hover:bg-red-600 border border-red-500/20 rounded-lg cursor-pointer transition-colors"
                     >
                       🗑
                     </button>
@@ -630,16 +630,16 @@ export function ServiceManager() {
         <div
           role="dialog"
           aria-modal="true"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#040404]/85 backdrop-blur-md overflow-y-auto"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 dark:bg-[#040404]/85 backdrop-blur-md overflow-y-auto"
         >
-          <div className="bg-[#0D0F12] border border-white/10 rounded-2xl max-w-2xl w-full p-6 sm:p-8 space-y-5 my-auto max-h-[90vh] overflow-y-auto shadow-2xl">
-            <div className="flex items-center justify-between border-b border-white/8 pb-4">
+          <div className="bg-[var(--gm-bg-card)] border border-[var(--gm-border-subtle)] rounded-2xl max-w-2xl w-full p-6 sm:p-8 space-y-5 my-auto max-h-[90vh] overflow-y-auto shadow-2xl text-[var(--gm-text-primary)]">
+            <div className="flex items-center justify-between border-b border-[var(--gm-border-subtle)] pb-4">
               <div>
-                <h2 className="text-lg sm:text-xl font-bold text-[#F2F0EA] uppercase tracking-wide">
+                <h2 className="text-lg sm:text-xl font-bold text-[var(--gm-text-primary)] uppercase tracking-wide">
                   {editingService.id ? `Edit: ${editingService.title || 'Service'}` : 'Add New Service'}
                 </h2>
                 {isFormDirty() && (
-                  <span className="text-[10px] text-[#B88952] font-semibold tracking-wider uppercase">
+                  <span className="text-[10px] text-[var(--gm-accent-primary)] font-semibold tracking-wider uppercase">
                     ● Unsaved changes
                   </span>
                 )}
@@ -647,7 +647,7 @@ export function ServiceManager() {
               <button
                 type="button"
                 onClick={handleCloseModal}
-                className="text-[#A7AAAD] hover:text-[#F2F0EA] text-sm p-1 rounded cursor-pointer"
+                className="text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)] text-sm p-1 rounded cursor-pointer"
                 aria-label="Close modal"
               >
                 ✕
@@ -657,7 +657,7 @@ export function ServiceManager() {
             <div className="space-y-4 text-xs">
               {/* Title */}
               <div>
-                <label className="block text-[#A7AAAD] uppercase tracking-wider mb-1 font-semibold">
+                <label className="block text-[var(--gm-text-secondary)] uppercase tracking-wider mb-1 font-semibold">
                   Service Title *
                 </label>
                 <input
@@ -667,13 +667,13 @@ export function ServiceManager() {
                     setEditingService({ ...editingService, title: e.target.value })
                   }
                   placeholder="e.g. Performance Exhaust Tuning"
-                  className="w-full bg-[#0A0C0D] border border-white/10 rounded-lg px-3 py-2.5 text-sm text-[#F2F0EA] focus:border-[#B88952] focus:outline-none"
+                  className="w-full bg-[var(--gm-bg-surface)] border border-[var(--gm-border-subtle)] rounded-lg px-3 py-2.5 text-sm text-[var(--gm-text-primary)] focus:border-[var(--gm-accent-primary)] focus:outline-none"
                 />
               </div>
 
               {/* Summary */}
               <div>
-                <label className="block text-[#A7AAAD] uppercase tracking-wider mb-1 font-semibold">
+                <label className="block text-[var(--gm-text-secondary)] uppercase tracking-wider mb-1 font-semibold">
                   Summary
                 </label>
                 <textarea
@@ -683,13 +683,13 @@ export function ServiceManager() {
                     setEditingService({ ...editingService, summary: e.target.value })
                   }
                   placeholder="Brief overview displayed on catalogue and cards…"
-                  className="w-full bg-[#0A0C0D] border border-white/10 rounded-lg px-3 py-2 text-xs text-[#F2F0EA] focus:border-[#B88952] focus:outline-none resize-none"
+                  className="w-full bg-[var(--gm-bg-surface)] border border-[var(--gm-border-subtle)] rounded-lg px-3 py-2 text-xs text-[var(--gm-text-primary)] focus:border-[var(--gm-accent-primary)] focus:outline-none resize-none"
                 />
               </div>
 
               {/* Items */}
               <div>
-                <label className="block text-[#A7AAAD] uppercase tracking-wider mb-1 font-semibold">
+                <label className="block text-[var(--gm-text-secondary)] uppercase tracking-wider mb-1 font-semibold">
                   Included Tasks / Checklist (One per line)
                 </label>
                 <textarea
@@ -697,14 +697,14 @@ export function ServiceManager() {
                   value={itemsText}
                   onChange={(e) => setItemsText(e.target.value)}
                   placeholder="OBD Diagnostic scan&#10;High-flow cat installation&#10;Dyno performance verification"
-                  className="w-full bg-[#0A0C0D] border border-white/10 rounded-lg px-3 py-2 text-xs text-[#F2F0EA] font-mono focus:border-[#B88952] focus:outline-none resize-none"
+                  className="w-full bg-[var(--gm-bg-surface)] border border-[var(--gm-border-subtle)] rounded-lg px-3 py-2 text-xs text-[var(--gm-text-primary)] font-mono focus:border-[var(--gm-accent-primary)] focus:outline-none resize-none"
                 />
               </div>
 
               {/* Media Section */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between mb-1">
-                  <label className="block text-[#A7AAAD] uppercase tracking-wider font-semibold">
+                  <label className="block text-[var(--gm-text-secondary)] uppercase tracking-wider font-semibold">
                     Linked Media Asset
                   </label>
                   <input
@@ -718,11 +718,11 @@ export function ServiceManager() {
                     type="button"
                     disabled={isUploadingMedia}
                     onClick={() => fileInputRef.current?.click()}
-                    className="text-[10px] text-[#B88952] hover:text-[#caa066] font-semibold tracking-wider uppercase cursor-pointer flex items-center gap-1"
+                    className="text-[10px] text-[var(--gm-accent-primary)] hover:text-[var(--gm-accent-primary-hover)] font-semibold tracking-wider uppercase cursor-pointer flex items-center gap-1"
                   >
                     {isUploadingMedia ? (
                       <>
-                        <span className="w-2.5 h-2.5 border-2 border-[#B88952]/40 border-t-[#B88952] rounded-full animate-spin" />
+                        <span className="w-2.5 h-2.5 border-2 border-[var(--gm-accent-primary)]/40 border-t-[var(--gm-accent-primary)] rounded-full animate-spin" />
                         <span>Uploading…</span>
                       </>
                     ) : (
@@ -739,7 +739,7 @@ export function ServiceManager() {
                       mediaAssetId: e.target.value || null,
                     })
                   }
-                  className="w-full bg-[#0A0C0D] border border-white/10 rounded-lg px-3 py-2 text-xs text-[#F2F0EA] focus:border-[#B88952] focus:outline-none cursor-pointer"
+                  className="w-full bg-[var(--gm-bg-surface)] border border-[var(--gm-border-subtle)] rounded-lg px-3 py-2 text-xs text-[var(--gm-text-primary)] focus:border-[var(--gm-accent-primary)] focus:outline-none cursor-pointer"
                 >
                   <option value="">(Default Hardcoded Image)</option>
                   {mediaAssets.map((asset) => (
@@ -752,15 +752,15 @@ export function ServiceManager() {
 
               {/* Upload Error Banner */}
               {mediaUploadError && (
-                <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-300 text-xs">
+                <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 dark:text-red-300 text-xs">
                   {mediaUploadError}
                 </div>
               )}
 
               {/* Linked Media Asset Thumbnail Preview Card */}
-              <div className="p-3 rounded-xl border border-white/8 bg-[#0A0C0D] flex items-center justify-between gap-4">
+              <div className="p-3 rounded-xl border border-[var(--gm-border-subtle)] bg-[var(--gm-bg-surface)] flex items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-14 h-14 rounded-lg bg-[#111315] border border-white/10 overflow-hidden shrink-0 flex items-center justify-center">
+                  <div className="w-14 h-14 rounded-lg bg-[var(--gm-bg-card)] border border-[var(--gm-border-subtle)] overflow-hidden shrink-0 flex items-center justify-center">
                     {selectedMediaAsset ? (
                       <img
                         src={getMediaUrl(selectedMediaAsset) || '/images/placeholder.jpg'}
@@ -784,14 +784,14 @@ export function ServiceManager() {
 
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-semibold text-[#F2F0EA]">
+                      <span className="text-xs font-semibold text-[var(--gm-text-primary)]">
                         {selectedMediaAsset ? selectedMediaAsset.filename : '(Default Image Asset)'}
                       </span>
-                      <span className="px-1.5 py-0.5 text-[9px] font-mono uppercase rounded bg-white/5 border border-white/10 text-[#A7AAAD]">
+                      <span className="px-1.5 py-0.5 text-[9px] font-mono uppercase rounded bg-[var(--gm-bg-card)] border border-[var(--gm-border-subtle)] text-[var(--gm-text-secondary)]">
                         {selectedMediaAsset ? selectedMediaAsset.source : 'seed/builtin'}
                       </span>
                     </div>
-                    <p className="text-[11px] text-[#A7AAAD]/60 font-mono mt-0.5">
+                    <p className="text-[11px] text-[var(--gm-text-muted)] font-mono mt-0.5">
                       {selectedMediaAsset?.width && selectedMediaAsset?.height
                         ? `${selectedMediaAsset.width} × ${selectedMediaAsset.height} px • `
                         : ''}
@@ -804,7 +804,7 @@ export function ServiceManager() {
                   <button
                     type="button"
                     onClick={() => setEditingService({ ...editingService, mediaAssetId: null })}
-                    className="text-[10px] text-[#A7AAAD] hover:text-[#F2F0EA] border border-white/10 hover:border-white/20 px-2.5 py-1 rounded cursor-pointer"
+                    className="text-[10px] text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)] border border-[var(--gm-border-subtle)] hover:border-[var(--gm-accent-primary)] px-2.5 py-1 rounded cursor-pointer"
                   >
                     Reset to Default
                   </button>
@@ -812,7 +812,7 @@ export function ServiceManager() {
               </div>
 
               {/* Toggles */}
-              <div className="flex flex-wrap items-center gap-6 pt-2 border-t border-white/5">
+              <div className="flex flex-wrap items-center gap-6 pt-2 border-t border-[var(--gm-border-subtle)]">
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
@@ -820,9 +820,9 @@ export function ServiceManager() {
                     onChange={(e) =>
                       setEditingService({ ...editingService, active: e.target.checked })
                     }
-                    className="accent-[#B88952] cursor-pointer"
+                    className="accent-[var(--gm-accent-primary)] cursor-pointer"
                   />
-                  <span className="text-[#F2F0EA] font-semibold">Active Status</span>
+                  <span className="text-[var(--gm-text-primary)] font-semibold">Active Status</span>
                 </label>
 
                 <label className="flex items-center gap-2 cursor-pointer">
@@ -835,9 +835,9 @@ export function ServiceManager() {
                         visibleInCatalogue: e.target.checked,
                       })
                     }
-                    className="accent-[#B88952] cursor-pointer"
+                    className="accent-[var(--gm-accent-primary)] cursor-pointer"
                   />
-                  <span className="text-[#F2F0EA] font-semibold">Show in Catalogue</span>
+                  <span className="text-[var(--gm-text-primary)] font-semibold">Show in Catalogue</span>
                 </label>
 
                 <label className="flex items-center gap-2 cursor-pointer">
@@ -850,26 +850,26 @@ export function ServiceManager() {
                         selectableInBooking: e.target.checked,
                       })
                     }
-                    className="accent-[#B88952] cursor-pointer"
+                    className="accent-[var(--gm-accent-primary)] cursor-pointer"
                   />
-                  <span className="text-[#F2F0EA] font-semibold">Selectable in Booking Form</span>
+                  <span className="text-[var(--gm-text-primary)] font-semibold">Selectable in Booking Form</span>
                 </label>
               </div>
             </div>
 
             {saveError && (
-              <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-300 text-xs">
+              <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 dark:text-red-300 text-xs">
                 {saveError}
               </div>
             )}
 
             {/* Bottom Actions */}
-            <div className="flex items-center justify-between gap-3 pt-4 border-t border-white/8">
+            <div className="flex items-center justify-between gap-3 pt-4 border-t border-[var(--gm-border-subtle)]">
               {editingService.id ? (
                 <button
                   type="button"
                   onClick={() => promptDeleteService(editingService as ServiceRecord)}
-                  className="px-3.5 py-2 text-xs font-semibold text-red-400 hover:text-white bg-red-500/10 hover:bg-red-600 rounded-lg border border-red-500/20 cursor-pointer transition-colors"
+                  className="px-3.5 py-2 text-xs font-semibold text-red-500 hover:text-white bg-red-500/10 hover:bg-red-600 rounded-lg border border-red-500/20 cursor-pointer transition-colors"
                 >
                   Delete Service
                 </button>
@@ -879,7 +879,7 @@ export function ServiceManager() {
                 <button
                   type="button"
                   onClick={handleCloseModal}
-                  className="px-4 py-2 text-xs font-semibold text-[#A7AAAD] hover:text-[#F2F0EA] cursor-pointer"
+                  className="px-4 py-2 text-xs font-semibold text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)] cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -887,7 +887,7 @@ export function ServiceManager() {
                   type="button"
                   onClick={handleSaveService}
                   disabled={isSaving || !editingService.title?.trim()}
-                  className="px-6 py-2.5 text-xs font-semibold uppercase tracking-wider text-[#0A0C0D] bg-[#B88952] hover:bg-[#caa066] disabled:opacity-50 rounded-lg cursor-pointer transition-colors shadow-lg"
+                  className="px-6 py-2.5 text-xs font-semibold uppercase tracking-wider text-[var(--gm-accent-foreground)] bg-[var(--gm-accent-primary)] hover:bg-[var(--gm-accent-primary-hover)] disabled:opacity-50 rounded-lg cursor-pointer transition-colors shadow-sm"
                 >
                   {isSaving ? 'Saving…' : 'Save Service'}
                 </button>
@@ -902,24 +902,24 @@ export function ServiceManager() {
         <div
           role="dialog"
           aria-modal="true"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#040404]/85 backdrop-blur-md"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 dark:bg-[#040404]/85 backdrop-blur-md"
         >
-          <div className="bg-[#0D0F12] border border-white/10 rounded-2xl max-w-md w-full p-6 sm:p-8 space-y-5 my-auto shadow-2xl">
-            <h2 className="text-lg font-bold text-[#F2F0EA] uppercase tracking-wide">
+          <div className="bg-[var(--gm-bg-card)] border border-[var(--gm-border-subtle)] rounded-2xl max-w-md w-full p-6 sm:p-8 space-y-5 my-auto shadow-2xl text-[var(--gm-text-primary)]">
+            <h2 className="text-lg font-bold text-[var(--gm-text-primary)] uppercase tracking-wide">
               Delete Service
             </h2>
 
             {deleteConflictBookingCount ? (
               <div className="space-y-4">
-                <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs space-y-2">
-                  <p className="font-semibold text-sm text-amber-100">
+                <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-[#b45309] dark:text-amber-200 text-xs space-y-2">
+                  <p className="font-semibold text-sm text-[#92400e] dark:text-amber-100">
                     Cannot Permanently Delete Service
                   </p>
                   <p>
                     <strong>&ldquo;{deletingService.title}&rdquo;</strong> is referenced by{' '}
                     <strong>{deleteConflictBookingCount}</strong> historical booking record(s).
                   </p>
-                  <p className="text-amber-200/80">
+                  <p className="opacity-90">
                     To preserve booking records and customer audit history, we recommend deactivating the service instead. This removes it from public catalogue and booking forms safely.
                   </p>
                 </div>
@@ -928,14 +928,14 @@ export function ServiceManager() {
                   <button
                     type="button"
                     onClick={() => setDeletingService(null)}
-                    className="px-4 py-2 text-xs font-semibold text-[#A7AAAD] hover:text-[#F2F0EA] cursor-pointer"
+                    className="px-4 py-2 text-xs font-semibold text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)] cursor-pointer"
                   >
                     Cancel
                   </button>
                   <button
                     type="button"
                     onClick={handleDeactivateInstead}
-                    className="px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-[#0A0C0D] bg-[#B88952] hover:bg-[#caa066] rounded-lg cursor-pointer transition-colors"
+                    className="px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-[var(--gm-accent-foreground)] bg-[var(--gm-accent-primary)] hover:bg-[var(--gm-accent-primary-hover)] rounded-lg cursor-pointer transition-colors shadow-sm"
                   >
                     Deactivate Service Instead
                   </button>
@@ -943,14 +943,14 @@ export function ServiceManager() {
               </div>
             ) : (
               <div className="space-y-4">
-                <p className="text-xs text-[#A7AAAD] leading-relaxed">
+                <p className="text-xs text-[var(--gm-text-secondary)] leading-relaxed">
                   Are you sure you want to permanently delete{' '}
-                  <strong className="text-[#F2F0EA]">&ldquo;{deletingService.title}&rdquo;</strong>?
+                  <strong className="text-[var(--gm-text-primary)]">&ldquo;{deletingService.title}&rdquo;</strong>?
                   This action cannot be undone.
                 </p>
 
                 {deleteError && (
-                  <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-300 text-xs">
+                  <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 dark:text-red-300 text-xs">
                     {deleteError}
                   </div>
                 )}
@@ -959,7 +959,7 @@ export function ServiceManager() {
                   <button
                     type="button"
                     onClick={() => setDeletingService(null)}
-                    className="px-4 py-2 text-xs font-semibold text-[#A7AAAD] hover:text-[#F2F0EA] cursor-pointer"
+                    className="px-4 py-2 text-xs font-semibold text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)] cursor-pointer"
                   >
                     Cancel
                   </button>

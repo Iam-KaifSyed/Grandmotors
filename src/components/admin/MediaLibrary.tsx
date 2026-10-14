@@ -239,12 +239,12 @@ export function MediaLibrary() {
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <span className="w-4 h-px bg-[#B88952]" />
-            <span className="text-[10px] font-semibold tracking-[0.25em] text-[#B88952] uppercase">
+            <span className="w-4 h-px bg-[var(--gm-accent-primary)]" />
+            <span className="text-[10px] font-semibold tracking-[0.25em] text-[var(--gm-accent-primary)] uppercase">
               Content Management
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-[-0.02em] text-[#F2F0EA] uppercase">
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-[-0.02em] text-[var(--gm-text-primary)] uppercase">
             Media Library
           </h1>
         </div>
@@ -261,7 +261,7 @@ export function MediaLibrary() {
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={isUploading}
-            className="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-semibold tracking-[0.14em] uppercase text-[#0A0C0D] bg-[#B88952] hover:bg-[#caa066] disabled:opacity-50 rounded-lg transition-colors cursor-pointer"
+            className="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-semibold tracking-[0.14em] uppercase text-[var(--gm-accent-foreground)] bg-[var(--gm-accent-primary)] hover:bg-[var(--gm-accent-primary-hover)] disabled:opacity-50 rounded-lg transition-colors cursor-pointer shadow-sm"
           >
             {isUploading ? 'Uploading…' : '+ Upload Image'}
           </button>
@@ -275,35 +275,35 @@ export function MediaLibrary() {
       )}
 
       {/* Filter and Search */}
-      <div className="rounded-xl border border-white/8 bg-[#111315] p-4 sm:p-5">
+      <div className="rounded-xl border border-[var(--gm-border-subtle)] bg-[var(--gm-bg-card)] p-4 sm:p-5 shadow-sm">
         <input
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search by filename or usage location..."
-          className="w-full bg-[#0A0C0D] border border-white/10 rounded-lg px-4 py-2.5 text-sm text-[#F2F0EA] placeholder-[#A7AAAD]/40 focus:border-[#B88952] focus:outline-none transition-colors"
+          className="w-full bg-[var(--gm-bg-surface)] border border-[var(--gm-border-subtle)] rounded-lg px-4 py-2.5 text-sm text-[var(--gm-text-primary)] placeholder-[var(--gm-text-muted)] focus:border-[var(--gm-accent-primary)] focus:outline-none transition-colors"
         />
       </div>
 
       {/* Media Grid */}
-      <div className="rounded-xl border border-white/8 bg-[#111315] p-6">
+      <div className="rounded-xl border border-[var(--gm-border-subtle)] bg-[var(--gm-bg-card)] p-6 shadow-sm">
         {isLoading ? (
           <div className="py-16 flex items-center justify-center">
-            <div className="w-8 h-8 rounded-full border-2 border-[#B88952]/20 border-t-[#B88952] animate-spin" />
+            <div className="w-8 h-8 rounded-full border-2 border-[var(--gm-accent-primary)]/20 border-t-[var(--gm-accent-primary)] animate-spin" />
           </div>
         ) : error ? (
           <div className="py-12 px-6 text-center">
-            <p className="text-sm text-red-300">{error}</p>
+            <p className="text-sm text-red-500 dark:text-red-300">{error}</p>
             <button
               type="button"
               onClick={loadData}
-              className="mt-4 inline-flex items-center px-5 py-2 text-xs font-semibold tracking-wider uppercase text-[#0A0C0D] bg-[#B88952] rounded-lg cursor-pointer"
+              className="mt-4 inline-flex items-center px-5 py-2 text-xs font-semibold tracking-wider uppercase text-[var(--gm-accent-foreground)] bg-[var(--gm-accent-primary)] rounded-lg cursor-pointer shadow-sm"
             >
               Retry
             </button>
           </div>
         ) : !assets || assets.length === 0 ? (
-          <div className="py-16 px-6 text-center text-sm text-[#A7AAAD]">
+          <div className="py-16 px-6 text-center text-sm text-[var(--gm-text-secondary)]">
             No media assets found. Upload images to build your catalogue library.
           </div>
         ) : (
@@ -311,10 +311,10 @@ export function MediaLibrary() {
             {assets.map((asset) => (
               <div
                 key={asset.id}
-                className="group relative flex flex-col rounded-xl border border-white/8 bg-[#0A0C0D] overflow-hidden hover:border-[#B88952]/40 transition-colors"
+                className="group relative flex flex-col rounded-xl border border-[var(--gm-border-subtle)] bg-[var(--gm-bg-surface)] overflow-hidden hover:border-[var(--gm-accent-primary)]/40 transition-colors shadow-sm"
               >
                 {/* Preview */}
-                <div className="relative aspect-[16/10] bg-[#111315] overflow-hidden">
+                <div className="relative aspect-[16/10] bg-[var(--gm-bg-card)] overflow-hidden">
                   <img
                     src={asset.url}
                     alt={asset.filename}
@@ -323,7 +323,7 @@ export function MediaLibrary() {
                       (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
                     }}
                   />
-                  <span className="absolute top-2 right-2 px-2 py-0.5 text-[9px] font-bold tracking-wider uppercase rounded bg-[#0A0C0D]/80 border border-white/10 text-[#A7AAAD] backdrop-blur-sm">
+                  <span className="absolute top-2 right-2 px-2 py-0.5 text-[9px] font-bold tracking-wider uppercase rounded bg-[var(--gm-bg-surface)]/80 border border-[var(--gm-border-subtle)] text-[var(--gm-text-secondary)] backdrop-blur-sm">
                     {asset.source}
                   </span>
                 </div>
@@ -332,12 +332,12 @@ export function MediaLibrary() {
                 <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
                   <div>
                     <h3
-                      className="text-xs font-semibold text-[#F2F0EA] truncate"
+                      className="text-xs font-semibold text-[var(--gm-text-primary)] truncate"
                       title={asset.filename}
                     >
                       {asset.filename}
                     </h3>
-                    <p className="text-[11px] text-[#A7AAAD]/70 font-mono mt-1">
+                    <p className="text-[11px] text-[var(--gm-text-muted)] font-mono mt-1">
                       {asset.width && asset.height
                         ? `${asset.width} × ${asset.height} px • `
                         : ''}
@@ -347,7 +347,7 @@ export function MediaLibrary() {
 
                   {/* Usage badges */}
                   <div>
-                    <span className="text-[9px] font-bold tracking-wider uppercase text-[#B88952] block mb-1">
+                    <span className="text-[9px] font-bold tracking-wider uppercase text-[var(--gm-accent-primary)] block mb-1">
                       Assigned Locations
                     </span>
                     {asset.usageLocations && asset.usageLocations.length > 0 ? (
@@ -355,19 +355,19 @@ export function MediaLibrary() {
                         {asset.usageLocations.map((loc) => (
                           <span
                             key={loc}
-                            className="px-2 py-0.5 text-[10px] rounded bg-[#B88952]/10 border border-[#B88952]/30 text-[#B88952]"
+                            className="px-2 py-0.5 text-[10px] rounded bg-[var(--gm-accent-muted)] border border-[var(--gm-accent-border)] text-[var(--gm-accent-primary)] font-medium"
                           >
                             {loc}
                           </span>
                         ))}
                       </div>
                     ) : (
-                      <span className="text-[10px] text-[#A7AAAD]/40 italic">Unassigned</span>
+                      <span className="text-[10px] text-[var(--gm-text-muted)] italic">Unassigned</span>
                     )}
                   </div>
 
                   {/* Actions */}
-                  <div className="pt-3 border-t border-white/5 flex items-center justify-between gap-2">
+                  <div className="pt-3 border-t border-[var(--gm-border-subtle)] flex items-center justify-between gap-2">
                     <button
                       type="button"
                       onClick={() => {
@@ -375,7 +375,7 @@ export function MediaLibrary() {
                         setSelectedLocation(usageLocations[0]?.key || '');
                         setAssignError(null);
                       }}
-                      className="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-[#F2F0EA] bg-white/5 hover:bg-white/10 border border-white/10 rounded cursor-pointer transition-colors"
+                      className="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-[var(--gm-text-primary)] bg-[var(--gm-bg-card)] hover:bg-[var(--gm-bg-card-hover)] border border-[var(--gm-border-subtle)] rounded cursor-pointer transition-colors"
                     >
                       Assign
                     </button>
@@ -387,7 +387,7 @@ export function MediaLibrary() {
                           setReplaceFile(null);
                           setReplaceError(null);
                         }}
-                        className="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-[#60A5FA] bg-[#60A5FA]/10 hover:bg-[#60A5FA]/20 border border-[#60A5FA]/20 rounded cursor-pointer transition-colors"
+                        className="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-[#2563eb] dark:text-[#60A5FA] bg-[#2563eb]/10 dark:bg-[#60A5FA]/10 hover:bg-[#2563eb]/20 dark:hover:bg-[#60A5FA]/20 border border-[#2563eb]/20 dark:border-[#60A5FA]/20 rounded cursor-pointer transition-colors"
                       >
                         Replace
                       </button>
@@ -402,7 +402,7 @@ export function MediaLibrary() {
                               : null
                           );
                         }}
-                        className="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-[#FF5F5F] bg-[#FF5F5F]/10 hover:bg-[#FF5F5F]/20 border border-[#FF5F5F]/20 rounded cursor-pointer transition-colors"
+                        className="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-[#dc2626] dark:text-[#FF5F5F] bg-[#dc2626]/10 dark:bg-[#FF5F5F]/10 hover:bg-[#dc2626]/20 dark:hover:bg-[#FF5F5F]/20 border border-[#dc2626]/20 dark:border-[#FF5F5F]/20 rounded cursor-pointer transition-colors"
                       >
                         Delete
                       </button>
@@ -417,12 +417,12 @@ export function MediaLibrary() {
 
       {/* Replace Modal */}
       {replacingAsset && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#040404]/85 backdrop-blur-md">
-          <div className="bg-[#0D0F12] border border-white/10 rounded-2xl max-w-md w-full p-6 space-y-4">
-            <h2 className="text-lg font-bold text-[#F2F0EA] uppercase">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 dark:bg-[#040404]/85 backdrop-blur-md">
+          <div className="bg-[var(--gm-bg-card)] border border-[var(--gm-border-subtle)] rounded-2xl max-w-md w-full p-6 space-y-4 text-[var(--gm-text-primary)] shadow-2xl">
+            <h2 className="text-lg font-bold text-[var(--gm-text-primary)] uppercase">
               Replace Image: {replacingAsset.filename}
             </h2>
-            <p className="text-xs text-[#A7AAAD] leading-relaxed">
+            <p className="text-xs text-[var(--gm-text-secondary)] leading-relaxed">
               Replacing will update the image binary while retaining all linked usage locations and
               service cards atomically.
             </p>
@@ -431,16 +431,16 @@ export function MediaLibrary() {
               type="file"
               accept=".jpg,.jpeg,.png,.webp"
               onChange={(e) => setReplaceFile(e.target.files?.[0] || null)}
-              className="w-full text-xs text-[#A7AAAD] file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#B88952] file:text-[#0A0C0D] file:cursor-pointer"
+              className="w-full text-xs text-[var(--gm-text-secondary)] file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[var(--gm-accent-primary)] file:text-[var(--gm-accent-foreground)] file:cursor-pointer"
             />
 
-            {replaceError && <p className="text-xs text-red-400">{replaceError}</p>}
+            {replaceError && <p className="text-xs text-red-500 dark:text-red-400">{replaceError}</p>}
 
             <div className="flex items-center justify-end gap-3 pt-3">
               <button
                 type="button"
                 onClick={() => setReplacingAsset(null)}
-                className="px-4 py-2 text-xs font-semibold text-[#A7AAAD] hover:text-[#F2F0EA] cursor-pointer"
+                className="px-4 py-2 text-xs font-semibold text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)] cursor-pointer"
               >
                 Cancel
               </button>
@@ -448,7 +448,7 @@ export function MediaLibrary() {
                 type="button"
                 onClick={handleReplace}
                 disabled={!replaceFile || isReplacing}
-                className="px-5 py-2 text-xs font-semibold uppercase tracking-wider text-[#0A0C0D] bg-[#B88952] hover:bg-[#caa066] disabled:opacity-50 rounded-lg cursor-pointer transition-colors"
+                className="px-5 py-2 text-xs font-semibold uppercase tracking-wider text-[var(--gm-accent-foreground)] bg-[var(--gm-accent-primary)] hover:bg-[var(--gm-accent-primary-hover)] disabled:opacity-50 rounded-lg cursor-pointer transition-colors shadow-sm"
               >
                 {isReplacing ? 'Replacing…' : 'Confirm Replace'}
               </button>
@@ -466,16 +466,16 @@ export function MediaLibrary() {
         const isBlocked = usageLocationsInUse.length > 0;
 
         return (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#040404]/85 backdrop-blur-md">
-            <div className="bg-[#0D0F12] border border-white/10 rounded-2xl max-w-md w-full p-6 space-y-4">
-              <h2 className="text-lg font-bold text-[#F2F0EA] uppercase">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 dark:bg-[#040404]/85 backdrop-blur-md">
+            <div className="bg-[var(--gm-bg-card)] border border-[var(--gm-border-subtle)] rounded-2xl max-w-md w-full p-6 space-y-4 text-[var(--gm-text-primary)] shadow-2xl">
+              <h2 className="text-lg font-bold text-[var(--gm-text-primary)] uppercase">
                 Delete this image?
               </h2>
 
               {isBlocked ? (
                 <div className="space-y-4">
                   <div className="p-3 bg-red-950/40 border border-red-500/40 rounded-lg space-y-2 text-xs text-red-200">
-                    <p className="font-semibold text-red-300">
+                    <p className="font-semibold text-red-400 dark:text-red-300">
                       Deletion blocked: This image is currently referenced by a website section or service.
                     </p>
                     <p className="text-[11px] text-red-300/80">
@@ -484,7 +484,7 @@ export function MediaLibrary() {
                   </div>
 
                   <div>
-                    <span className="text-[10px] font-bold tracking-wider uppercase text-[#B88952] block mb-2">
+                    <span className="text-[10px] font-bold tracking-wider uppercase text-[var(--gm-accent-primary)] block mb-2">
                       Where it's used ({usageLocationsInUse.length})
                     </span>
                     <ul className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
@@ -494,7 +494,7 @@ export function MediaLibrary() {
                         return (
                           <li
                             key={loc}
-                            className="flex items-center justify-between gap-2 p-2 rounded bg-white/5 border border-white/5 text-xs text-[#F2F0EA]"
+                            className="flex items-center justify-between gap-2 p-2 rounded bg-[var(--gm-bg-surface)] border border-[var(--gm-border-subtle)] text-xs text-[var(--gm-text-primary)]"
                           >
                             <span className="truncate" title={label}>
                               {label}
@@ -503,7 +503,7 @@ export function MediaLibrary() {
                               type="button"
                               onClick={() => handleUnlink(loc)}
                               disabled={isUnlinking}
-                              className="px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[#E5A93C] bg-[#E5A93C]/10 hover:bg-[#E5A93C]/20 border border-[#E5A93C]/20 rounded cursor-pointer disabled:opacity-50 transition-colors shrink-0"
+                              className="px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[#b45309] dark:text-[#E5A93C] bg-[#b45309]/10 dark:bg-[#E5A93C]/10 hover:bg-[#b45309]/20 dark:hover:bg-[#E5A93C]/20 border border-[#b45309]/20 dark:border-[#E5A93C]/20 rounded cursor-pointer disabled:opacity-50 transition-colors shrink-0"
                             >
                               Unlink
                             </button>
@@ -513,9 +513,9 @@ export function MediaLibrary() {
                     </ul>
                   </div>
 
-                  {deleteError && <p className="text-xs text-red-400">{deleteError}</p>}
+                  {deleteError && <p className="text-xs text-red-500 dark:text-red-400">{deleteError}</p>}
 
-                  <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-white/10">
+                  <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-[var(--gm-border-subtle)]">
                     <div className="flex items-center gap-2">
                       <button
                         type="button"
@@ -527,7 +527,7 @@ export function MediaLibrary() {
                           setReplaceFile(null);
                           setReplaceError(null);
                         }}
-                        className="px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-[#60A5FA] bg-[#60A5FA]/10 hover:bg-[#60A5FA]/20 border border-[#60A5FA]/20 rounded-lg cursor-pointer transition-colors"
+                        className="px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-[#2563eb] dark:text-[#60A5FA] bg-[#2563eb]/10 dark:bg-[#60A5FA]/10 hover:bg-[#2563eb]/20 dark:hover:bg-[#60A5FA]/20 border border-[#2563eb]/20 dark:border-[#60A5FA]/20 rounded-lg cursor-pointer transition-colors"
                       >
                         Replace Image
                       </button>
@@ -535,7 +535,7 @@ export function MediaLibrary() {
                         type="button"
                         onClick={() => handleUnlink()}
                         disabled={isUnlinking}
-                        className="px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-[#E5A93C] bg-[#E5A93C]/10 hover:bg-[#E5A93C]/20 border border-[#E5A93C]/20 rounded-lg cursor-pointer disabled:opacity-50 transition-colors"
+                        className="px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-[#b45309] dark:text-[#E5A93C] bg-[#b45309]/10 dark:bg-[#E5A93C]/10 hover:bg-[#b45309]/20 dark:hover:bg-[#E5A93C]/20 border border-[#b45309]/20 dark:border-[#E5A93C]/20 rounded-lg cursor-pointer disabled:opacity-50 transition-colors"
                       >
                         {isUnlinking ? 'Unlinking…' : 'Unlink All'}
                       </button>
@@ -546,7 +546,7 @@ export function MediaLibrary() {
                         setDeletingAsset(null);
                         setDeleteUsageConflicts(null);
                       }}
-                      className="px-4 py-2 text-xs font-semibold text-[#A7AAAD] hover:text-[#F2F0EA] cursor-pointer"
+                      className="px-4 py-2 text-xs font-semibold text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)] cursor-pointer"
                     >
                       Cancel
                     </button>
@@ -554,30 +554,30 @@ export function MediaLibrary() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  <div className="flex items-center gap-3 p-3 bg-white/5 border border-white/5 rounded-lg">
+                  <div className="flex items-center gap-3 p-3 bg-[var(--gm-bg-surface)] border border-[var(--gm-border-subtle)] rounded-lg">
                     <img
                       src={deletingAsset.url}
                       alt={deletingAsset.filename}
-                      className="w-12 h-12 object-cover rounded border border-white/10"
+                      className="w-12 h-12 object-cover rounded border border-[var(--gm-border-subtle)]"
                       onError={(e) => {
                         (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
                       }}
                     />
                     <div className="min-w-0 flex-1">
-                      <p className="text-xs font-semibold text-[#F2F0EA] truncate">
+                      <p className="text-xs font-semibold text-[var(--gm-text-primary)] truncate">
                         {deletingAsset.filename}
                       </p>
-                      <p className="text-[11px] text-[#A7AAAD]/70 font-mono mt-0.5">
+                      <p className="text-[11px] text-[var(--gm-text-muted)] font-mono mt-0.5">
                         {formatBytes(deletingAsset.byteSize)}
                       </p>
                     </div>
                   </div>
 
-                  <p className="text-xs text-[#A7AAAD] leading-relaxed">
+                  <p className="text-xs text-[var(--gm-text-secondary)] leading-relaxed">
                     This image is not currently used by any website sections or services. Deleting it will permanently remove it from the library.
                   </p>
 
-                  {deleteError && <p className="text-xs text-red-400">{deleteError}</p>}
+                  {deleteError && <p className="text-xs text-red-500 dark:text-red-400">{deleteError}</p>}
 
                   <div className="flex items-center justify-end gap-3 pt-2">
                     <button
@@ -586,7 +586,7 @@ export function MediaLibrary() {
                         setDeletingAsset(null);
                         setDeleteUsageConflicts(null);
                       }}
-                      className="px-4 py-2 text-xs font-semibold text-[#A7AAAD] hover:text-[#F2F0EA] cursor-pointer"
+                      className="px-4 py-2 text-xs font-semibold text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)] cursor-pointer"
                     >
                       Cancel
                     </button>
@@ -594,7 +594,7 @@ export function MediaLibrary() {
                       type="button"
                       onClick={handleDelete}
                       disabled={isDeleting}
-                      className="px-5 py-2 text-xs font-semibold uppercase tracking-wider text-[#F2F0EA] bg-[#FF5F5F] hover:bg-[#e04848] disabled:opacity-50 rounded-lg cursor-pointer transition-colors"
+                      className="px-5 py-2 text-xs font-semibold uppercase tracking-wider text-white bg-red-600 hover:bg-red-700 disabled:opacity-50 rounded-lg cursor-pointer transition-colors"
                     >
                       {isDeleting ? 'Deleting…' : 'Delete'}
                     </button>
@@ -608,17 +608,17 @@ export function MediaLibrary() {
 
       {/* Assign Modal */}
       {assigningAsset && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#040404]/85 backdrop-blur-md">
-          <div className="bg-[#0D0F12] border border-white/10 rounded-2xl max-w-md w-full p-6 space-y-4">
-            <h2 className="text-lg font-bold text-[#F2F0EA] uppercase">Assign to Usage Location</h2>
-            <p className="text-xs text-[#A7AAAD]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 dark:bg-[#040404]/85 backdrop-blur-md">
+          <div className="bg-[var(--gm-bg-card)] border border-[var(--gm-border-subtle)] rounded-2xl max-w-md w-full p-6 space-y-4 text-[var(--gm-text-primary)] shadow-2xl">
+            <h2 className="text-lg font-bold text-[var(--gm-text-primary)] uppercase">Assign to Usage Location</h2>
+            <p className="text-xs text-[var(--gm-text-secondary)]">
               Select where on the website this image should appear:
             </p>
 
             <select
               value={selectedLocation}
               onChange={(e) => setSelectedLocation(e.target.value)}
-              className="w-full bg-[#0A0C0D] border border-white/10 rounded-lg px-3 py-2.5 text-xs text-[#F2F0EA] focus:border-[#B88952] focus:outline-none cursor-pointer"
+              className="w-full bg-[var(--gm-bg-surface)] border border-[var(--gm-border-subtle)] rounded-lg px-3 py-2.5 text-xs text-[var(--gm-text-primary)] focus:border-[var(--gm-accent-primary)] focus:outline-none cursor-pointer"
             >
               {usageLocations.map((loc) => (
                 <option key={loc.key} value={loc.key}>
@@ -627,13 +627,13 @@ export function MediaLibrary() {
               ))}
             </select>
 
-            {assignError && <p className="text-xs text-red-400">{assignError}</p>}
+            {assignError && <p className="text-xs text-red-500 dark:text-red-400">{assignError}</p>}
 
             <div className="flex items-center justify-end gap-3 pt-3">
               <button
                 type="button"
                 onClick={() => setAssigningAsset(null)}
-                className="px-4 py-2 text-xs font-semibold text-[#A7AAAD] hover:text-[#F2F0EA] cursor-pointer"
+                className="px-4 py-2 text-xs font-semibold text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)] cursor-pointer"
               >
                 Cancel
               </button>
@@ -641,7 +641,7 @@ export function MediaLibrary() {
                 type="button"
                 onClick={handleAssign}
                 disabled={!selectedLocation || isAssigning}
-                className="px-5 py-2 text-xs font-semibold uppercase tracking-wider text-[#0A0C0D] bg-[#B88952] hover:bg-[#caa066] disabled:opacity-50 rounded-lg cursor-pointer transition-colors"
+                className="px-5 py-2 text-xs font-semibold uppercase tracking-wider text-[var(--gm-accent-foreground)] bg-[var(--gm-accent-primary)] hover:bg-[var(--gm-accent-primary-hover)] disabled:opacity-50 rounded-lg cursor-pointer transition-colors shadow-sm"
               >
                 {isAssigning ? 'Assigning…' : 'Save Assignment'}
               </button>

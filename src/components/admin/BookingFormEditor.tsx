@@ -135,7 +135,7 @@ export function BookingFormEditor() {
   if (isLoading) {
     return (
       <div className="py-24 flex items-center justify-center">
-        <div className="w-8 h-8 rounded-full border-2 border-[#B88952]/20 border-t-[#B88952] animate-spin" />
+        <div className="w-8 h-8 rounded-full border-2 border-[var(--gm-accent-primary)]/20 border-t-[var(--gm-accent-primary)] animate-spin" />
       </div>
     );
   }
@@ -143,11 +143,11 @@ export function BookingFormEditor() {
   if (error || !config) {
     return (
       <div className="py-16 text-center space-y-4">
-        <p className="text-sm text-red-300">{error || 'Unable to load configuration.'}</p>
+        <p className="text-sm text-red-600 dark:text-red-300">{error || 'Unable to load configuration.'}</p>
         <button
           type="button"
           onClick={loadConfig}
-          className="px-5 py-2 text-xs font-semibold uppercase tracking-wider text-[#0A0C0D] bg-[#B88952] rounded-lg cursor-pointer"
+          className="px-5 py-2 text-xs font-semibold uppercase tracking-wider text-[var(--gm-accent-foreground)] bg-[var(--gm-accent-primary)] hover:bg-[var(--gm-accent-hover)] rounded-lg cursor-pointer"
         >
           Retry
         </button>
@@ -161,12 +161,12 @@ export function BookingFormEditor() {
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <span className="w-4 h-px bg-[#B88952]" />
-            <span className="text-[10px] font-semibold tracking-[0.25em] text-[#B88952] uppercase">
+            <span className="w-4 h-px bg-[var(--gm-accent-primary)]" />
+            <span className="text-[10px] font-semibold tracking-[0.25em] text-[var(--gm-accent-primary)] uppercase">
               Form Customizer
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-[-0.02em] text-[#F2F0EA] uppercase">
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-[-0.02em] text-[var(--gm-text-primary)] uppercase">
             Booking Form Settings
           </h1>
         </div>
@@ -175,7 +175,7 @@ export function BookingFormEditor() {
           type="button"
           onClick={handleSave}
           disabled={isSaving}
-          className="inline-flex items-center gap-2 px-7 py-3 text-xs font-semibold tracking-[0.16em] uppercase text-[#0A0C0D] bg-[#B88952] hover:bg-[#caa066] disabled:opacity-50 rounded-lg transition-colors cursor-pointer self-start sm:self-auto shadow-lg shadow-[#B88952]/10"
+          className="inline-flex items-center gap-2 px-7 py-3 text-xs font-semibold tracking-[0.16em] uppercase text-[var(--gm-accent-foreground)] bg-[var(--gm-accent-primary)] hover:bg-[var(--gm-accent-hover)] disabled:opacity-50 rounded-lg transition-colors cursor-pointer self-start sm:self-auto shadow-lg shadow-[var(--gm-accent-primary)]/10"
         >
           {isSaving ? 'Saving Changes…' : 'Save All Changes'}
         </button>
@@ -185,8 +185,8 @@ export function BookingFormEditor() {
         <div
           className={`p-4 rounded-xl border text-xs ${
             saveFeedback.ok
-              ? 'bg-[#25D366]/10 border-[#25D366]/30 text-[#25D366]'
-              : 'bg-red-950/40 border-red-500/40 text-red-200'
+              ? 'bg-[#15803d]/10 border-[#15803d]/30 text-[#15803d] dark:bg-[#25D366]/10 dark:border-[#25D366]/30 dark:text-[#25D366]'
+              : 'bg-red-500/10 border-red-500/30 text-red-600 dark:bg-red-950/40 dark:border-red-500/40 dark:text-red-200'
           }`}
         >
           {saveFeedback.msg}
@@ -194,57 +194,57 @@ export function BookingFormEditor() {
       )}
 
       {/* 1. Form Headings */}
-      <div className="rounded-xl border border-white/8 bg-[#111315] p-6 space-y-4">
-        <h2 className="text-sm font-semibold tracking-wider uppercase text-[#F2F0EA] border-b border-white/5 pb-3">
+      <div className="rounded-xl border border-[var(--gm-border-subtle)] bg-[var(--gm-bg-card)] p-6 space-y-4 shadow-sm">
+        <h2 className="text-sm font-semibold tracking-wider uppercase text-[var(--gm-text-primary)] border-b border-[var(--gm-border-subtle)] pb-3">
           1. Headings & Presentation
         </h2>
 
         <div className="space-y-4 text-xs">
           <div>
-            <label className="block text-[#A7AAAD] uppercase tracking-wider mb-1">
+            <label className="block text-[var(--gm-text-secondary)] uppercase tracking-wider mb-1">
               Page / Section Heading
             </label>
             <input
               type="text"
               value={config.heading}
               onChange={(e) => setConfig({ ...config, heading: e.target.value })}
-              className="w-full bg-[#0A0C0D] border border-white/10 rounded-lg px-3 py-2.5 text-sm text-[#F2F0EA] focus:border-[#B88952] focus:outline-none"
+              className="w-full bg-[var(--gm-bg-surface)] border border-[var(--gm-border-medium)] rounded-lg px-3 py-2.5 text-sm text-[var(--gm-text-primary)] focus:border-[var(--gm-accent-primary)] focus:outline-none"
             />
           </div>
 
           <div>
-            <label className="block text-[#A7AAAD] uppercase tracking-wider mb-1">
+            <label className="block text-[var(--gm-text-secondary)] uppercase tracking-wider mb-1">
               Supporting Subtext
             </label>
             <textarea
               rows={2}
               value={config.supportingText}
               onChange={(e) => setConfig({ ...config, supportingText: e.target.value })}
-              className="w-full bg-[#0A0C0D] border border-white/10 rounded-lg px-3 py-2 text-xs text-[#F2F0EA] focus:border-[#B88952] focus:outline-none resize-none"
+              className="w-full bg-[var(--gm-bg-surface)] border border-[var(--gm-border-medium)] rounded-lg px-3 py-2 text-xs text-[var(--gm-text-primary)] focus:border-[var(--gm-accent-primary)] focus:outline-none resize-none"
             />
           </div>
 
           <div>
-            <label className="block text-[#A7AAAD] uppercase tracking-wider mb-1">
+            <label className="block text-[var(--gm-text-secondary)] uppercase tracking-wider mb-1">
               Submission Confirmation Message
             </label>
             <textarea
               rows={2}
               value={config.confirmationMessage}
               onChange={(e) => setConfig({ ...config, confirmationMessage: e.target.value })}
-              className="w-full bg-[#0A0C0D] border border-white/10 rounded-lg px-3 py-2 text-xs text-[#F2F0EA] focus:border-[#B88952] focus:outline-none resize-none"
+              className="w-full bg-[var(--gm-bg-surface)] border border-[var(--gm-border-medium)] rounded-lg px-3 py-2 text-xs text-[var(--gm-text-primary)] focus:border-[var(--gm-accent-primary)] focus:outline-none resize-none"
             />
           </div>
         </div>
       </div>
 
       {/* 2. Field Customization & Essential Field Protection */}
-      <div className="rounded-xl border border-white/8 bg-[#111315] p-6 space-y-4">
-        <div className="border-b border-white/5 pb-3">
-          <h2 className="text-sm font-semibold tracking-wider uppercase text-[#F2F0EA]">
+      <div className="rounded-xl border border-[var(--gm-border-subtle)] bg-[var(--gm-bg-card)] p-6 space-y-4 shadow-sm">
+        <div className="border-b border-[var(--gm-border-subtle)] pb-3">
+          <h2 className="text-sm font-semibold tracking-wider uppercase text-[var(--gm-text-primary)]">
             2. Field Labels & Optional Fields
           </h2>
-          <p className="text-[11px] text-[#A7AAAD]/80 mt-1">
+          <p className="text-[11px] text-[var(--gm-text-secondary)] mt-1">
             Essential booking fields (marked with 🔒) are protected and permanently required for
             workshop operations and booking tracking.
           </p>
@@ -257,9 +257,9 @@ export function BookingFormEditor() {
             const isVisible = isOptional ? config.optionalFieldVisibility[fieldKey] ?? true : true;
 
             return (
-              <div key={fieldKey} className="p-3 bg-[#0A0C0D] border border-white/5 rounded-lg space-y-2">
+              <div key={fieldKey} className="p-3 bg-[var(--gm-bg-surface)] border border-[var(--gm-border-subtle)] rounded-lg space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="font-mono text-[10px] text-[#A7AAAD] uppercase">
+                  <span className="font-mono text-[10px] text-[var(--gm-text-secondary)] uppercase">
                     {fieldKey} {isEssential ? '🔒 (Essential)' : '(Optional)'}
                   </span>
                   {isOptional && (
@@ -268,8 +268,8 @@ export function BookingFormEditor() {
                       onClick={() => toggleOptionalField(fieldKey)}
                       className={`px-2 py-0.5 text-[9px] font-bold uppercase rounded cursor-pointer ${
                         isVisible
-                          ? 'bg-[#25D366]/10 text-[#25D366] border border-[#25D366]/30'
-                          : 'bg-white/5 text-[#A7AAAD] border border-white/10'
+                          ? 'bg-[#15803d]/10 text-[#15803d] border border-[#15803d]/30 dark:bg-[#25D366]/10 dark:text-[#25D366] dark:border-[#25D366]/30'
+                          : 'bg-black/5 dark:bg-white/5 text-[var(--gm-text-secondary)] border border-[var(--gm-border-subtle)]'
                       }`}
                     >
                       {isVisible ? 'Shown' : 'Hidden'}
@@ -282,7 +282,7 @@ export function BookingFormEditor() {
                   value={label}
                   onChange={(e) => updateLabel(fieldKey, e.target.value)}
                   placeholder={`Label for ${fieldKey}`}
-                  className="w-full bg-[#111315] border border-white/10 rounded px-2.5 py-1.5 text-xs text-[#F2F0EA] focus:border-[#B88952] focus:outline-none"
+                  className="w-full bg-[var(--gm-bg-card)] border border-[var(--gm-border-medium)] rounded px-2.5 py-1.5 text-xs text-[var(--gm-text-primary)] focus:border-[var(--gm-accent-primary)] focus:outline-none"
                 />
               </div>
             );
@@ -291,8 +291,8 @@ export function BookingFormEditor() {
       </div>
 
       {/* 3. Appointment Time Slots */}
-      <div className="rounded-xl border border-white/8 bg-[#111315] p-6 space-y-4">
-        <h2 className="text-sm font-semibold tracking-wider uppercase text-[#F2F0EA] border-b border-white/5 pb-3">
+      <div className="rounded-xl border border-[var(--gm-border-subtle)] bg-[var(--gm-bg-card)] p-6 space-y-4 shadow-sm">
+        <h2 className="text-sm font-semibold tracking-wider uppercase text-[var(--gm-text-primary)] border-b border-[var(--gm-border-subtle)] pb-3">
           3. Available Appointment Time Windows
         </h2>
 
@@ -302,13 +302,13 @@ export function BookingFormEditor() {
             value={newSlot}
             onChange={(e) => setNewSlot(e.target.value)}
             placeholder="e.g. Early Bird (7:30 AM - 9:00 AM)"
-            className="flex-1 bg-[#0A0C0D] border border-white/10 rounded-lg px-3 py-2 text-xs text-[#F2F0EA] focus:border-[#B88952] focus:outline-none"
+            className="flex-1 bg-[var(--gm-bg-surface)] border border-[var(--gm-border-medium)] rounded-lg px-3 py-2 text-xs text-[var(--gm-text-primary)] focus:border-[var(--gm-accent-primary)] focus:outline-none placeholder:text-[var(--gm-text-muted)]"
           />
           <button
             type="button"
             onClick={addSlot}
             disabled={!newSlot.trim()}
-            className="px-4 py-2 text-xs font-semibold uppercase tracking-wider text-[#0A0C0D] bg-[#B88952] hover:bg-[#caa066] disabled:opacity-50 rounded-lg cursor-pointer"
+            className="px-4 py-2 text-xs font-semibold uppercase tracking-wider text-[var(--gm-accent-foreground)] bg-[var(--gm-accent-primary)] hover:bg-[var(--gm-accent-hover)] disabled:opacity-50 rounded-lg cursor-pointer"
           >
             + Add Slot
           </button>
@@ -318,13 +318,13 @@ export function BookingFormEditor() {
           {config.appointmentSlots.map((slot) => (
             <div
               key={slot}
-              className="flex items-center justify-between p-3 rounded-lg border border-white/5 bg-[#0A0C0D] text-xs text-[#F2F0EA]"
+              className="flex items-center justify-between p-3 rounded-lg border border-[var(--gm-border-subtle)] bg-[var(--gm-bg-surface)] text-xs text-[var(--gm-text-primary)]"
             >
               <span>{slot}</span>
               <button
                 type="button"
                 onClick={() => removeSlot(slot)}
-                className="text-[#FF5F5F] hover:text-red-400 text-xs px-2 py-1 cursor-pointer"
+                className="text-red-600 dark:text-[#FF5F5F] hover:text-red-700 dark:hover:text-red-400 text-xs px-2 py-1 cursor-pointer font-medium"
               >
                 Remove
               </button>
@@ -334,8 +334,8 @@ export function BookingFormEditor() {
       </div>
 
       {/* 4. Custom Additional Questions */}
-      <div className="rounded-xl border border-white/8 bg-[#111315] p-6 space-y-4">
-        <h2 className="text-sm font-semibold tracking-wider uppercase text-[#F2F0EA] border-b border-white/5 pb-3">
+      <div className="rounded-xl border border-[var(--gm-border-subtle)] bg-[var(--gm-bg-card)] p-6 space-y-4 shadow-sm">
+        <h2 className="text-sm font-semibold tracking-wider uppercase text-[var(--gm-text-primary)] border-b border-[var(--gm-border-subtle)] pb-3">
           4. Custom Additional Questions
         </h2>
 
@@ -345,13 +345,13 @@ export function BookingFormEditor() {
             value={newQuestion}
             onChange={(e) => setNewQuestion(e.target.value)}
             placeholder="e.g. Do you require door-step pickup?"
-            className="flex-1 bg-[#0A0C0D] border border-white/10 rounded-lg px-3 py-2 text-xs text-[#F2F0EA] focus:border-[#B88952] focus:outline-none"
+            className="flex-1 bg-[var(--gm-bg-surface)] border border-[var(--gm-border-medium)] rounded-lg px-3 py-2 text-xs text-[var(--gm-text-primary)] focus:border-[var(--gm-accent-primary)] focus:outline-none placeholder:text-[var(--gm-text-muted)]"
           />
           <button
             type="button"
             onClick={addQuestion}
             disabled={!newQuestion.trim()}
-            className="px-4 py-2 text-xs font-semibold uppercase tracking-wider text-[#0A0C0D] bg-[#B88952] hover:bg-[#caa066] disabled:opacity-50 rounded-lg cursor-pointer"
+            className="px-4 py-2 text-xs font-semibold uppercase tracking-wider text-[var(--gm-accent-foreground)] bg-[var(--gm-accent-primary)] hover:bg-[var(--gm-accent-hover)] disabled:opacity-50 rounded-lg cursor-pointer"
           >
             + Add Question
           </button>
@@ -362,13 +362,13 @@ export function BookingFormEditor() {
             {config.customQuestions.map((q) => (
               <div
                 key={q.id}
-                className="flex items-center justify-between p-3 rounded-lg border border-white/5 bg-[#0A0C0D] text-xs text-[#F2F0EA]"
+                className="flex items-center justify-between p-3 rounded-lg border border-[var(--gm-border-subtle)] bg-[var(--gm-bg-surface)] text-xs text-[var(--gm-text-primary)]"
               >
                 <span>{q.label}</span>
                 <button
                   type="button"
                   onClick={() => removeQuestion(q.id)}
-                  className="text-[#FF5F5F] hover:text-red-400 text-xs px-2 py-1 cursor-pointer"
+                  className="text-red-600 dark:text-[#FF5F5F] hover:text-red-700 dark:hover:text-red-400 text-xs px-2 py-1 cursor-pointer font-medium"
                 >
                   Remove
                 </button>
@@ -376,7 +376,7 @@ export function BookingFormEditor() {
             ))}
           </div>
         ) : (
-          <p className="text-xs text-[#A7AAAD]/60 italic">No custom questions added.</p>
+          <p className="text-xs text-[var(--gm-text-muted)] italic">No custom questions added.</p>
         )}
       </div>
 
@@ -386,7 +386,7 @@ export function BookingFormEditor() {
           type="button"
           onClick={handleSave}
           disabled={isSaving}
-          className="inline-flex items-center gap-2 px-8 py-3.5 text-xs font-semibold tracking-[0.16em] uppercase text-[#0A0C0D] bg-[#B88952] hover:bg-[#caa066] disabled:opacity-50 rounded-lg transition-colors cursor-pointer shadow-lg shadow-[#B88952]/10"
+          className="inline-flex items-center gap-2 px-8 py-3.5 text-xs font-semibold tracking-[0.16em] uppercase text-[var(--gm-accent-foreground)] bg-[var(--gm-accent-primary)] hover:bg-[var(--gm-accent-hover)] disabled:opacity-50 rounded-lg transition-colors cursor-pointer shadow-lg shadow-[var(--gm-accent-primary)]/10"
         >
           {isSaving ? 'Saving Changes…' : 'Save All Changes'}
         </button>
