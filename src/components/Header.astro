@@ -6,6 +6,7 @@ const pathname = new URL(Astro.request.url).pathname;
 const navItems = [
   { name: 'Home', url: '/' },
   { name: 'Services', url: '/services' },
+  { name: 'Gallery', url: '/gallery' },
   { name: 'My Bookings', url: '/my-bookings' },
   { name: 'About', url: '/about' },
   { name: 'Contact', url: '/contact' },
@@ -13,6 +14,7 @@ const navItems = [
 const links = [
   { href: '/', label: 'Home' },
   { href: '/services', label: 'Services' },
+  { href: '/gallery', label: 'Gallery' },
   { href: '/book-service?location=doorstep#doorstep', label: 'Doorstep Service', badge: 'NEW' },
   { href: '/my-bookings', label: 'My Bookings' },
   { href: '/about', label: 'About' },

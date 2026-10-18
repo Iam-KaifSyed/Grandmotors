@@ -1,0 +1,102 @@
+---
+export const prerender = false;
+
+import Base from '../layouts/Base.astro';
+import { getAppEnv, getDatabase } from '../lib/env';
+import { getPublishedGalleryItems, listGalleryCategories } from '../lib/galleryStore';
+import { GalleryLightbox } from '../components/site/GalleryLightbox';
+import Reveal from '../components/site/Reveal.astro';
+import { ArrowRightIcon } from '../components/site/Icons';
+
+const env = getAppEnv(Astro.locals);
+const db = getDatabase(Astro.locals, env);
+
+let items: any[] = [];
+let categories: any[] = [];
+try {
+  items = await getPublishedGalleryItems(db);
+} catch (err) {
+  console.warn('Failed to load gallery items:', err);
+  items = [];
+}
+
+try {
+  categories = await listGalleryCategories(db);
+} catch (err) {
+  console.warn('Failed to load gallery categories:', err);
+  categories = [];
+}
+---
+
+<Base
+  title="Past Work Gallery & Completed Projects | Grand Motors Hyderabad"
+  description="Explore real completed automotive work, precision engine repairs, luxury detailing, and diagnostic servicing at Grand Motors Hyderabad. Real client results."
+  keywords="car repair gallery Hyderabad, luxury car service photos, Grand Motors past work, AMG Mercedes service gallery, auto repair showcase Hyderabad"
+>
+  <main class="pb-24">
+    <!-- Hero Section -->
+    <section class="relative isolate overflow-hidden pt-32 pb-16 md:pt-44 md:pb-24 border-b border-[var(--gm-border-subtle)] bg-[var(--gm-bg-surface)]">
+      <div class="max-w-7xl mx-auto px-4 sm:px-8 md:px-12 lg:px-16 text-center">
+        <Reveal class="inline-flex items-center gap-2.5 mb-5 sm:mb-6">
+          <span class="w-5 sm:w-6 h-px bg-[var(--gm-accent-primary)]"></span>
+          <span class="text-[10px] sm:text-[11px] font-semibold tracking-[0.25em] sm:tracking-[0.3em] text-[var(--gm-accent-primary)] uppercase">
+            Real Work, Real Precision
+          </span>
+          <span class="w-5 sm:w-6 h-px bg-[var(--gm-accent-primary)]"></span>
+        </Reveal>
+        <Reveal
+          as="h1"
+          delay={80}
+          class="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-[-0.035em] text-[var(--gm-text-primary)] leading-[1.0] uppercase"
+        >
+          Past Work Gallery
+        </Reveal>
+        <Reveal
+          as="p"
+          delay={160}
+          class="mt-4 sm:mt-6 max-w-2xl mx-auto text-xs sm:text-sm md:text-base leading-relaxed text-[var(--gm-text-secondary)]"
+        >
+          A transparent look inside our workshop bays. Every photo represents an actual vehicle serviced, diagnosed and delivered with factory-level care by our technicians.
+        </Reveal>
+      </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section class="px-4 sm:px-8 md:px-12 lg:px-16 pt-16 md:pt-24">
+      <div class="max-w-7xl mx-auto">
+        <GalleryLightbox items={items} categories={categories} client:load />
+      </div>
+    </section>
+
+    <!-- Bottom CTA -->
+    <section class="px-4 sm:px-8 md:px-12 lg:px-16 pt-20 md:pt-28">
+      <div class="max-w-7xl mx-auto">
+        <Reveal class="rounded-3xl border border-[var(--gm-border-subtle)] bg-[var(--gm-bg-card)] p-8 sm:p-12 md:p-16 text-center shadow-xl relative overflow-hidden">
+          <div aria-hidden="true" class="absolute -right-20 -bottom-20 w-96 h-96 bg-[var(--gm-accent-primary)]/5 rounded-full blur-3xl pointer-events-none" />
+
+          <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-[-0.03em] text-[var(--gm-text-primary)] uppercase">
+            Ready to give your car the care it deserves?
+          </h2>
+          <p class="mt-4 max-w-xl mx-auto text-xs sm:text-sm md:text-base text-[var(--gm-text-secondary)] leading-relaxed">
+            Book an inspection or service appointment online in under a minute. Doorstep pickup and workshop bay options available across Hyderabad.
+          </p>
+          <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
+            <a
+              href="/book-service"
+              class="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-[var(--gm-accent-primary)] text-[var(--gm-accent-foreground)] font-semibold text-xs tracking-wider uppercase shadow-lg shadow-[var(--gm-accent-primary)]/20 hover:bg-[var(--gm-accent-hover)] transition-colors cursor-pointer"
+            >
+              Book a Service
+              <ArrowRightIcon className="w-4 h-4" />
+            </a>
+            <a
+              href="/services"
+              class="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full border border-[var(--gm-border-medium)] text-[var(--gm-text-primary)] font-semibold text-xs tracking-wider uppercase hover:border-[var(--gm-accent-border)] hover:bg-[var(--gm-accent-muted)] transition-colors cursor-pointer"
+            >
+              Explore Services
+            </a>
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  </main>
+</Base>

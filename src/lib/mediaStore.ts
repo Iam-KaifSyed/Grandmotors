@@ -266,6 +266,22 @@ export async function listMediaAssets(db: any, query?: string): Promise<MediaAss
     }
   }
 
+  // Also query gallery_items for direct mediaAssetId usage
+  try {
+    const rawGallery = await db
+      .prepare('SELECT id, title, mediaAssetId FROM gallery_items WHERE mediaAssetId IS NOT NULL')
+      .all();
+    for (const g of rawGallery?.results || []) {
+      if (!refMap[g.mediaAssetId]) refMap[g.mediaAssetId] = [];
+      const locName = `Gallery: ${g.title || 'Untitled'}`;
+      if (!refMap[g.mediaAssetId].includes(locName)) {
+        refMap[g.mediaAssetId].push(locName);
+      }
+    }
+  } catch {
+    // gallery_items table might not exist in all environments yet
+  }
+
   const enriched = assets.map((a) => ({
     ...a,
     url: resolveAssetUrl(a),
@@ -495,6 +511,19 @@ export async function deleteMediaAsset(
     usageLocations.push(`Service: ${s.title}`);
   }
 
+  // Check if in use in gallery_items table
+  try {
+    const rawGallery = await db
+      .prepare('SELECT title FROM gallery_items WHERE mediaAssetId = ?')
+      .bind(id)
+      .all();
+    for (const g of rawGallery?.results || []) {
+      usageLocations.push(`Gallery: ${g.title || 'Untitled'}`);
+    }
+  } catch {
+    // If gallery_items table doesn't exist yet, ignore
+  }
+
   if (usageLocations.length > 0) {
     const err: any = new Error(
       'Cannot delete media asset because it is currently in use.'
@@ -572,6 +601,18 @@ export async function unlinkMediaAsset(
       .bind(actorAdmin, id)
       .run();
 
+    // 3. Unlink from all gallery items referencing this asset
+    try {
+      const rawGallery = await db
+        .prepare('SELECT id, title FROM gallery_items WHERE mediaAssetId = ?')
+        .bind(id)
+        .all();
+      for (const g of rawGallery?.results || []) {
+        unlinkedLocations.push(`Gallery: ${g.title || 'Untitled'}`);
+      }
+      await db.prepare('DELETE FROM gallery_items WHERE mediaAssetId = ?').bind(id).run();
+    } catch {}
+
     await recordAuditEvent(db, {
       entityType: 'media',
       entityId: id,
@@ -598,6 +639,18 @@ export async function unlinkMediaAsset(
           .run();
         unlinkedLocations.push(`Service: ${svc.title}`);
       }
+    } else if (trimmedLoc.startsWith('Gallery:')) {
+      const galleryTitle = trimmedLoc.replace(/^Gallery:\s*/, '').trim();
+      try {
+        const gal = await db
+          .prepare('SELECT id, title FROM gallery_items WHERE mediaAssetId = ? AND (title = ? OR id = ?)')
+          .bind(id, galleryTitle, trimmedLoc)
+          .first();
+        if (gal) {
+          await db.prepare('DELETE FROM gallery_items WHERE id = ?').bind(gal.id).run();
+          unlinkedLocations.push(`Gallery: ${gal.title || 'Untitled'}`);
+        }
+      } catch {}
     } else {
       // Could be in media_references
       const ref = await db
@@ -653,6 +706,16 @@ export async function unlinkMediaAsset(
   for (const s of remainingServices?.results || []) {
     remainingLocations.push(`Service: ${s.title}`);
   }
+
+  try {
+    const remainingGallery = await db
+      .prepare('SELECT title FROM gallery_items WHERE mediaAssetId = ?')
+      .bind(id)
+      .all();
+    for (const g of remainingGallery?.results || []) {
+      remainingLocations.push(`Gallery: ${g.title || 'Untitled'}`);
+    }
+  } catch {}
 
   return {
     unlinked: true,

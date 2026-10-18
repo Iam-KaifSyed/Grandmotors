@@ -45,6 +45,7 @@ export function Footer({ services }: FooterProps = {}) {
               {[
                 { label: 'Home', href: '/' },
                 { label: 'Services', href: '/services' },
+                { label: 'Gallery', href: '/gallery' },
                 { label: 'Book Service', href: '/book-service' },
                 { label: 'My Bookings', href: '/my-bookings' },
                 { label: 'Track Booking', href: '/track-booking' },

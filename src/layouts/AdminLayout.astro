@@ -104,6 +104,16 @@ const pathname = Astro.url.pathname;
                 Services
               </a>
               <a
+                href="/admin/gallery"
+                class={`px-3 py-1.5 text-[11px] font-semibold tracking-[0.14em] uppercase rounded-lg transition-colors ${
+                  pathname.startsWith('/admin/gallery')
+                    ? 'text-[var(--gm-accent-primary)] bg-[var(--gm-accent-muted)] border border-[var(--gm-accent-border)]'
+                    : 'text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)] hover:bg-[var(--gm-bg-card-hover)]'
+                }`}
+              >
+                Gallery
+              </a>
+              <a
                 href="/admin/booking-form"
                 class={`px-3 py-1.5 text-[11px] font-semibold tracking-[0.14em] uppercase rounded-lg transition-colors ${
                   pathname.startsWith('/admin/booking-form')
@@ -160,6 +170,16 @@ const pathname = Astro.url.pathname;
             }`}
           >
             Services
+          </a>
+          <a
+            href="/admin/gallery"
+            class={`px-2.5 py-1 text-[10px] font-semibold tracking-[0.12em] uppercase rounded-md shrink-0 transition-colors ${
+              pathname.startsWith('/admin/gallery')
+                ? 'text-[var(--gm-accent-primary)] bg-[var(--gm-accent-muted)] border border-[var(--gm-accent-border)]'
+                : 'text-[var(--gm-text-secondary)] hover:text-[var(--gm-text-primary)]'
+            }`}
+          >
+            Gallery
           </a>
           <a
             href="/admin/booking-form"
