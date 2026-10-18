@@ -1,20 +1,28 @@
 {
-  "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "grand-motor",
-  "compatibility_date": "2026-10-01",
-  "compatibility_flags": ["nodejs_compat"],
-  "d1_databases": [
-    {
-      "binding": "DB",
-      "database_name": "grandmotors",
-      "database_id": "local-db",
-      "migrations_dir": "migrations"
-    }
-  ],
-  "r2_buckets": [
-    {
-      "binding": "MEDIA",
-      "bucket_name": "grandmotors-media"
-    }
-  ]
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "grand-motor",
+	"compatibility_date": "2026-10-01",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "grandmotors",
+			"database_id": "f752ae34-dc45-4241-9389-502e271c2be6",
+			"migrations_dir": "migrations"
+		}
+	],
+	"kv_namespaces": [
+		{
+			"binding": "SESSION",
+			"id": "f05f18d76d5443159df12d795b0d83b4"
+		}
+	],
+	"r2_buckets": [
+		{
+			"binding": "MEDIA",
+			"bucket_name": "grandmotors-media"
+		}
+	]
 }
